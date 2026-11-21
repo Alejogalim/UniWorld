@@ -1,0 +1,96 @@
+{
+  "welcome": {
+    "title": "Chào mừng đến với UniWorld",
+    "subtitle": "Cách nhẹ nhàng, từng bước để tìm những trường đại học phù hợp với bạn. Chỉ mất khoảng một phút.",
+    "switchLabel": "Ngôn ngữ giao diện"
+  },
+  "name": {
+    "label": "Tên của bạn",
+    "placeholder": "Chúng tôi nên gọi bạn là gì?",
+    "hint": "AI sẽ dùng tên này khi trò chuyện với bạn."
+  },
+  "languages": {
+    "primaryLabel": "Ngôn ngữ chính",
+    "searchPlaceholder": "Tìm ngôn ngữ…",
+    "extraLabel": "Ngôn ngữ khác",
+    "addLanguage": "Thêm ngôn ngữ",
+    "remove": "Xóa",
+    "levelLabel": "Trình độ",
+    "switchPrompt": "Chuyển giao diện sang {{lang}}?",
+    "switchYes": "Có, chuyển",
+    "switchNo": "Giữ tiếng Anh"
+  },
+  "levels": {
+    "A1": "A1 (sơ cấp)",
+    "A2": "A2 (căn bản)",
+    "B1": "B1 (trung cấp)",
+    "B2": "B2 (trung cao cấp)",
+    "C1": "C1 (cao cấp)",
+    "C2": "C2 (thành thạo)",
+    "native": "Tiếng mẹ đẻ"
+  },
+  "program": {
+    "label": "Chương trình học",
+    "IB": "IB Diploma",
+    "AP": "AP (Advanced Placement)",
+    "US": "Chương trình phổ thông Mỹ"
+  },
+  "grades": {
+    "title": "Điểm số (không bắt buộc)",
+    "note": "Giúp chúng tôi gợi ý những lựa chọn thực tế hơn.",
+    "add": "Thêm điểm số",
+    "ib": {
+      "predictedTotal": "Tổng điểm dự kiến (trên 45)",
+      "subjects": "Các môn học",
+      "subjectName": "Môn",
+      "subjectLevel": "Cấp độ",
+      "subjectScore": "Điểm (1–7)",
+      "addSubject": "Thêm môn"
+    },
+    "ap": {
+      "gpa": "Điểm GPA",
+      "exams": "Các kỳ thi",
+      "examName": "Kỳ thi",
+      "examScore": "Điểm (1–5)",
+      "addExam": "Thêm kỳ thi"
+    },
+    "us": {
+      "gpaUnweighted": "GPA không trọng số (trên 4.0)",
+      "sat": "Điểm SAT",
+      "act": "Điểm ACT"
+    }
+  },
+  "residence": {
+    "title": "Quốc tịch và nơi cư trú (không bắt buộc)",
+    "note": "Học phí miễn phí thường phụ thuộc vào hai mục này.",
+    "citizenship": "Quốc tịch (quốc gia)",
+    "residence": "Quốc gia cư trú",
+    "optional": "Không bắt buộc"
+  },
+  "ai": {
+    "title": "Kết nối khóa AI của bạn",
+    "openrouter": {
+      "label": "Khóa OpenRouter",
+      "required": "Bắt buộc. Mục Tìm trường cần khóa này để tìm kiếm web có xác minh."
+    },
+    "opencode": {
+      "label": "Khóa OpenCode Go",
+      "optional": "Không bắt buộc. Chỉ dùng cho chat tư vấn.",
+      "experimental": "Thử nghiệm"
+    },
+    "keyPlaceholder": "Dán khóa của bạn",
+    "keyStored": "Khóa được lưu trong kho khóa của hệ điều hành, không bao giờ lưu trong cơ sở dữ liệu.",
+    "testConnection": "Kiểm tra kết nối",
+    "testing": "Đang kiểm tra…",
+    "connected": "Kết nối hoạt động",
+    "failed": "Kết nối thất bại: {{error}}"
+  },
+  "actions": {
+    "next": "Tiếp",
+    "back": "Quay lại",
+    "finish": "Hoàn tất"
+  },
+  "steps": {
+    "progress": "Bước {{current}} trên {{total}}"
+  }
+}

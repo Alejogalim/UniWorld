@@ -1,0 +1,96 @@
+{
+  "welcome": {
+    "title": "Bienvenido a UniWorld",
+    "subtitle": "Una forma tranquila y paso a paso de encontrar universidades que se ajusten a ti. Tarda alrededor de un minuto.",
+    "switchLabel": "Idioma de la interfaz"
+  },
+  "name": {
+    "label": "Tu nombre",
+    "placeholder": "¿Cómo quieres que te llamemos?",
+    "hint": "La IA lo usa para hablar contigo."
+  },
+  "languages": {
+    "primaryLabel": "Idioma principal",
+    "searchPlaceholder": "Buscar idiomas…",
+    "extraLabel": "Otros idiomas",
+    "addLanguage": "Añadir idioma",
+    "remove": "Quitar",
+    "levelLabel": "Nivel",
+    "switchPrompt": "¿Cambiar la interfaz a {{lang}}?",
+    "switchYes": "Sí, cambiar",
+    "switchNo": "Mantener inglés"
+  },
+  "levels": {
+    "A1": "A1 (principiante)",
+    "A2": "A2 (elemental)",
+    "B1": "B1 (intermedio)",
+    "B2": "B2 (intermedio alto)",
+    "C1": "C1 (avanzado)",
+    "C2": "C2 (dominio)",
+    "native": "Nativo"
+  },
+  "program": {
+    "label": "Programa académico",
+    "IB": "Diploma IB",
+    "AP": "AP (Advanced Placement)",
+    "US": "Estándar de EE. UU. (secundaria)"
+  },
+  "grades": {
+    "title": "Calificaciones (opcional)",
+    "note": "Nos ayuda a sugerir opciones realistas.",
+    "add": "Añadir calificaciones",
+    "ib": {
+      "predictedTotal": "Total previsto (sobre 45)",
+      "subjects": "Asignaturas",
+      "subjectName": "Asignatura",
+      "subjectLevel": "Nivel",
+      "subjectScore": "Nota (1–7)",
+      "addSubject": "Añadir asignatura"
+    },
+    "ap": {
+      "gpa": "Promedio (GPA)",
+      "exams": "Exámenes",
+      "examName": "Examen",
+      "examScore": "Nota (1–5)",
+      "addExam": "Añadir examen"
+    },
+    "us": {
+      "gpaUnweighted": "GPA sin ponderar (sobre 4.0)",
+      "sat": "Puntuación SAT",
+      "act": "Puntuación ACT"
+    }
+  },
+  "residence": {
+    "title": "Nacionalidad y residencia (opcional)",
+    "note": "La gratuidad de la matrícula suele depender de estos datos.",
+    "citizenship": "Nacionalidad (país)",
+    "residence": "País de residencia",
+    "optional": "Opcional"
+  },
+  "ai": {
+    "title": "Conecta tu clave de IA",
+    "openrouter": {
+      "label": "Clave de OpenRouter",
+      "required": "Obligatoria. El buscador la necesita para la búsqueda web verificada."
+    },
+    "opencode": {
+      "label": "Clave de OpenCode Go",
+      "optional": "Opcional. Solo para el chat del orientador.",
+      "experimental": "Experimental"
+    },
+    "keyPlaceholder": "Pega tu clave",
+    "keyStored": "Se guarda en el llavero de tu sistema, nunca en la base de datos.",
+    "testConnection": "Probar conexión",
+    "testing": "Probando…",
+    "connected": "La conexión funciona",
+    "failed": "La conexión falló: {{error}}"
+  },
+  "actions": {
+    "next": "Siguiente",
+    "back": "Atrás",
+    "finish": "Terminar"
+  },
+  "steps": {
+    "progress": "Paso {{current}} de {{total}}"
+  }
+}

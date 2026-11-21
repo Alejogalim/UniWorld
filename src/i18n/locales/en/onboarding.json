@@ -1,0 +1,96 @@
+{
+  "welcome": {
+    "title": "Welcome to UniWorld",
+    "subtitle": "A calm, step-by-step way to find universities that fit you. It takes about a minute.",
+    "switchLabel": "Interface language"
+  },
+  "name": {
+    "label": "Your name",
+    "placeholder": "What should we call you?",
+    "hint": "The AI uses it to talk to you."
+  },
+  "languages": {
+    "primaryLabel": "Primary language",
+    "searchPlaceholder": "Search languages…",
+    "extraLabel": "Other languages",
+    "addLanguage": "Add language",
+    "remove": "Remove",
+    "levelLabel": "Level",
+    "switchPrompt": "Switch the interface to {{lang}}?",
+    "switchYes": "Yes, switch",
+    "switchNo": "Keep English"
+  },
+  "levels": {
+    "A1": "A1 (beginner)",
+    "A2": "A2 (elementary)",
+    "B1": "B1 (intermediate)",
+    "B2": "B2 (upper intermediate)",
+    "C1": "C1 (advanced)",
+    "C2": "C2 (proficient)",
+    "native": "Native"
+  },
+  "program": {
+    "label": "Academic program",
+    "IB": "IB Diploma",
+    "AP": "AP (Advanced Placement)",
+    "US": "US standard (high school)"
+  },
+  "grades": {
+    "title": "Grades (optional)",
+    "note": "Helps us suggest realistic options.",
+    "add": "Add grades",
+    "ib": {
+      "predictedTotal": "Predicted total (out of 45)",
+      "subjects": "Subjects",
+      "subjectName": "Subject",
+      "subjectLevel": "Level",
+      "subjectScore": "Score (1–7)",
+      "addSubject": "Add subject"
+    },
+    "ap": {
+      "gpa": "GPA",
+      "exams": "Exams",
+      "examName": "Exam",
+      "examScore": "Score (1–5)",
+      "addExam": "Add exam"
+    },
+    "us": {
+      "gpaUnweighted": "Unweighted GPA (out of 4.0)",
+      "sat": "SAT score",
+      "act": "ACT score"
+    }
+  },
+  "residence": {
+    "title": "Citizenship and residence (optional)",
+    "note": "Tuition-free status often depends on these.",
+    "citizenship": "Citizenship (country)",
+    "residence": "Country of residence",
+    "optional": "Optional"
+  },
+  "ai": {
+    "title": "Connect your AI key",
+    "openrouter": {
+      "label": "OpenRouter key",
+      "required": "Required. Finder needs it for verified web search."
+    },
+    "opencode": {
+      "label": "OpenCode Go key",
+      "optional": "Optional. Counselor chat only.",
+      "experimental": "Experimental"
+    },
+    "keyPlaceholder": "Paste your key",
+    "keyStored": "Stored in your system keychain, never in the database.",
+    "testConnection": "Test connection",
+    "testing": "Testing…",
+    "connected": "Connection works",
+    "failed": "Connection failed: {{error}}"
+  },
+  "actions": {
+    "next": "Next",
+    "back": "Back",
+    "finish": "Finish"
+  },
+  "steps": {
+    "progress": "Step {{current}} of {{total}}"
+  }
+}

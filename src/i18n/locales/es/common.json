@@ -1,0 +1,27 @@
+{
+  "appName": "UniWorld",
+  "beta": "Beta",
+  "loading": "Cargando…",
+  "comingSoon": "Próximamente",
+  "comingSoonLine": "Próximamente. Esta pantalla todavía no está lista.",
+  "language": {
+    "label": "Idioma de la interfaz",
+    "en": "English",
+    "es": "Español",
+    "vi": "Tiếng Việt"
+  },
+  "nav": {
+    "onboarding": "Perfil",
+    "counselor": "Orientador",
+    "finder": "Buscador",
+    "myUnis": "Mis universidades",
+    "settings": "Configuración"
+  },
+  "screens": {
+    "onboarding": "Bienvenida",
+    "counselor": "Orientador",
+    "finder": "Buscador de universidades",
+    "myUnis": "Mis universidades",
+    "settings": "Configuración"
+  }
+}
