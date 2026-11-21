@@ -1,5 +1,5 @@
 import { PlaceholderScreen } from './PlaceholderScreen';
 
 export function FinderScreen() {
-  return <PlaceholderScreen titleKey="screens.finder" />;
+  return <PlaceholderScreen />;
 }

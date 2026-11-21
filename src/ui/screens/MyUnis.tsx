@@ -1,5 +1,5 @@
 import { PlaceholderScreen } from './PlaceholderScreen';
 
 export function MyUnisScreen() {
-  return <PlaceholderScreen titleKey="screens.myUnis" />;
+  return <PlaceholderScreen />;
 }

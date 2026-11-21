@@ -1,18 +1,19 @@
 import { useTranslation } from 'react-i18next';
+import { Languages } from 'lucide-react';
 import type { UiLang } from '@/core/contracts';
 
 const LANGS: UiLang[] = ['en', 'es', 'vi'];
 
-/** Temporary UI-language switcher in the sidebar footer; fine to keep. */
+/** Sidebar-footer language switcher: a 32px icon button over a native select. */
 export function LanguageSwitcher() {
   const { t, i18n } = useTranslation('common');
   const current = (i18n.resolvedLanguage ?? 'en') as UiLang;
 
   return (
-    <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-      {t('language.label')}
+    <label className="lang-button" title={t('language.label')}>
+      <Languages className="size-4" aria-hidden="true" />
       <select
-        className="rounded-md border bg-background px-2 py-1.5 text-sm text-foreground"
+        aria-label={t('language.label')}
         value={current}
         onChange={(e) => void i18n.changeLanguage(e.target.value)}
       >
