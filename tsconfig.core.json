@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["bun-types", "node"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "composite": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/core/**/*.ts",
+    "src/store/counselor.ts",
+    "src/store/search.ts",
+    "src/store/detailCache.ts",
+    "src/store/stores.test.ts",
+    "src/vite-env.d.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": ["node_modules", "src-tauri"],
+  "references": []
+}

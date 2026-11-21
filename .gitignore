@@ -11,6 +11,11 @@ node_modules
 dist
 src-tauri/target
 .env*
+!.env.example
+.cache/
+tmp/
+data/ror-*.zip
+data/ror-*.json
 dist-ssr
 *.local
 

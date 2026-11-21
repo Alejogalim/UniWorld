@@ -1,0 +1,11 @@
+{
+  "ror_version": "v2.16",
+  "ror_record_id": "24378467",
+  "ror_md5": "0769f596ca9e8ebf87224a1ad93a7722",
+  "hipo_source": "https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json",
+  "generated_at": "2026-11-21T23:37:59.727Z",
+  "records": 31392,
+  "records_with_domains": 24247,
+  "records_with_geo": 31392,
+  "hipo_records_matched": 9534
+}

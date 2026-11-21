@@ -48,7 +48,28 @@ You own: `src/core/**` (incl. tests), `src/store/{counselor,search,detailCache}.
 ROR matcher, citation validator, Zod schemas.
 
 ## Requests (add things you need from A here)
-- 
+- Finder UI: when `done.verified < 3` or a progress message is "Couldn't verify enough results, try a narrower scope.", show the warning. No contract change needed.
+- Settings screen: write `model` and `default_provider` (`openrouter` | `opencode`) to the `settings` table; B's `TauriSettingsStore` reads those keys. Until then the defaults are used.
+- Real Finder **search** tests need an OpenRouter key in `OPENROUTER_API_KEY`; everything else runs offline (126 tests, fixtures + `bun:sqlite`).
+- `UNIFINDER_DEFAULT_PROVIDER` only chooses the Counselor provider. Finder search still needs OpenRouter; detail uses OpenRouter if present, otherwise OpenCode + direct official-page fetch.
+- `src-tauri/capabilities/default.json` now allows `https://*` for the OpenCode detail fallback; keep that scope or restrict it to a curated list.
+- Note: B's `bun install` rewrote the lockfile to `lockfileVersion: 1` because Bun 1.3 cannot read A's v2 lock. Re-run `bun install` on your Bun version if needed.
+
+## Implementation status (this session)
+- [x] `src/core/contracts.ts` already frozen on `main`.
+- [x] Rebased onto A's M1 scaffold (`c6a30e2`); merged `package.json`, `.gitignore`, `tsconfig.json`; added `tsconfig.core.json` for core/tests/scripts.
+- [x] Test runner: `bun test` (126 passing). `bun run build` (tsc + Vite) and `tauri build --debug --no-bundle` pass.
+- [x] `scripts/build-ror.ts`: ROR v2.16 (Zenodo record 24378467, md5 pinned), education+active filter, Hipo domain merge. Generated `data/universities.json` (31,392 records, 10.7 MB) + `data/universities.meta.json`.
+- [x] `rorMatcher` + domain disambiguation, `citationValidator`, schemas, `callJson` retry, AI clients, Counselor, Finder search + detail, SQL stores, CLI, real `CoreApi`.
+- [x] App wiring: `src/core/app.ts` lazy `createAppCore()` + `src/core/adapters/tauri.ts` (tauri-plugin-http, tauri-plugin-sql, keychain, profile, settings). `src/app/core.ts` now exports the real core.
+- [x] Detail fallback without OpenRouter: if only `OPENCODE_API_KEY` exists, `finder.detail` fetches the university's own website/admissions/tuition pages and runs the same quote check. `src-tauri/capabilities/default.json` allows `https://*` for this. Finder **search** still requires OpenRouter because OpenCode Go has no web search.
+- [x] `--refresh` for `bun run search ... --detail <rorId> --refresh`.
+- [x] `needToLearn.usualLevel` is filled from a sourced `languageRequirement` fact when extraction finds one.
+- [x] Local dev keys: `.env` (gitignored) + `.env.example`; Bun loads it automatically. `bun run provider opencode` tests OpenCode Go; `bun run counselor --provider opencode` chats with it.
+- [x] Tests: 126 passing (added web fetch + OpenCode detail fallback tests). `bun run build` and `tauri build --debug --no-bundle` pass.
+- [ ] Run real Finder searches in 3–4 scopes and read the output for fake universities: blocked on `OPENROUTER_API_KEY`.
+- [ ] Verify the live OpenRouter web-search response shape (Exa `url_citation.content`) with a real key.
+
 
 ## Done =
 Searching a career in a scope returns only ROR-matched universities, every shown fact has a source link and a verified quote, and missing facts are `null`. Counselor never prescribes and replies in the student's language.

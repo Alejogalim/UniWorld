@@ -19,6 +19,9 @@
         },
         {
           "url": "https://opencode.ai/*"
+        },
+        {
+          "url": "https://*"
         }
       ]
     }

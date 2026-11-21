@@ -1,19 +1,5 @@
 import type { CoreApi } from '@/core/contracts';
+import { createAppCore } from '@/core/app';
 
-const reject = (): Promise<never> => Promise.reject(new Error('Core not connected yet'));
-
-const notConnected: CoreApi = {
-  testConnection: reject,
-  counselor: {
-    start: reject,
-    send: reject,
-    careers: reject,
-  },
-  finder: {
-    search: reject,
-    detail: reject,
-  },
-};
-
-/** Swap this one line to point at B's real core. */
-export const core: CoreApi = notConnected;
+/** B's real core; swap to the stub only when doing layout-only work. */
+export const core: CoreApi = createAppCore();

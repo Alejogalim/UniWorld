@@ -8,7 +8,13 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "check:i18n": "bun scripts/check-i18n.ts"
+    "check:i18n": "bun scripts/check-i18n.ts",
+    "test": "bun test",
+    "typecheck": "tsc -p tsconfig.core.json --noEmit",
+    "build:ror": "bun run scripts/build-ror.ts",
+    "search": "bun run scripts/search.ts",
+    "provider": "bun run scripts/test-provider.ts",
+    "counselor": "bun run scripts/counselor.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -36,6 +42,8 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^6.0.2",
+    "bun-types": "latest",
+    "fflate": "^0.8.2",
     "shadcn": "^4.23.0",
     "tailwindcss": "^4.3.5",
     "typescript": "~6.0.3",
