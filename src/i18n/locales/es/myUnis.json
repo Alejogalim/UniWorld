@@ -4,38 +4,43 @@
     "description": "Abre una universidad en el buscador y añádela a tu lista.",
     "action": "Abrir el buscador"
   },
-  "columns": {
-    "university": "Universidad",
-    "program": "Programa",
-    "language": "Idioma",
-    "deadline": "Fecha límite",
-    "exams": "Exámenes requeridos",
-    "status": "Estado",
-    "notes": "Notas",
-    "actions": "Acciones"
+  "groups": {
+    "dueSoon": "Vence pronto",
+    "inProgress": "En curso",
+    "decided": "Decididas"
+  },
+  "next": {
+    "line_one": "Próxima: <name>{{name}}</name> cierra en <days>{{count}} día</days>",
+    "line_other": "Próxima: <name>{{name}}</name> cierra en <days>{{count}} días</days>",
+    "today": "Próxima: <name>{{name}}</name> cierra <days>hoy</days>"
+  },
+  "row": {
+    "edit": "Editar {{name}}"
   },
   "deadline": {
     "none": "Sin fecha límite",
-    "passed": "Vencida",
-    "daysLeft_one": "Queda {{count}} día",
-    "daysLeft_other": "Quedan {{count}} días",
-    "label": "Fecha límite de {{name}}"
+    "inDays_one": "en {{count}} día",
+    "inDays_other": "en {{count}} días",
+    "today": "Hoy",
+    "closed": "Cerrada"
   },
   "exams": {
-    "edit": "Editar",
-    "empty": "Ninguno",
     "placeholder": "SAT, IELTS",
-    "label": "Exámenes requeridos de {{name}}",
-    "hint": "Sepáralos con comas. Enter guarda, Escape cancela."
+    "hint": "Sepáralos con comas. Los cambios se guardan al salir del campo."
   },
-  "inline": {
-    "hint": "Enter guarda, Escape cancela.",
-    "editProgram": "Editar el programa de {{name}}",
-    "editLanguage": "Editar el idioma de {{name}}",
-    "empty": "Añadir"
+  "notes": {
+    "empty": "Añadir una nota"
+  },
+  "panel": {
+    "close": "Cerrar",
+    "program": "Programa",
+    "language": "Idioma",
+    "deadline": "Fecha límite",
+    "status": "Estado",
+    "exams": "Exámenes requeridos",
+    "notes": "Notas"
   },
   "status": {
-    "label": "Estado de {{name}}",
     "considering": "Considerando",
     "preparing": "Preparando",
     "applied": "Solicitada",
@@ -43,11 +48,6 @@
     "admitted": "Admitido",
     "waitlisted": "Lista de espera",
     "rejected": "Rechazada"
-  },
-  "notes": {
-    "empty": "Añadir una nota",
-    "label": "Notas de {{name}}",
-    "done": "Listo"
   },
   "remove": {
     "button": "Quitar",
@@ -60,10 +60,5 @@
     "save": "No se pudo guardar ese cambio, así que se deshizo. Inténtalo de nuevo.",
     "remove": "No se pudo quitar esta universidad. Inténtalo de nuevo.",
     "load": "No se pudo cargar tu lista. Inténtalo de nuevo."
-  },
-  "summary": {
-    "total_one": "universidad",
-    "total_other": "universidades",
-    "urgent": "con fecha límite en los próximos 30 días"
   }
 }

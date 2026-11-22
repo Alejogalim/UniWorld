@@ -4,38 +4,43 @@
     "description": "Open a university in the Finder and add it to your list.",
     "action": "Open the Finder"
   },
-  "columns": {
-    "university": "University",
-    "program": "Program",
-    "language": "Language",
-    "deadline": "Deadline",
-    "exams": "Required exams",
-    "status": "Status",
-    "notes": "Notes",
-    "actions": "Actions"
+  "groups": {
+    "dueSoon": "Due soon",
+    "inProgress": "In progress",
+    "decided": "Decided"
+  },
+  "next": {
+    "line_one": "Next: <name>{{name}}</name> closes in <days>{{count}} day</days>",
+    "line_other": "Next: <name>{{name}}</name> closes in <days>{{count}} days</days>",
+    "today": "Next: <name>{{name}}</name> closes <days>today</days>"
+  },
+  "row": {
+    "edit": "Edit {{name}}"
   },
   "deadline": {
     "none": "No deadline",
-    "passed": "Passed",
-    "daysLeft_one": "{{count}} day left",
-    "daysLeft_other": "{{count}} days left",
-    "label": "Deadline for {{name}}"
+    "inDays_one": "in {{count}} day",
+    "inDays_other": "in {{count}} days",
+    "today": "Today",
+    "closed": "Closed"
   },
   "exams": {
-    "edit": "Edit",
-    "empty": "None",
     "placeholder": "SAT, IELTS",
-    "label": "Required exams for {{name}}",
-    "hint": "Separate with commas. Enter saves, Escape cancels."
+    "hint": "Separate with commas. Changes save when you leave the field."
   },
-  "inline": {
-    "hint": "Enter saves, Escape cancels.",
-    "editProgram": "Edit program for {{name}}",
-    "editLanguage": "Edit language for {{name}}",
-    "empty": "Add"
+  "notes": {
+    "empty": "Add a note"
+  },
+  "panel": {
+    "close": "Close",
+    "program": "Program",
+    "language": "Language",
+    "deadline": "Deadline",
+    "status": "Status",
+    "exams": "Required exams",
+    "notes": "Notes"
   },
   "status": {
-    "label": "Status for {{name}}",
     "considering": "Considering",
     "preparing": "Preparing",
     "applied": "Applied",
@@ -43,11 +48,6 @@
     "admitted": "Admitted",
     "waitlisted": "Waitlisted",
     "rejected": "Rejected"
-  },
-  "notes": {
-    "empty": "Add a note",
-    "label": "Notes for {{name}}",
-    "done": "Done"
   },
   "remove": {
     "button": "Remove",
@@ -60,10 +60,5 @@
     "save": "That change could not be saved, so it was undone. Try again.",
     "remove": "This university could not be removed. Try again.",
     "load": "Your list could not load. Try again."
-  },
-  "summary": {
-    "total_one": "university",
-    "total_other": "universities",
-    "urgent": "with a deadline in the next 30 days"
   }
 }

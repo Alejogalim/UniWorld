@@ -4,38 +4,43 @@
     "description": "Mở một trường trong Tìm trường và thêm vào danh sách.",
     "action": "Mở Tìm trường"
   },
-  "columns": {
-    "university": "Trường",
-    "program": "Chương trình",
-    "language": "Ngôn ngữ",
-    "deadline": "Hạn nộp",
-    "exams": "Kỳ thi yêu cầu",
-    "status": "Trạng thái",
-    "notes": "Ghi chú",
-    "actions": "Thao tác"
+  "groups": {
+    "dueSoon": "Sắp đến hạn",
+    "inProgress": "Đang thực hiện",
+    "decided": "Đã có kết quả"
+  },
+  "next": {
+    "line_one": "Tiếp theo: <name>{{name}}</name> đóng đơn sau <days>{{count}} ngày</days>",
+    "line_other": "Tiếp theo: <name>{{name}}</name> đóng đơn sau <days>{{count}} ngày</days>",
+    "today": "Tiếp theo: <name>{{name}}</name> đóng đơn <days>hôm nay</days>"
+  },
+  "row": {
+    "edit": "Sửa {{name}}"
   },
   "deadline": {
     "none": "Chưa có hạn",
-    "passed": "Đã qua hạn",
-    "daysLeft_one": "Còn {{count}} ngày",
-    "daysLeft_other": "Còn {{count}} ngày",
-    "label": "Hạn nộp của {{name}}"
+    "inDays_one": "Còn {{count}} ngày",
+    "inDays_other": "Còn {{count}} ngày",
+    "today": "Hôm nay",
+    "closed": "Đã đóng"
   },
   "exams": {
-    "edit": "Sửa",
-    "empty": "Không có",
     "placeholder": "SAT, IELTS",
-    "label": "Kỳ thi yêu cầu của {{name}}",
-    "hint": "Ngăn cách bằng dấu phẩy. Enter để lưu, Escape để hủy."
+    "hint": "Ngăn cách bằng dấu phẩy. Thay đổi được lưu khi bạn rời khỏi ô."
   },
-  "inline": {
-    "hint": "Enter để lưu, Escape để hủy.",
-    "editProgram": "Sửa chương trình của {{name}}",
-    "editLanguage": "Sửa ngôn ngữ của {{name}}",
-    "empty": "Thêm"
+  "notes": {
+    "empty": "Thêm ghi chú"
+  },
+  "panel": {
+    "close": "Đóng",
+    "program": "Chương trình",
+    "language": "Ngôn ngữ",
+    "deadline": "Hạn nộp",
+    "status": "Trạng thái",
+    "exams": "Kỳ thi yêu cầu",
+    "notes": "Ghi chú"
   },
   "status": {
-    "label": "Trạng thái của {{name}}",
     "considering": "Đang cân nhắc",
     "preparing": "Đang chuẩn bị",
     "applied": "Đã nộp hồ sơ",
@@ -43,11 +48,6 @@
     "admitted": "Đã trúng tuyển",
     "waitlisted": "Danh sách chờ",
     "rejected": "Không trúng tuyển"
-  },
-  "notes": {
-    "empty": "Thêm ghi chú",
-    "label": "Ghi chú của {{name}}",
-    "done": "Xong"
   },
   "remove": {
     "button": "Xóa",
@@ -60,10 +60,5 @@
     "save": "Không thể lưu thay đổi này nên đã được hoàn tác. Hãy thử lại.",
     "remove": "Không thể xóa trường này. Hãy thử lại.",
     "load": "Không thể tải danh sách. Hãy thử lại."
-  },
-  "summary": {
-    "total_one": "trường đại học",
-    "total_other": "trường đại học",
-    "urgent": "có hạn nộp trong 30 ngày tới"
   }
 }
