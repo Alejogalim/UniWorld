@@ -7,6 +7,7 @@ import {
   MessageCircle,
   Globe,
   PanelLeftClose,
+  PanelLeftOpen,
   Settings,
   Sparkles,
   type LucideIcon,
@@ -29,7 +30,7 @@ const NAV: { to: string; key: string; titleKey: string; icon: LucideIcon }[] = [
 
 /**
  * Two columns: the rail (logo row, nav, footer) and the working column (page title over the content).
- * The logo sits in the same spot in both rail states; collapsed, it is the button that opens the rail.
+ * The logo sits in the same spot in both rail states; collapsed, a separate button below it opens the rail.
  * The counselor screen has no title: its content fills the whole working column.
  */
 export function AppShell() {
@@ -58,38 +59,43 @@ export function AppShell() {
       <div className="ambient-haze" aria-hidden="true" />
 
       <aside className="app-rail flex min-h-0 flex-col gap-4 px-3 py-4">
-        <div className="flex h-9 items-center gap-2">
-          {railCollapsed ? (
+        {railCollapsed ? (
+          // Collapsed: the logo alone, then the expand button below it. The -mb-2 trims the
+          // aside's 16px gap to 8px so the nav sits a small gap under the expand button.
+          <div className="-mb-2 flex flex-col gap-2">
+            <span className="grid size-9 shrink-0 place-items-center">
+              <Logo className="size-7" />
+            </span>
             <button
               type="button"
               onClick={() => setRailCollapsed(false)}
               aria-label={t('nav.expand')}
               title={t('nav.expand')}
-              className="grid size-9 shrink-0 place-items-center rounded-control outline-none transition-colors hover:bg-shoal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+              className="grid size-9 shrink-0 place-items-center rounded-control text-chart-grey outline-none transition-colors hover:bg-shoal hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
             >
-              <Logo className="size-7" />
+              <PanelLeftOpen className="size-4" strokeWidth={1.75} aria-hidden="true" />
             </button>
-          ) : (
-            <>
-              <span className="grid size-9 shrink-0 place-items-center">
-                <Logo className="size-7" />
-              </span>
-              <span className="wordmark shrink-0">{t('appName')}</span>
-              <span className="shrink-0 rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
-                {t('beta')}
-              </span>
-              <button
-                type="button"
-                onClick={() => setRailCollapsed(true)}
-                aria-label={t('nav.collapse')}
-                title={t('nav.collapse')}
-                className="ml-auto grid size-9 shrink-0 place-items-center rounded-control text-chart-grey outline-none transition-colors hover:bg-shoal hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
-              >
-                <PanelLeftClose className="size-4" strokeWidth={1.75} aria-hidden="true" />
-              </button>
-            </>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex h-9 items-center gap-2">
+            <span className="grid size-9 shrink-0 place-items-center">
+              <Logo className="size-7" />
+            </span>
+            <span className="wordmark shrink-0">{t('appName')}</span>
+            <span className="shrink-0 rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
+              {t('beta')}
+            </span>
+            <button
+              type="button"
+              onClick={() => setRailCollapsed(true)}
+              aria-label={t('nav.collapse')}
+              title={t('nav.collapse')}
+              className="ml-auto grid size-9 shrink-0 place-items-center rounded-control text-chart-grey outline-none transition-colors hover:bg-shoal hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+            >
+              <PanelLeftClose className="size-4" strokeWidth={1.75} aria-hidden="true" />
+            </button>
+          </div>
+        )}
 
         <nav className="flex flex-col gap-1">
           {visibleNav.map(({ to, key, icon: Icon }) => (

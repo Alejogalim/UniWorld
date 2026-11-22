@@ -271,7 +271,7 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 
 ## Layout
 
-The rail is its own full-height column on the left: 284px expanded, 72px collapsed to an icon dock, with transparent ground over the stars. Its top row holds the logo: expanded, the logo, the wordmark, the beta pill and a 36px collapse button (`PanelLeftClose`) on the right; collapsed, the logo alone, and clicking it expands the rail. Nav rows follow, then the language and theme buttons at the foot. The width change animates over 200ms (none under reduced motion).
+The rail is its own full-height column on the left: 284px expanded, 72px collapsed to an icon dock, with transparent ground over the stars. Its top row holds the logo: expanded, the logo, the wordmark, the beta pill and a 36px collapse button (`PanelLeftClose`) on the right; collapsed, the logo alone with a 36px expand button (`PanelLeftOpen`) directly below it, which expands the rail. Nav rows follow, then the language and theme buttons at the foot. The width change animates over 200ms (none under reduced motion).
 
 The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet.
 
