@@ -58,6 +58,8 @@ interface TrackedUniCardProps {
   today: Date;
   onEdit: () => void;
   onOpen: () => void;
+  /** Position on the page's first paint; the status track draws in once, staggered by it. */
+  introIndex?: number;
 }
 
 /**
@@ -65,7 +67,7 @@ interface TrackedUniCardProps {
  * facts run through the middle, and the status track owns the bottom line. The rim and outer glow
  * take their colour from the status accent.
  */
-export function TrackedUniCard({ uni, today, onEdit, onOpen }: TrackedUniCardProps) {
+export function TrackedUniCard({ uni, today, onEdit, onOpen, introIndex }: TrackedUniCardProps) {
   const { t, i18n } = useTranslation('myUnis');
   const uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
   const place = [uni.city, countryName(uni.countryCode, uiLang)].filter(Boolean).join(', ');
@@ -147,6 +149,8 @@ export function TrackedUniCard({ uni, today, onEdit, onOpen }: TrackedUniCardPro
         <StatusProgress
           status={uni.status}
           name={uni.name}
+          trackKey={uni.id}
+          drawIn={introIndex}
           className="min-w-0 flex-1"
         />
         <Button

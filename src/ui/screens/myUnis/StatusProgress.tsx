@@ -1,23 +1,38 @@
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { TrackedStatus } from '@/core/contracts';
 import { cn } from '@/lib/utils';
 import { Chip } from '@/ui/components/Chip';
+import { OUTCOMES, OVERVIEW_STEPS, PIPELINE, finalOutcomeOf } from './status';
 import {
-  OUTCOMES,
-  OVERVIEW_STEPS,
-  PIPELINE,
-  finalOutcomeOf,
-  overviewIndex,
-  stageIndex,
-} from './status';
+  fillStartScale,
+  introDelayMs,
+  isLooping,
+  outcomeFlourish,
+  sparkVectors,
+  statusMemory,
+  trackIndex,
+  trackProgress,
+  trackTiming,
+  type TrackVariant,
+} from './trackMotion';
+import { useLiveWhileVisible } from './useLiveWhileVisible';
 
 interface StatusProgressProps {
   status: TrackedStatus;
   name: string;
   /** When given, the stages and outcomes become selectable controls. */
   onChange?: (status: TrackedStatus) => void;
-  /** CSS colour for the lit track. Defaults to the evidence green. */
+  /** CSS colour of the progress light: the current node and its ring. Defaults to the ember signal. */
   accent?: string;
+  /**
+   * Remembers the last status shown under this key for the app session, so a remounted track can
+   * play the change (the overview card passes the university id). The editor leaves it out.
+   */
+  trackKey?: string | number;
+  /** Card position on the page's first paint. When given, the track draws in once on mount. */
+  drawIn?: number;
   className?: string;
 }
 
@@ -26,23 +41,72 @@ interface Step {
   label: string;
 }
 
+interface Change {
+  id: number;
+  from: TrackedStatus;
+}
+
+const EASE = [0.2, 0, 0, 1] as const;
+/** Completed line and dots: ink at 60%, opaque so a dot over the line does not darken. */
+const INK = 'color-mix(in oklch, var(--foreground) 60%, var(--background))';
+const SPARKS = sparkVectors(6, 14);
+const SPARK_COLORS = ['var(--evidence)', 'var(--ember-2)'];
+/** How long the node fade-in trails the line as it draws from the first node to the last. */
+const NODE_TRAIL_MS = 480;
+
 /**
  * The application track. The overview shows considering → preparing → applied → waiting → one
  * shared final-outcome dot. The editor shows the three-stage pipeline plus the outcome controls.
- * A single continuous wave runs behind the nodes; the lit layer is clipped to the current stage.
+ * A straight line runs behind the nodes; a small ember light travels from the first node to the
+ * current one, and the current node breathes. Loops run only on screen and never under reduced motion.
  */
 export function StatusProgress({
   status,
   name,
   onChange,
-  accent = 'var(--evidence)',
+  accent = 'var(--signal)',
+  trackKey,
+  drawIn,
   className,
 }: StatusProgressProps) {
   const { t } = useTranslation('myUnis');
+  const reduceMotion = useReducedMotion() ?? false;
   const interactive = Boolean(onChange);
+  const variant: TrackVariant = interactive ? 'editor' : 'overview';
   const finalOutcome = finalOutcomeOf(status);
-  const current = interactive ? stageIndex(status) : overviewIndex(status);
-  const glow = `color-mix(in oklch, ${accent} 60%, transparent)`;
+  const rejected = finalOutcome === 'rejected';
+  const current = trackIndex(status, variant);
+  const progress = trackProgress(status, variant);
+
+  // A change is a new status while mounted, or (overview cards) a status that differs from the one
+  // this card showed last time this session. A first mount is never a change.
+  const [change, setChange] = useState<Change | null>(() => {
+    const last = trackKey === undefined ? null : statusMemory.peek(trackKey);
+    return last !== null && last !== status ? { id: 1, from: last } : null;
+  });
+  const [shown, setShown] = useState(status);
+  if (shown !== status) {
+    setShown(status);
+    setChange({ id: (change?.id ?? 0) + 1, from: shown });
+  }
+
+  useEffect(() => {
+    if (trackKey !== undefined) statusMemory.remember(trackKey, status);
+  }, [trackKey, status]);
+
+  const [timing] = useState(() => trackTiming());
+  // Captured once: the draw-in plays on mount only, and never together with a change.
+  const [intro] = useState(() => drawIn !== undefined && change === null && !reduceMotion);
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const looping = isLooping(status) && !reduceMotion;
+  const live = useLiveWhileVisible(trackRef, looping);
+
+  const fillFrom = change ? fillStartScale(change.from, status, variant) : null;
+  const flourish = change && !reduceMotion ? outcomeFlourish(change.from, status, variant) : null;
+  const changeId = change?.id ?? 0;
+  const introDelay = introDelayMs(drawIn ?? 0);
+  const lineColor = rejected ? 'var(--chart-grey)' : INK;
 
   const steps: Step[] = interactive
     ? PIPELINE.map((stage) => ({ key: stage, label: t(`status.${stage}`) }))
@@ -54,82 +118,154 @@ export function StatusProgress({
         },
       ];
 
-  const progress = steps.length > 1 ? (current / (steps.length - 1)) * 100 : 0;
-  const nodeSize = interactive ? 14 : 10;
+  const count = steps.length;
+  const slot = interactive ? 20 : 16;
+  const trackVars = {
+    '--pulse-period': `${timing.pulsePeriodMs}ms`,
+    '--pulse-delay': `${timing.pulseDelayMs}ms`,
+    '--ring-period': `${timing.ringPeriodMs}ms`,
+    '--ring-delay': `${timing.ringDelayMs}ms`,
+    '--ring-color': accent,
+    '--intro-delay': `${introDelay}ms`,
+  } as CSSProperties;
 
   return (
     <div className={cn('flex min-w-0 flex-col', className)}>
       <div
         className={cn(
           'min-w-0',
-          !interactive && 'status-track-scroll max-md:overflow-x-auto max-md:py-2',
+          !interactive && 'status-track-scroll max-md:overflow-x-auto max-md:py-3',
         )}
       >
         <div
+          ref={trackRef}
           role="group"
           aria-label={`${t('status.label', { name })} ${t('status.current', { status: t(`status.${status}`) })}`}
-          className={cn('relative flex', !interactive && 'max-md:min-w-[44rem]')}
+          className={cn(
+            'status-track relative flex',
+            looping && !live && 'is-paused',
+            !interactive && 'max-md:min-w-[44rem]',
+          )}
+          style={trackVars}
         >
           <div
             aria-hidden="true"
             className="pointer-events-none absolute"
             style={{
-              left: `${50 / steps.length}%`,
-              right: `${50 / steps.length}%`,
-              top: `${nodeSize / 2 - 4}px`,
-              height: '8px',
+              left: `${50 / count}%`,
+              right: `${50 / count}%`,
+              top: `${slot / 2 - 0.75}px`,
+              height: '1.5px',
             }}
           >
-            <span
-              className="absolute rounded-full bg-hairline"
-              style={{
-                left: `${progress}%`,
-                right: 0,
-                top: '50%',
-                height: '3px',
-                transform: 'translateY(-50%)',
-              }}
-            />
-            <span
-              className="status-wave-line status-wave-line--animated absolute inset-0"
-              style={{
-                backgroundColor: accent,
-                filter: `drop-shadow(0 0 3px ${glow})`,
-                clipPath: `inset(0 ${100 - progress}% 0 0)`,
-              }}
-            />
+            <div className={cn('absolute inset-0', intro && 'status-draw')}>
+              <span className="absolute inset-0 rounded-full bg-hairline" />
+              <motion.span
+                key={`fill-${changeId}`}
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{
+                  width: `${progress * 100}%`,
+                  backgroundColor: lineColor,
+                  transformOrigin: 'left center',
+                }}
+                initial={
+                  !change ? false : reduceMotion ? { opacity: 0 } : fillFrom === null ? false : { scaleX: fillFrom }
+                }
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={reduceMotion ? { duration: 0.25 } : { duration: 0.5, ease: EASE }}
+              />
+            </div>
+            {looping && current > 0 && (
+              <span
+                key={`pulse-${changeId}`}
+                className="status-pulse"
+                style={{ width: `${progress * 100}%` }}
+              />
+            )}
           </div>
 
           {steps.map((step, i) => {
-            const lit = i <= current;
+            const done = i < current;
             const isCurrent = i === current;
+            const outcomeTone = !interactive && step.key === 'outcome' && isCurrent ? finalOutcome : null;
+            const pop = isCurrent && change !== null && !reduceMotion;
+            const nodeDelay = intro ? introDelay + (count > 1 ? (i / (count - 1)) * NODE_TRAIL_MS : 0) : 0;
+
+            const dotSize = isCurrent
+              ? interactive ? 12 : 10
+              : done
+                ? interactive ? 8 : 6
+                : interactive ? 10 : 8;
+
+            let dotStyle: CSSProperties | undefined;
+            if (done) {
+              dotStyle = { backgroundColor: lineColor };
+            } else if (isCurrent) {
+              if (outcomeTone === 'admitted') {
+                dotStyle = {
+                  backgroundColor: 'var(--evidence)',
+                  boxShadow: '0 0 0 3px color-mix(in oklch, var(--evidence) 22%, transparent)',
+                };
+              } else if (outcomeTone === 'rejected') {
+                dotStyle = { backgroundColor: 'var(--chart-grey)' };
+              } else if (outcomeTone !== 'waitlisted') {
+                dotStyle = {
+                  backgroundColor: accent,
+                  boxShadow: `0 0 0 3px color-mix(in oklch, ${accent} 22%, transparent)`,
+                };
+              }
+            }
+
             const labelClass = cn(
-              'text-center leading-tight break-words',
+              'text-center leading-tight break-words transition-colors duration-300',
               interactive ? 'text-xs' : 'text-[11px]',
-              lit ? 'text-foreground' : 'text-chart-grey',
-              isCurrent && 'font-semibold',
+              isCurrent ? 'font-medium text-foreground' : 'text-chart-grey',
+              interactive && !isCurrent && 'group-hover:text-foreground',
             );
+
             const content = (
               <>
                 <span
                   aria-hidden="true"
-                  style={
-                    lit
-                      ? {
-                          backgroundColor: accent,
-                          borderColor: accent,
-                          boxShadow: isCurrent
-                            ? `0 0 0 3px color-mix(in oklch, ${accent} 26%, transparent), 0 0 16px 2px ${glow}`
-                            : `0 0 10px 1px ${glow}`,
-                        }
-                      : undefined
-                  }
-                  className={cn(
-                    'shrink-0 rounded-full border',
-                    interactive ? 'size-3.5' : 'size-2.5',
-                    !lit && 'border-hairline bg-panel',
-                  )}
-                />
+                  className={cn('relative grid shrink-0 place-items-center', intro && 'status-node-in')}
+                  style={{ width: slot, height: slot, '--node-delay': `${nodeDelay}ms` } as CSSProperties}
+                >
+                  <motion.span
+                    key={pop ? `pop-${changeId}` : 'dot'}
+                    className={cn(
+                      'relative block rounded-full',
+                      !done && !isCurrent && 'border-[1.5px] border-hairline bg-panel',
+                      outcomeTone === 'waitlisted' && 'status-node--waitlisted',
+                    )}
+                    style={{ width: dotSize, height: dotSize, ...dotStyle }}
+                    initial={pop ? { scale: 0.4 } : false}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 520, damping: 24 }}
+                  >
+                    {isCurrent && looping && <span className="status-ring" />}
+                    {outcomeTone === 'waitlisted' && flourish === 'settle-waitlisted' && (
+                      <span
+                        className="status-ring status-ring--once"
+                        style={{ '--ring-color': 'var(--ember-2)' } as CSSProperties}
+                      />
+                    )}
+                    {outcomeTone === 'admitted' &&
+                      flourish === 'burst' &&
+                      SPARKS.map((spark, s) => (
+                        <span
+                          key={s}
+                          className="status-spark"
+                          style={
+                            {
+                              '--dx': `${spark.dx}px`,
+                              '--dy': `${spark.dy}px`,
+                              '--spark-color': SPARK_COLORS[s % SPARK_COLORS.length],
+                            } as CSSProperties
+                          }
+                        />
+                      ))}
+                  </motion.span>
+                </span>
                 <span className={labelClass}>{step.label}</span>
               </>
             );
@@ -141,10 +277,7 @@ export function StatusProgress({
                 onClick={() => step.key !== 'outcome' && onChange?.(step.key)}
                 aria-pressed={status === step.key}
                 aria-current={isCurrent ? 'step' : undefined}
-                className={cn(
-                  'relative z-10 flex flex-1 flex-col items-center gap-2 rounded-control outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-signal',
-                  !lit && 'hover:text-foreground',
-                )}
+                className="group relative z-10 flex flex-1 flex-col items-center gap-2 rounded-control outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-signal"
               >
                 {content}
               </button>

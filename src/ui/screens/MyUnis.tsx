@@ -36,6 +36,9 @@ export function MyUnisScreen() {
   const loaded = useTracked((s) => s.loaded);
   const [loadError, setLoadError] = useState<unknown>(null);
   const [editing, setEditing] = useState<TrackedUni | null>(null);
+  // True until the cards have painted once: their tracks draw in on this screen's first paint only,
+  // not when the list comes back from the editor.
+  const [intro, setIntro] = useState(true);
 
   useEffect(() => {
     if (loaded) return;
@@ -44,6 +47,10 @@ export function MyUnisScreen() {
       .load()
       .catch((err: unknown) => setLoadError(err));
   }, [loaded]);
+
+  useEffect(() => {
+    if (intro && loaded && items.length > 0) setIntro(false);
+  }, [intro, loaded, items.length]);
 
   const today = new Date();
   const sorted = sortByDeadline(items, today);
@@ -85,11 +92,12 @@ export function MyUnisScreen() {
           {t('summary.urgent')}
         </p>
         <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-2">
-          {sorted.map((uni) => (
+          {sorted.map((uni, index) => (
             <TrackedUniCard
               key={uni.id}
               uni={uni}
               today={today}
+              introIndex={intro ? index : undefined}
               onEdit={() => setEditing(uni)}
               onOpen={() => openDetail(uni)}
             />

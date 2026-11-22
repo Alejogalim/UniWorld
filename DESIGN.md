@@ -104,7 +104,7 @@ Three rejections still stand: a warm cream and serif editorial template, a neon 
 - Headlines are two-tone: grey body text with the key phrase in ink, used on the welcome headline and empty-state titles only.
 - Results are still a ranked column of rows, never a grid of equal cards.
 - Every fact carries its source or says it is missing. The missing state is designed, not hidden.
-- Motion answers an action. The twinkling stars, the rare shooting star and the arrival of search results are the only things that move without a cause.
+- Motion answers an action. The twinkling stars, the rare shooting star, the arrival of search results and the small light on the My universities status track are the only things that move without a cause.
 
 ## Colors
 
@@ -330,7 +330,11 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 ### My universities (Uni Manager)
 Implemented in `src/ui/screens/MyUnis.tsx` and `src/ui/screens/myUnis/` (`TrackedUniCard`, `TrackedUniEditor`, `StatusProgress`, `status.ts`).
 - **Overview of independent cards**, nearest deadline first (`sortByDeadline`), then no deadline, then passed. Each card is wide and read-only: name and place top-left, deadline top-right (relative note: passed, urgent in signal, or a quiet day count), the facts through the middle, and the status track along the bottom. The card rim and outer glow take their colour from the status accent.
-- **Status track** (`StatusProgress`): considering, preparing, applied, waiting, then one shared final-outcome dot (admitted, waitlisted or rejected). One continuous wave runs behind the nodes; the lit layer is clipped to the current stage.
+- **Status track** (`StatusProgress`, plan 35): considering, preparing, applied, waiting, then one shared final-outcome dot (admitted, waitlisted or rejected); the editor shows the three pipeline stages plus the outcome chips. A straight 1.5px line: the completed part in ink at 60%, the rest a hairline. Completed nodes are small ink dots, the current node a larger ember (signal) dot with a soft ember ring, upcoming nodes hollow hairline dots. Labels are chart grey except the current one (ink, medium).
+  - **Light travels along the track:** every 5 to 7 s (random per card) a 40px soft ember glow slides from the first node to the current one, decelerating, and fades into it; it never passes the current step. The current node breathes: a faint ember ring scales up and fades about every 3 s. Both are named exceptions to "nothing that glows is ever animated": tiny elements, transform and opacity only, per-card CSS timing, running only while the card is on screen and the window is visible. They stop once a final outcome is reached.
+  - **Status change:** the completed line fills from the old node to the new one (500ms, scaleX), the new current node pops with a small spring, and its label fades to ink. A card remembers (for the session) the status it last showed, so the change plays when the list returns from the editor.
+  - **Outcomes:** admitted, a one-time burst of six tiny sparks (700ms) on an actual change, then the final dot settles in evidence green (the only green on the track); waitlisted, the dot settles in ember-2 with one slow ring pulse; rejected, no flourish and the whole track goes calm chart grey.
+  - **First paint:** on entering My universities each card's line draws in left to right once (600ms, 60ms stagger per card, capped at eight cards), the nodes following it.
 - **Full editor** per university (`TrackedUniEditor`): a local draft of every field, saved in one update on Save, with the three-stage pipeline plus the outcome controls.
 
 ### Settings
@@ -349,7 +353,7 @@ Unchanged in behaviour. A 14px label in Chart Grey, the value in body text, and 
 Ocean `#fbfaf8` in light and `#060607` in dark, so the sphere glows against the stars. Land `#d9d9d9` in light and `#26262a` in dark. Graticule faint. Selected countries are filled with ember. Idle rotation at 0.35 degrees per second. The globe is a circle.
 
 ### Motion
-State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. A few stars twinkle and a rare shooting star crosses; nothing drifts. The globe fly-to and contraction keep their durations. `prefers-reduced-motion` removes transforms and keeps opacity.
+State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. A few stars twinkle and a rare shooting star crosses; nothing drifts. The globe fly-to and contraction keep their durations. The status track (My universities) carries a travelling ember light and a breathing current node as CSS keyframes on tiny elements, paused off screen and while the window is hidden; its status-change fill (500ms) and node pop are state-driven (framer-motion). On the owner's Linux software-rendering path only small elements may animate, with transform and opacity: never a full-card or full-window animated layer, and no `requestAnimationFrame` loop. `prefers-reduced-motion` removes transforms and keeps opacity: on the status track no loops, no burst, no draw-in, no pop, and the fill becomes a 250ms fade.
 
 ## Do's and Don'ts
 

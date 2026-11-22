@@ -298,35 +298,127 @@
     display: none;
   }
 
-  /* Lit status connectors are a true sine wave: a solid colour revealed by a repeating wave mask,
-     sliding one full period per cycle so the wave travels like an audio waveform. */
-  @keyframes status-wave-move {
-    from {
-      -webkit-mask-position: 0 center;
-      mask-position: 0 center;
+  /* Status track (plan 35): a straight line; a small ember light travels to the current step and the current
+     node breathes. Only small elements animate, transform and opacity only. Per-card timing arrives as CSS
+     variables from StatusProgress; .is-paused (off screen or hidden window) freezes the loops. */
+  .status-pulse {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 0;
+    transform: translateX(-100%);
+    will-change: transform;
+    animation: status-pulse-travel var(--pulse-period, 6000ms) linear var(--pulse-delay, 0ms) infinite;
+  }
+  .status-pulse::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    right: -4px;
+    width: 40px;
+    height: 6px;
+    border-radius: 999px;
+    background:
+      radial-gradient(closest-side, var(--ember-2), transparent) right center / 8px 6px no-repeat,
+      linear-gradient(to right, transparent, color-mix(in oklch, var(--ember-1) 70%, transparent));
+    opacity: 0;
+    animation: status-pulse-fade var(--pulse-period, 6000ms) linear var(--pulse-delay, 0ms) infinite;
+  }
+  @keyframes status-pulse-travel {
+    0% {
+      transform: translateX(-100%);
+      animation-timing-function: cubic-bezier(0.25, 0.8, 0.3, 1);
     }
-    to {
-      -webkit-mask-position: 24px center;
-      mask-position: 24px center;
+    28%,
+    100% {
+      transform: translateX(0);
     }
   }
-  .status-wave-line {
-    height: 8px;
-    background-color: var(--wave-color, var(--evidence));
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 C3 1 9 1 12 4 S21 7 24 4' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 C3 1 9 1 12 4 S21 7 24 4' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
-    -webkit-mask-repeat: repeat-x;
-    mask-repeat: repeat-x;
-    -webkit-mask-size: 24px 8px;
-    mask-size: 24px 8px;
-    -webkit-mask-position: 0 center;
-    mask-position: 0 center;
+  @keyframes status-pulse-fade {
+    0% { opacity: 0; }
+    4% { opacity: 1; }
+    26% { opacity: 0.9; }
+    36%,
+    100% { opacity: 0; }
   }
-  .status-wave-line--animated {
-    animation: status-wave-move 1.4s linear infinite;
+
+  .status-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 1.5px solid var(--ring-color, var(--signal));
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: status-ring-ping var(--ring-period, 3000ms) cubic-bezier(0.2, 0, 0, 1) var(--ring-delay, 0ms) infinite;
   }
+  .status-ring--once {
+    animation-duration: 1600ms;
+    animation-delay: 300ms;
+    animation-iteration-count: 1;
+  }
+  @keyframes status-ring-ping {
+    0% { transform: scale(1); opacity: 0.6; }
+    70%,
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  .status-track.is-paused .status-pulse,
+  .status-track.is-paused .status-pulse::after,
+  .status-track.is-paused .status-ring {
+    animation-play-state: paused;
+  }
+
+  /* Waitlisted final dot: amber, with an inset edge so it still reads on white paper. */
+  .status-node--waitlisted {
+    background: var(--ember-2);
+    box-shadow:
+      0 0 0 3px color-mix(in oklch, var(--ember-2) 30%, transparent),
+      inset 0 0 0 1px color-mix(in oklch, var(--signal) 45%, transparent);
+  }
+
+  /* Admitted: a one-time burst of tiny sparks from the final dot. */
+  .status-spark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    margin: -1.5px 0 0 -1.5px;
+    border-radius: 999px;
+    background: var(--spark-color, var(--evidence));
+    opacity: 0;
+    pointer-events: none;
+    animation: status-spark 700ms cubic-bezier(0.2, 0, 0, 1) forwards;
+  }
+  @keyframes status-spark {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+  }
+
+  /* First paint of My universities: the line draws left to right, the nodes follow it. */
+  .status-draw {
+    transform-origin: left center;
+    animation: status-draw 600ms cubic-bezier(0.2, 0, 0, 1) var(--intro-delay, 0ms) both;
+  }
+  @keyframes status-draw {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  .status-node-in {
+    animation: status-node-in 240ms ease-out var(--node-delay, 0ms) both;
+  }
+  @keyframes status-node-in {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .status-wave-line--animated { animation: none; }
+    .status-pulse,
+    .status-ring,
+    .status-spark { display: none; }
+    .status-draw,
+    .status-node-in { animation: none; }
   }
 
   /* Primary button fill: a vertical ember gradient (light: deep orange; dark: amber to ember). */
