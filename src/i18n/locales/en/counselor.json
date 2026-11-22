@@ -1,0 +1,58 @@
+{
+  "intake": {
+    "q1": "{{name}}, what would you do even if nobody asked you to?",
+    "q2": "What do people usually come to you for?",
+    "q3": "Which subjects do you enjoy most, and why?",
+    "q4": "When you picture your life at 30, what are you doing each day?",
+    "q5": "What matters most to you in work: impact, stability, creativity, money, or freedom?",
+    "q6": "What are your practical limits, such as budget, distance from home, and the languages you could study in?",
+    "progress": "Question {{n}} of {{total}}"
+  },
+  "chat": {
+    "label": "Counselor",
+    "log": "Conversation with the counselor",
+    "placeholderAnswer": "Your answer",
+    "placeholderReply": "Reply to the counselor",
+    "send": "Send",
+    "sending": "Sending…"
+  },
+  "priorities": {
+    "title": "Your priorities",
+    "hint": "These weight the career ideas. Higher means that matters more to you.",
+    "passions": "Passions",
+    "strengths": "Strengths",
+    "goals": "Goals",
+    "earning": "Earning potential",
+    "show": "Show my career ideas",
+    "need": "Answer a few more questions first ({{count}} of {{min}})"
+  },
+  "reset": {
+    "start": "Start a new conversation",
+    "line": "This clears the chat on screen. Your saved careers stay.",
+    "confirm": "Clear the chat",
+    "cancel": "Cancel"
+  },
+  "careers": {
+    "heading": "Career ideas",
+    "thinking": "Thinking about careers that fit your answers…",
+    "whyYou": "Why you",
+    "save": "Save",
+    "saved": "Saved",
+    "find": "Find universities",
+    "rank": "Rank {{n}}"
+  },
+  "errors": {
+    "chatTitle": "The counselor could not reply",
+    "careersTitle": "Career ideas could not be made",
+    "saveTitle": "That career could not be updated",
+    "missingKey": "Add an AI key in Settings to talk to the counselor.",
+    "openSettings": "Open settings",
+    "noReply": "The counselor did not reply. Try again to continue.",
+    "tryAgain": "Try again"
+  },
+  "noProfile": {
+    "title": "Finish your profile first",
+    "description": "The counselor needs your name, languages and program to ask the right questions.",
+    "action": "Start onboarding"
+  }
+}

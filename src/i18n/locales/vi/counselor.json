@@ -1,0 +1,58 @@
+{
+  "intake": {
+    "q1": "{{name}}, bạn sẽ làm gì nếu không ai yêu cầu bạn?",
+    "q2": "Mọi người thường tìm đến bạn để nhờ điều gì?",
+    "q3": "Bạn thích môn học nào nhất, và vì sao?",
+    "q4": "Khi hình dung cuộc sống của bạn ở tuổi 30, bạn đang làm gì mỗi ngày?",
+    "q5": "Điều gì quan trọng nhất với bạn trong công việc: tác động, sự ổn định, sáng tạo, tiền bạc hay tự do?",
+    "q6": "Những giới hạn thực tế của bạn là gì, như ngân sách, khoảng cách từ nhà và các ngôn ngữ bạn có thể học?",
+    "progress": "Câu hỏi {{n}} trên {{total}}"
+  },
+  "chat": {
+    "label": "Cố vấn",
+    "log": "Cuộc trò chuyện với cố vấn",
+    "placeholderAnswer": "Câu trả lời của bạn",
+    "placeholderReply": "Trả lời cố vấn",
+    "send": "Gửi",
+    "sending": "Đang gửi…"
+  },
+  "priorities": {
+    "title": "Ưu tiên của bạn",
+    "hint": "Các mục này làm nặng thêm phần gợi ý nghề nghiệp. Số càng cao nghĩa là bạn càng coi trọng.",
+    "passions": "Đam mê",
+    "strengths": "Thế mạnh",
+    "goals": "Mục tiêu",
+    "earning": "Khả năng thu nhập",
+    "show": "Xem gợi ý nghề nghiệp của tôi",
+    "need": "Hãy trả lời thêm vài câu hỏi trước ({{count}} trên {{min}})"
+  },
+  "reset": {
+    "start": "Bắt đầu cuộc trò chuyện mới",
+    "line": "Thao tác này xóa đoạn chat trên màn hình. Các nghề đã lưu vẫn còn.",
+    "confirm": "Xóa đoạn chat",
+    "cancel": "Hủy"
+  },
+  "careers": {
+    "heading": "Gợi ý nghề nghiệp",
+    "thinking": "Đang tìm những nghề phù hợp với câu trả lời của bạn…",
+    "whyYou": "Vì sao phù hợp với bạn",
+    "save": "Lưu",
+    "saved": "Đã lưu",
+    "find": "Tìm trường đại học",
+    "rank": "Hạng {{n}}"
+  },
+  "errors": {
+    "chatTitle": "Cố vấn chưa thể trả lời",
+    "careersTitle": "Chưa thể tạo gợi ý nghề nghiệp",
+    "saveTitle": "Chưa thể cập nhật nghề này",
+    "missingKey": "Hãy thêm khóa AI trong Cài đặt để trò chuyện với cố vấn.",
+    "openSettings": "Mở cài đặt",
+    "noReply": "Cố vấn chưa trả lời. Hãy thử lại để tiếp tục.",
+    "tryAgain": "Thử lại"
+  },
+  "noProfile": {
+    "title": "Hãy hoàn tất hồ sơ trước",
+    "description": "Cố vấn cần tên, ngôn ngữ và chương trình học của bạn để đặt đúng câu hỏi.",
+    "action": "Bắt đầu hồ sơ"
+  }
+}

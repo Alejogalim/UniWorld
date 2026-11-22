@@ -6,18 +6,21 @@ import esCommon from './locales/es/common.json';
 import esOnboarding from './locales/es/onboarding.json';
 import viCommon from './locales/vi/common.json';
 import viOnboarding from './locales/vi/onboarding.json';
+import enCounselor from './locales/en/counselor.json';
+import esCounselor from './locales/es/counselor.json';
+import viCounselor from './locales/vi/counselor.json';
 
 export const resources = {
-  en: { common: enCommon, onboarding: enOnboarding },
-  es: { common: esCommon, onboarding: esOnboarding },
-  vi: { common: viCommon, onboarding: viOnboarding },
+  en: { common: enCommon, onboarding: enOnboarding, counselor: enCounselor },
+  es: { common: esCommon, onboarding: esOnboarding, counselor: esCounselor },
+  vi: { common: viCommon, onboarding: viOnboarding, counselor: viCounselor },
 } as const;
 
 void i18n.use(initReactI18next).init({
   resources,
   lng: 'en',
   fallbackLng: 'en',
-  ns: ['common', 'onboarding'],
+  ns: ['common', 'onboarding', 'counselor'],
   defaultNS: 'common',
   interpolation: { escapeValue: false },
 });
