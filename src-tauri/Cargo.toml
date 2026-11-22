@@ -1,7 +1,8 @@
 [package]
 name = "uniworld"
 version = "0.1.0"
-description = "A Tauri App"
+description = "UniWorld: find real universities worldwide"
+license = "MIT"
 authors = ["you"]
 edition = "2024"
 
