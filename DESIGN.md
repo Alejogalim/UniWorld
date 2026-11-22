@@ -267,11 +267,13 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 - **Mark:** a thin ring with a thick arc along its lower half, round-capped, on a square ground (1024 px PNG and SVG). The arc fades from white or near-black at the top to ember at the bottom.
 - **Two versions by theme:** the dark-ground mark (black ground, white arc, ember bottom) in dark theme, and the light-ground mark (#eeeeee ground, near-black arc, deep ember bottom) in light theme. `src/ui/layout/Logo.tsx` picks one from the resolved theme.
 - **Files:** `src/assets/logo/uniworld-logo-{light,dark}.{svg,png}` are the square app-icon sources. The dark PNG is the source for the app icons in `src-tauri/icons/`. The in-app marks are `src/assets/logo/uniworld-mark-{light,dark}.svg`: transparent ground, cropped to the ring and arc, with no square.
-- **Use:** the rail shows the mark at 28px, before the wordmark when expanded and centered above the nav when collapsed. In the UI, use only the cropped marks; the square files are for app icons. It is decorative (`alt=""`, `aria-hidden`); the wordmark carries the name.
+- **Use:** the rail shows the mark at 28px in a 36px box, at the same spot in both states (rail padding 12px). Collapsed, the mark is the button that expands the rail; expanded, it sits before the wordmark. In the UI, use only the cropped marks; the square files are for app icons. It is decorative (`alt=""`, `aria-hidden`); the wordmark carries the name.
 
 ## Layout
 
-A fixed 268px rail on the left (72px collapsed to an icon dock), with transparent ground over the stars. A working field to its right, with content capped at 1120px and a 48px page margin. Onboarding is a single 640px sheet.
+The rail is its own full-height column on the left: 284px expanded, 72px collapsed to an icon dock, with transparent ground over the stars. Its top row holds the logo: expanded, the logo, the wordmark, the beta pill and a 36px collapse button (`PanelLeftClose`) on the right; collapsed, the logo alone, and clicking it expands the rail. Nav rows follow, then the language and theme buttons at the foot. The width change animates over 200ms (none under reduced motion).
+
+The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet.
 
 Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
 
@@ -300,7 +302,7 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 - **Slider:** 4px track, thumb in ink, with an ember ring in dark mode.
 
 ### Navigation
-- Rail items: 40px rows, 14px corners, Inter 14px. Active: `rim` on shoal, with a 3px ember dot on the left edge. Hover: shoal.
+- Rail items: 40px rows (36px wide when collapsed, on the logo's left edge), 14px corners, Inter 14px. Active: `rim` on shoal, with a 3px ember dot on the left edge. Hover: shoal.
 - Footer: two round 40px buttons with a rim: language and theme.
 
 ### Result rows and lists
