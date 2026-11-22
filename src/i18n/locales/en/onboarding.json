@@ -91,14 +91,14 @@
     "title": "Connect your AI key",
     "openrouter": {
       "label": "OpenRouter key",
-      "required": "Required. Finder needs it for verified web search.",
-      "errorRequired": "Paste your OpenRouter key. Finder cannot search without it."
+      "recommended": "Recommended. The Finder needs it for verified web search."
     },
     "opencode": {
       "label": "OpenCode Go key",
-      "optional": "Optional. Counselor chat only.",
+      "optional": "Optional. Enough on its own for the Counselor.",
       "experimental": "Experimental"
     },
+    "errorAtLeastOne": "Add at least one key to continue.",
     "keyPlaceholder": "Paste your key",
     "showKey": "Show key",
     "hideKey": "Hide key",

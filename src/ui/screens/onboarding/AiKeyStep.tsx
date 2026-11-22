@@ -94,7 +94,7 @@ function KeyField({ provider, label, hint, error, value, onChange, test, onTest,
   );
 }
 
-/** Step 7: the OpenRouter key (required) and the OpenCode Go key (optional, experimental). */
+/** Step 7: the OpenRouter key (recommended) and the OpenCode Go key (optional). At least one is needed. */
 export function AiKeyStep({ errors }: { errors: Errors }) {
   const { t } = useTranslation("onboarding");
   const errorText = useErrorText(errors);
@@ -148,7 +148,7 @@ export function AiKeyStep({ errors }: { errors: Errors }) {
       <KeyField
         provider="openrouter"
         label={t("ai.openrouter.label")}
-        hint={t("ai.openrouter.required")}
+        hint={t("ai.openrouter.recommended")}
         error={errorText("openrouterKey")}
         value={openrouterKey}
         onChange={(v) => setKey("openrouter", v)}

@@ -65,8 +65,15 @@ function validateGrades(d: OnboardingDraft, errors: Errors) {
   }
 }
 
+/** True when no AI key is typed or already stored. At least one of OpenRouter or OpenCode Go is required. */
+export function aiKeyMissing(d: OnboardingDraft): boolean {
+  const hasOpenRouter = d.openrouterKey.trim() !== '' || d.storedKeys.openrouter;
+  const hasOpenCode = d.opencodeKey.trim() !== '' || d.storedKeys.opencode;
+  return !hasOpenRouter && !hasOpenCode;
+}
+
 /**
- * Validation for one step. Step 0 (welcome) has no rules; step 6 is the AI key step.
+ * Validation for one step. Step 0 (welcome) has no rules; step 6 is the AI key step (at least one key).
  */
 export function validateStep(step: number, d: OnboardingDraft): Errors {
   const errors: Errors = {};
@@ -88,8 +95,8 @@ export function validateStep(step: number, d: OnboardingDraft): Errors {
   }
   if (step === 3 && !d.program) errors.program = { key: 'program.errorRequired' };
   if (step === 4) validateGrades(d, errors);
-  if (step === 6 && d.openrouterKey.trim() === '' && !d.storedKeys.openrouter) {
-    errors.openrouterKey = { key: 'ai.openrouter.errorRequired' };
+  if (step === 6 && aiKeyMissing(d)) {
+    errors.openrouterKey = { key: 'ai.errorAtLeastOne' };
   }
   return errors;
 }

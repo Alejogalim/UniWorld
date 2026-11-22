@@ -91,14 +91,14 @@
     "title": "Conecta tu clave de IA",
     "openrouter": {
       "label": "Clave de OpenRouter",
-      "required": "Obligatoria. El buscador la necesita para buscar en la web con fuentes verificadas.",
-      "errorRequired": "Pega tu clave de OpenRouter. Sin ella el buscador no puede buscar."
+      "recommended": "Recomendada. El buscador la necesita para la búsqueda web verificada."
     },
     "opencode": {
       "label": "Clave de OpenCode Go",
-      "optional": "Opcional. Solo para el chat con el consejero.",
+      "optional": "Opcional. Basta por sí sola para el consejero.",
       "experimental": "Experimental"
     },
+    "errorAtLeastOne": "Añade al menos una clave para continuar.",
     "keyPlaceholder": "Pega tu clave",
     "showKey": "Mostrar clave",
     "hideKey": "Ocultar clave",

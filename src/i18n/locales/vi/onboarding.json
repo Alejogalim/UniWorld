@@ -91,14 +91,14 @@
     "title": "Kết nối khóa AI của bạn",
     "openrouter": {
       "label": "Khóa OpenRouter",
-      "required": "Bắt buộc. Tìm trường cần khóa này để tìm kiếm trên web có nguồn đã xác minh.",
-      "errorRequired": "Dán khóa OpenRouter của bạn. Tìm trường không thể tìm kiếm nếu thiếu khóa."
+      "recommended": "Được khuyến nghị. Công cụ tìm kiếm cần khóa này để tìm kiếm web đã xác minh."
     },
     "opencode": {
       "label": "Khóa OpenCode Go",
-      "optional": "Không bắt buộc. Chỉ dùng cho trò chuyện với cố vấn.",
+      "optional": "Không bắt buộc. Chỉ khóa này cũng đủ cho cố vấn.",
       "experimental": "Thử nghiệm"
     },
+    "errorAtLeastOne": "Thêm ít nhất một khóa để tiếp tục.",
     "keyPlaceholder": "Dán khóa của bạn",
     "showKey": "Hiện khóa",
     "hideKey": "Ẩn khóa",

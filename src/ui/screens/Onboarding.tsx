@@ -9,7 +9,7 @@ import { ErrorNote } from "@/ui/components/ErrorNote";
 import { Button } from "@/ui/components/ui/button";
 import { Spinner } from "@/ui/components/Spinner";
 import { AiKeyStep, saveProviderKeys } from "./onboarding/AiKeyStep";
-import { buildProfile, firstInvalidStep, STEP_COUNT, validateStep, type Errors } from "./onboarding/draftRules";
+import { aiKeyMissing, buildProfile, firstInvalidStep, STEP_COUNT, validateStep, type Errors } from "./onboarding/draftRules";
 import { GradesStep } from "./onboarding/GradesStep";
 import { LanguagesStep } from "./onboarding/LanguagesStep";
 import { NameStep } from "./onboarding/NameStep";
@@ -206,7 +206,7 @@ export function OnboardingScreen() {
           <Button
             type="submit"
             autoFocus={step === 0}
-            disabled={saving || (step === LAST && draft.openrouterKey.trim() === "" && !draft.storedKeys.openrouter)}
+            disabled={saving || (step === LAST && aiKeyMissing(draft))}
           >
             {saving ? (
               <>
