@@ -9,7 +9,7 @@ import { Badge } from '@/ui/components/Chip';
 import { EmptyState } from '@/ui/components/EmptyState';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Flag } from '@/ui/components/Flag';
-import { Panel } from '@/ui/components/Panel';
+import { cn } from '@/lib/utils';
 import { Input, Select, Textarea } from '@/ui/components/Input';
 import { Button } from '@/ui/components/ui/button';
 import { daysUntil } from './myUnis/deadline';
@@ -114,18 +114,35 @@ export function MyUnisScreen() {
     const urgentCount = sorted.filter((u) => u.deadline && isUrgent(daysUntil(u.deadline, today))).length;
     body = (
       <>
-        <Panel variant="ember" className="flex flex-wrap items-end gap-x-10 gap-y-4 p-6">
-          <p className="flex items-baseline gap-3">
-            <span className="numeral-ember type-display">{items.length}</span>
-            <span className="type-title text-foreground">{t('summary.total', { count: items.length })}</span>
+        <div className="flex flex-wrap items-baseline gap-x-10 gap-y-2 border-b border-hairline pb-5">
+          <p className="flex items-baseline gap-2.5">
+            <span className="font-mono text-2xl font-semibold tabular-nums text-foreground">{items.length}</span>
+            <span className="text-sm text-chart-grey">{t('summary.total', { count: items.length })}</span>
           </p>
-          <p className="flex items-baseline gap-3">
-            <span className="numeral-ember type-display">{urgentCount}</span>
-            <span className="type-title text-chart-grey">{t('summary.urgent')}</span>
+          <p className="flex items-baseline gap-2.5">
+            <span
+              className={cn(
+                'font-mono text-2xl font-semibold tabular-nums',
+                urgentCount > 0 ? 'text-signal' : 'text-foreground',
+              )}
+            >
+              {urgentCount}
+            </span>
+            <span className="text-sm text-chart-grey">{t('summary.urgent')}</span>
           </p>
-        </Panel>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+        </div>
+        <div className="-mx-6 overflow-x-auto px-6 min-[900px]:mx-0 min-[900px]:px-0">
+          <table className="w-full min-w-[54rem] table-fixed border-collapse text-left text-sm">
+            <colgroup>
+              <col className="w-[18%]" />
+              <col className="w-[14%]" />
+              <col className="w-[8%]" />
+              <col className="w-[12%]" />
+              <col className="w-[13%]" />
+              <col className="w-[12%]" />
+              <col className="w-[15%]" />
+              <col className="w-[8%]" />
+            </colgroup>
             <thead>
               <tr className="border-b border-hairline text-xs font-medium text-chart-grey">
                 <th scope="col" className="py-2 pr-4 font-medium">{t('columns.university')}</th>
@@ -157,7 +174,7 @@ export function MyUnisScreen() {
   }
 
   return (
-    <div className="max-w-[1120px] px-12 py-8">
+    <div className="w-full px-6 py-8 min-[900px]:px-10">
       <div className="flex flex-col gap-6">
         {actionError && <ErrorNote title={actionError.title} message={actionError.message} />}
         {body}
@@ -182,7 +199,7 @@ function TrackedRow({ uni, today, onSave, onRemove, onOpen }: TrackedRowProps) {
   return (
     <tr className="border-b border-hairline align-top transition-colors hover:bg-shoal">
       <td className="py-3 pr-4">
-        <div className="flex max-w-56 items-start gap-2">
+        <div className="flex min-w-0 items-start gap-2">
           <Flag code={uni.countryCode} className="mt-0.5" />
           <div className="flex min-w-0 flex-col gap-0.5">
             <button
@@ -228,7 +245,7 @@ function TrackedRow({ uni, today, onSave, onRemove, onOpen }: TrackedRowProps) {
           aria-label={t('status.label', { name: uni.name })}
           value={uni.status}
           onChange={(e) => onSave({ status: e.target.value as TrackedStatus })}
-          className="w-full min-w-40"
+          className="w-full"
         >
           {STATUSES.map((s) => (
             <option key={s} value={s}>
@@ -308,7 +325,7 @@ function InlineText({
   };
 
   return (
-    <div className="flex w-48 flex-col gap-1">
+    <div className="flex w-full flex-col gap-1">
       <Input
         autoFocus
         aria-label={label}
@@ -347,7 +364,7 @@ function DeadlineCell({ uni, today, onSave }: { uni: TrackedUni; today: Date; on
   }
 
   return (
-    <div className="flex w-44 flex-col gap-1.5">
+    <div className="flex w-full flex-col gap-1.5">
       <Input
         type="date"
         aria-label={t('deadline.label', { name: uni.name })}
@@ -380,7 +397,7 @@ function ExamsCell({ uni, onSave }: { uni: TrackedUni; onSave: (exams: string[])
 
   if (editing) {
     return (
-      <div className="flex w-52 flex-col gap-1">
+      <div className="flex w-full flex-col gap-1">
         <Input
           autoFocus
           aria-label={t('exams.label', { name: uni.name })}
@@ -405,7 +422,7 @@ function ExamsCell({ uni, onSave }: { uni: TrackedUni; onSave: (exams: string[])
   }
 
   return (
-    <div className="flex w-44 flex-col items-start gap-1.5">
+    <div className="flex w-full flex-col items-start gap-1.5">
       <div className="flex flex-wrap gap-1.5">
         {uni.requiredExams.length === 0 && <span className="text-xs text-chart-grey">{t('exams.empty')}</span>}
         {uni.requiredExams.map((exam) => (
@@ -446,7 +463,7 @@ function NotesCell({ uni, onSave }: { uni: TrackedUni; onSave: (notes: string) =
           setEditing(false);
           if (draft !== uni.notes) onSave(draft);
         }}
-        className="field-sizing-content w-64 min-h-16"
+        className="field-sizing-content w-full min-h-16"
       />
     );
   }
@@ -459,7 +476,7 @@ function NotesCell({ uni, onSave }: { uni: TrackedUni; onSave: (notes: string) =
         setDraft(uni.notes);
         setEditing(true);
       }}
-      className="block w-64 text-left text-sm text-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+      className="block w-full text-left text-sm text-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
     >
       {uni.notes ? (
         <span className="line-clamp-2 break-words">{uni.notes}</span>
@@ -476,16 +493,16 @@ function RemoveCell({ onRemove }: { onRemove: () => void }) {
 
   if (!confirming) {
     return (
-      <Button variant="quiet" size="sm" onClick={() => setConfirming(true)}>
+      <Button variant="quiet" size="sm" className="px-0" onClick={() => setConfirming(true)}>
         {t('remove.button')}
       </Button>
     );
   }
 
   return (
-    <div className="flex w-40 flex-col gap-2">
+    <div className="flex w-full flex-col gap-2">
       <span className="text-sm text-foreground">{t('remove.confirm')}</span>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button variant="secondary" size="sm" onClick={onRemove}>
           {t('remove.confirmButton')}
         </Button>
