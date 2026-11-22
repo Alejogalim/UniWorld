@@ -57,6 +57,11 @@ pub fn run() {
         description: "tracked_detail_program",
         sql: include_str!("../../src/db/migrations/003_tracked_detail_program.sql"),
         kind: MigrationKind::Up,
+    }, Migration {
+        version: 4,
+        description: "counselor_notes",
+        sql: include_str!("../../src/db/migrations/004_counselor_notes.sql"),
+        kind: MigrationKind::Up,
     }];
 
     tauri::Builder::default()

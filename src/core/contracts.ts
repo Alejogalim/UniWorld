@@ -63,6 +63,20 @@ export interface CounselorWeights {
   earning: number;
 }
 
+/** Checklist areas the counselor keeps notes on (plan 30). */
+export type CounselorNoteArea = 'interests' | 'strengths' | 'values' | 'workStyle' | 'limits';
+
+/** Short running notes the counselor keeps about the student, per checklist area. */
+export interface CounselorNotes {
+  interests: string[];
+  strengths: string[];
+  values: string[];
+  workStyle: string[];
+  limits: string[];
+  /** Areas with no concrete information yet, most important first. */
+  gaps: CounselorNoteArea[];
+}
+
 export interface CareerPath {
   id: number;
   title: string;
@@ -155,6 +169,8 @@ export interface CoreApi {
     ): Promise<string>;
     /** Generates 3–5 career ideas from the session so far. */
     careers(sessionId: number, weights: CounselorWeights): Promise<CareerPath[]>;
+    /** Updates the session's running notes from the latest messages (one small JSON call). Null before any answer. */
+    updateNotes(sessionId: number): Promise<CounselorNotes | null>;
   };
 
   finder: {

@@ -12,7 +12,8 @@ CREATE TABLE counselor_session (
   started_at TEXT NOT NULL,
   provider TEXT NOT NULL,
   weights_json TEXT,
-  status TEXT NOT NULL
+  status TEXT NOT NULL,
+  notes_json TEXT
 );
 CREATE TABLE counselor_message (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -224,5 +225,21 @@ describe('SqlCounselorStore', () => {
     const savedAcrossSessions = await store.listSavedCareers();
     expect(savedAcrossSessions).toHaveLength(1);
     expect(savedAcrossSessions[0]?.title).toBe('Software engineer');
+  });
+
+  it('saves and reads counselor notes', async () => {
+    const store = new SqlCounselorStore(client());
+    const sessionId = await store.createSession('openrouter');
+    expect(await store.getNotes(sessionId)).toBeNull();
+    const notes = {
+      interests: ['draws comics'],
+      strengths: [],
+      values: ['freedom'],
+      workStyle: [],
+      limits: [],
+      gaps: ['strengths' as const],
+    };
+    await store.setNotes(sessionId, notes);
+    expect(await store.getNotes(sessionId)).toEqual(notes);
   });
 });

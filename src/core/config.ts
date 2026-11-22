@@ -45,3 +45,7 @@ export const CAREER_MAX = 5;
 export const CAREER_IDEAS_MIN_STUDENT_MESSAGES = 8;
 
 export const OFFICIAL_SOURCE_KINDS = ['official', 'third_party'] as const;
+
+/** Running counselor notes (plan 30): how many recent messages the note-taker reads, and its token cap. */
+export const NOTES_RECENT_MESSAGES = 6;
+export const NOTES_MAX_TOKENS = 400;

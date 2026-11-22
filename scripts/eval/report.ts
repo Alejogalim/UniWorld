@@ -1,3 +1,4 @@
+import type { CounselorNotes } from '../../src/core/contracts';
 import type { CheckResult } from './checks';
 import type { JudgeScore } from './judge';
 import type { Persona } from './personas';
@@ -16,6 +17,7 @@ export interface PersonaResult {
   persona: Persona;
   replies: ReplyResult[];
   error?: string;
+  notes?: CounselorNotes | null;
 }
 
 export interface ReportMeta {
@@ -87,6 +89,7 @@ export function renderReport(meta: ReportMeta, results: PersonaResult[]): string
       if (reply.judgeError) lines.push(`- Judge error: ${oneLine(reply.judgeError)}`);
       lines.push('');
     }
+    if (result.notes) lines.push('**Final notes:**', '', '```json', JSON.stringify(result.notes, null, 2), '```', '');
   }
   return `${lines.join('\n').trimEnd()}\n`;
 }

@@ -1,4 +1,4 @@
-import type { Profile, SearchInput, UiLang } from '../contracts';
+import type { CounselorNoteArea, CounselorNotes, Profile, SearchInput, UiLang } from '../contracts';
 import type { ChatMessage } from './types';
 import type { SearchHit } from './types';
 import type { CounselorWeights } from '../contracts';
@@ -49,9 +49,30 @@ const REGISTER: Record<string, string> = {
   vi: 'Use a warm, informal-polite tone: call the student "bạn" and refer to yourself as "mình". Avoid stiff or formal phrasing.',
 };
 
+const NOTE_LABELS: Record<CounselorNoteArea, string> = {
+  interests: 'Interests',
+  strengths: 'Strengths',
+  values: 'Values',
+  workStyle: 'Work style',
+  limits: 'Practical limits',
+};
+
+/** The notes as plain lines for a prompt. */
+export function notesToText(notes: CounselorNotes): string {
+  const areas = Object.keys(NOTE_LABELS) as CounselorNoteArea[];
+  const lines = areas.map(
+    (area) => `${NOTE_LABELS[area]}: ${notes[area].length ? notes[area].join('; ') : '(nothing yet)'}`,
+  );
+  const gaps = notes.gaps.map((gap) => NOTE_LABELS[gap].toLowerCase());
+  lines.push(`Still unknown: ${gaps.length ? gaps.join(', ') : 'nothing major'}`);
+  return lines.join('\n');
+}
+
 export interface CounselorPromptContext {
   /** Student messages in the session so far, including the one being answered now. */
   studentAnswers: number;
+  /** Running notes (plan 30), or null/absent before the first update. */
+  notes?: CounselorNotes | null;
 }
 
 /** How the counselor runs the six intake topics (plan 29): its own questions, one follow-up, a control tag. */
@@ -119,6 +140,13 @@ export function counselorSystemPrompt(
       '4. Work style: alone or in a team; structured or free; hands-on or abstract.',
       '5. Practical limits: budget, how far from home they can or want to study, and which languages they can study in.',
       'An area counts as covered once the student has given one concrete example or a clear statement about it. Each turn, find the biggest gap (the area you know least about) that connects naturally to what they just said, and aim your question there. Do not march through the areas in order, and do not keep digging into an area that is already covered.',
+    ].join('\n'),
+
+    [
+      'WHAT YOU KNOW SO FAR',
+      context.notes
+        ? `Your private notes from this conversation (they can lag one answer behind; the messages are the source of truth). Use them to find the biggest gap. Never read them out or mention them.\n${notesToText(context.notes)}`
+        : 'No notes yet: rely on the messages.',
     ].join('\n'),
 
     [
@@ -193,6 +221,7 @@ export function careersPrompt(
   profile: Profile,
   transcript: string,
   weights: CounselorWeights,
+  notes: CounselorNotes | null = null,
 ): ChatMessage[] {
   const lang = respondIn(profile);
   const shape = {
@@ -226,7 +255,54 @@ export function careersPrompt(
       content: [
         `Student profile:\n${profileToText(profile)}`,
         `Importance weights (1-10): ${JSON.stringify(weights)}`,
+        ...(notes
+          ? [`Counselor's notes (a summary; quote the conversation, not the notes, in whyYou):\n${notesToText(notes)}`]
+          : []),
         `Conversation so far:\n${transcript}`,
+        'Return the JSON now.',
+      ].join('\n\n'),
+    },
+  ];
+}
+
+/** The cheap note-taker call (plan 30): previous notes + the latest messages in, updated notes out. */
+export function notesPrompt(
+  profile: Profile,
+  previous: CounselorNotes | null,
+  transcript: string,
+): ChatMessage[] {
+  const lang = respondIn(profile);
+  const shape = {
+    interests: ['string'],
+    strengths: ['string'],
+    values: ['string'],
+    workStyle: ['string'],
+    limits: ['string'],
+    gaps: ['values'],
+  };
+  return [
+    {
+      role: 'system',
+      content: [
+        "You are UniFinder's counselor note-taker. You keep short private notes about a high-school student during a career-guidance chat.",
+        'Update the notes with what the latest messages add. Keep every previous item that is still true; change or drop an item only if the student corrected it.',
+        `Each field is a list of at most 4 short phrases (2 to 8 words each), written in ${lang} about the student, for example "draws comics most evenings".`,
+        '- interests: activities, topics and media they enjoy or seek out',
+        '- strengths: what they are good at or what others come to them for',
+        '- values: what they want work to give them',
+        '- workStyle: alone or in a team, structured or free, hands-on or abstract',
+        '- limits: budget, distance from home, study languages and other practical limits',
+        '- gaps: which of "interests", "strengths", "values", "workStyle", "limits" still have no concrete information, most important first',
+        "Use only what the student actually said; never guess. Ignore the counselor's suggestions unless the student agreed, and ignore jokes that say nothing real.",
+        'Return only JSON matching this shape:',
+        JSON.stringify(shape),
+      ].join('\n'),
+    },
+    {
+      role: 'user',
+      content: [
+        `Previous notes:\n${previous ? JSON.stringify(previous) : 'none yet'}`,
+        `Latest messages:\n${transcript}`,
         'Return the JSON now.',
       ].join('\n\n'),
     },

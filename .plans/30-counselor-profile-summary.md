@@ -54,7 +54,7 @@ Nothing else.
 
 ## Steps
 
-- [ ] 1. Create `src/db/migrations/004_counselor_notes.sql`:
+- [x] 1. Create `src/db/migrations/004_counselor_notes.sql`:
 ```sql
 -- Running counselor notes (plan 30): a short JSON summary of what the student has shared, per checklist area.
 -- NULL until the first update. Never holds secrets.
@@ -70,7 +70,7 @@ ALTER TABLE counselor_session ADD COLUMN notes_json TEXT;
 ```
   (i.e. the closing `}];` of the vec now follows the version-4 entry).
 
-- [ ] 2. `src/core/contracts.ts`: add right after the `CounselorWeights` interface:
+- [x] 2. `src/core/contracts.ts`: add right after the `CounselorWeights` interface:
 ```ts
 /** Checklist areas the counselor keeps notes on (plan 30). */
 export type CounselorNoteArea = 'interests' | 'strengths' | 'values' | 'workStyle' | 'limits';
@@ -92,14 +92,14 @@ export interface CounselorNotes {
     updateNotes(sessionId: number): Promise<CounselorNotes | null>;
 ```
 
-- [ ] 3. `src/core/config.ts`: append
+- [x] 3. `src/core/config.ts`: append
 ```ts
 /** Running counselor notes (plan 30): how many recent messages the note-taker reads, and its token cap. */
 export const NOTES_RECENT_MESSAGES = 6;
 export const NOTES_MAX_TOKENS = 400;
 ```
 
-- [ ] 4. `src/core/schemas.ts`: add `import type { CounselorNoteArea } from './contracts';` below the zod import, and after `export type CareerIdeasAI = …` add:
+- [x] 4. `src/core/schemas.ts`: add `import type { CounselorNoteArea } from './contracts';` below the zod import, and after `export type CareerIdeasAI = …` add:
 ```ts
 // ---------- Counselor notes (plan 30) ----------
 export const COUNSELOR_NOTE_AREAS = ['interests', 'strengths', 'values', 'workStyle', 'limits'] as const;
@@ -133,7 +133,7 @@ export const counselorNotesSchema = z.object({
 });
 ```
 
-- [ ] 5. `src/core/ports.ts`: add `CounselorNotes` to the `import type { … } from './contracts'` list, and add to `interface CounselorPersistence` (after `setWeights`):
+- [x] 5. `src/core/ports.ts`: add `CounselorNotes` to the `import type { … } from './contracts'` list, and add to `interface CounselorPersistence` (after `setWeights`):
 ```ts
   /** The running notes for a session, or null when none were saved yet. */
   getNotes(sessionId: number): Promise<CounselorNotes | null>;
@@ -169,7 +169,7 @@ export const counselorNotesSchema = z.object({
 ```
   Note: `counselorNotesSchema.safeParse(null)` fails, so a NULL column returns null.
 
-- [ ] 6. `src/store/stores.test.ts`: in the `DDL` string, change the `counselor_session` table to end with `status TEXT NOT NULL,\n  notes_json TEXT\n);` (add the column). Add inside `describe('SqlCounselorStore')`:
+- [x] 6. `src/store/stores.test.ts`: in the `DDL` string, change the `counselor_session` table to end with `status TEXT NOT NULL,\n  notes_json TEXT\n);` (add the column). Add inside `describe('SqlCounselorStore')`:
 ```ts
   it('saves and reads counselor notes', async () => {
     const store = new SqlCounselorStore(client());
@@ -188,7 +188,7 @@ export const counselorNotesSchema = z.object({
   });
 ```
 
-- [ ] 7. Create `src/core/counselor/transcript.ts`:
+- [x] 7. Create `src/core/counselor/transcript.ts`:
 ```ts
 import type { StoredMessage } from '../ports';
 import { stripReplyTags } from './replyTag';
@@ -231,7 +231,7 @@ export function buildTranscript(messages: StoredMessage[]): string {
 }
 ```
 
-- [ ] 8. Create `src/core/counselor/transcript.test.ts`:
+- [x] 8. Create `src/core/counselor/transcript.test.ts`:
 ```ts
 import { describe, expect, it } from 'bun:test';
 import { buildTranscript, readStudentMessage } from './transcript';
@@ -272,7 +272,7 @@ describe('buildTranscript', () => {
 });
 ```
 
-- [ ] 9. `src/core/ai/prompts.ts`:
+- [x] 9. `src/core/ai/prompts.ts`:
   a. Change the contracts import to `import type { CounselorNoteArea, CounselorNotes, Profile, SearchInput, UiLang } from '../contracts';`.
   b. Add above `CounselorPromptContext`:
 ```ts
@@ -362,7 +362,7 @@ export function notesPrompt(
 }
 ```
 
-- [ ] 10. `src/core/ai/prompts.test.ts`: change the import to `import { careersPrompt, counselorSystemPrompt, notesPrompt, promptRules } from './prompts';`, add `import type { CounselorNotes, Profile } from '../contracts';` (replacing the `Profile`-only import), and append:
+- [x] 10. `src/core/ai/prompts.test.ts`: change the import to `import { careersPrompt, counselorSystemPrompt, notesPrompt, promptRules } from './prompts';`, add `import type { CounselorNotes, Profile } from '../contracts';` (replacing the `Profile`-only import), and append:
 ```ts
 describe('notes', () => {
   const notes: CounselorNotes = {
@@ -398,7 +398,7 @@ describe('notes', () => {
 });
 ```
 
-- [ ] 11. `src/core/counselor/index.ts`:
+- [x] 11. `src/core/counselor/index.ts`:
   a. Imports: add `CounselorNotes` to the contracts import; `notesPrompt` to the prompts import; `NOTES_MAX_TOKENS, NOTES_RECENT_MESSAGES` to the config import; `counselorNotesSchema` to the schemas import; and `import { buildTranscript } from './transcript';`.
   b. Add this private method after `profile()`:
 ```ts
@@ -443,7 +443,7 @@ describe('notes', () => {
   }
 ```
 
-- [ ] 12. `src/core/counselor/counselor.test.ts`:
+- [x] 12. `src/core/counselor/counselor.test.ts`:
   a. Add `import type { CounselorNotes } from '../contracts';` (or extend the existing contracts import).
   b. Add next to `careersJson`:
 ```ts
@@ -519,9 +519,9 @@ const notesJson = JSON.stringify({
 ```
   (`deps(http, store)` takes `InMemoryCounselorStore`; `BrokenNotesStore` is a subclass, so it fits.)
 
-- [ ] 13. `src/core/coreApi.ts`: in `counselor: { … }` add `updateNotes: (sessionId: number) => counselor.updateNotes(sessionId),`. `src/core/stub.ts`: in `counselor: { … }` add `updateNotes: async () => null,`.
+- [x] 13. `src/core/coreApi.ts`: in `counselor: { … }` add `updateNotes: (sessionId: number) => counselor.updateNotes(sessionId),`. `src/core/stub.ts`: in `counselor: { … }` add `updateNotes: async () => null,`.
 
-- [ ] 14. `src/ui/screens/counselor/useCounselor.ts`:
+- [x] 14. `src/ui/screens/counselor/useCounselor.ts`:
   a. Add `type CounselorNotes,` to the `from '@/core'` import.
   b. `CounselorState`: add after `careers: CareerPath[];`:
 ```ts
@@ -547,7 +547,7 @@ function refreshNotes(sessionId: number): void {
   e. Add `notes: null,` after `careers: [],` in: the store's initial state, `reset()`, `resetCounselorState()`, and both early "fresh" `setState` calls in `loadLatest()`.
   f. In `loadLatest()`, after `const careers = await persisted.listCareers(sessionId);` add `const notes = await persisted.getNotes(sessionId).catch(() => null);` and add `notes,` after `careers,` in the final `useCounselor.setState({ … })`.
 
-- [ ] 15. `src/ui/screens/counselor/PrioritiesPanel.tsx`:
+- [x] 15. `src/ui/screens/counselor/PrioritiesPanel.tsx`:
   a. Add `import { ChevronDown } from "lucide-react";`.
   b. Add below the `DIMENSIONS` constant:
 ```tsx
@@ -585,12 +585,12 @@ function LearnedNotes() {
 ```
   c. Render `<LearnedNotes />` as the first child of the root `<div className="flex flex-col gap-6">` in `PrioritiesPanel`. Change nothing else.
 
-- [ ] 16. i18n: add a top-level `"notes"` object to each `counselor.json`, placed right after `"priorities"`:
+- [x] 16. i18n: add a top-level `"notes"` object to each `counselor.json`, placed right after `"priorities"`:
   - en: `title` "What I've learned", `hint` "From your answers so far. It updates as you chat.", `interests` "Interests", `strengths` "Strengths", `values` "Values", `workStyle` "Work style", `limits` "Practical limits"
   - es: `title` "Lo que he aprendido", `hint` "Según tus respuestas hasta ahora. Se actualiza mientras hablamos.", `interests` "Intereses", `strengths` "Fortalezas", `values` "Valores", `workStyle` "Forma de trabajar", `limits` "Límites prácticos"
   - vi: `title` "Những điều mình biết về bạn", `hint` "Dựa trên các câu trả lời của bạn. Mục này cập nhật khi mình trò chuyện.", `interests` "Sở thích", `strengths` "Thế mạnh", `values` "Giá trị", `workStyle` "Cách làm việc", `limits` "Giới hạn thực tế"
 
-- [ ] 17. Eval updates notes like the app.
+- [x] 17. Eval updates notes like the app.
   a. `scripts/eval/report.ts`: add `import type { CounselorNotes } from '../../src/core/contracts';` and `notes?: CounselorNotes | null;` to `PersonaResult`. At the end of the per-persona loop (after the replies loop, still inside `for (const result of results)`), add:
 ```ts
     if (result.notes) lines.push('**Final notes:**', '', '```json', JSON.stringify(result.notes, null, 2), '```', '');
@@ -628,3 +628,12 @@ git status --short                                              # only the files
 Do not start the app and do not run the eval with a real key. The orchestrator checks the panel in the running app (migration 004 applies on next launch).
 
 ## Builder notes
+- Steps 1-17 implemented as written, except the deviations below.
+- BLOCKED: `bun run typecheck` and `bun run build` fail (exit 2): `src/core/app.ts(59,5)` TS2741, `updateNotes` missing in the `CoreApi` literal in `createAppCore()`. `app.ts` is not in the Files list, so it was not touched. Fix needed (one line, after `careers:`): `updateNotes: async (sessionId) => (await getReady()).counselor.updateNotes(sessionId),`.
+- Deviation: step 14e `loadLatest()` fresh states have no `careers` field, so `notes: null,` was added after `studentCount: 0` in both identical lines.
+- `bun test`: 214 pass, 0 fail (22 files).
+- `bun run check:i18n`: passed (es, vi match en).
+- `cargo check --offline` (src-tauri): finished, exit 0.
+- `OPENROUTER_API_KEY= OPENCODE_API_KEY= bun run eval:counselor`: "eval:counselor skipped ...", exit 0. No networked eval run.
+- `git status --short`: only listed files modified, plus new `004_counselor_notes.sql`, `transcript.ts`, `transcript.test.ts`, and pre-existing `.impeccable/`, `graphify-out/`. Plan file also updated (checkboxes and these notes). Nothing committed.
+

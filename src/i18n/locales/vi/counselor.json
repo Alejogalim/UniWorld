@@ -36,6 +36,15 @@
     "show": "Xem gợi ý nghề nghiệp của tôi",
     "need": "Hãy trả lời thêm vài câu hỏi trước ({{count}} trên {{min}})"
   },
+  "notes": {
+    "title": "Những điều mình biết về bạn",
+    "hint": "Dựa trên các câu trả lời của bạn. Mục này cập nhật khi mình trò chuyện.",
+    "interests": "Sở thích",
+    "strengths": "Thế mạnh",
+    "values": "Giá trị",
+    "workStyle": "Cách làm việc",
+    "limits": "Giới hạn thực tế"
+  },
   "reset": {
     "start": "Bắt đầu cuộc trò chuyện mới",
     "line": "Thao tác này xóa đoạn chat trên màn hình. Các nghề đã lưu vẫn còn.",

@@ -1,10 +1,11 @@
-import type { CareerPath, CounselorWeights, Provider } from '../core/contracts';
+import type { CareerPath, CounselorNotes, CounselorWeights, Provider } from '../core/contracts';
 import type {
   CounselorPersistence,
   CounselorSession,
   SqlClient,
   StoredMessage,
 } from '../core/ports';
+import { counselorNotesSchema } from '../core/schemas';
 
 interface SessionRow {
   id: number;
@@ -77,6 +78,22 @@ export class SqlCounselorStore implements CounselorPersistence {
   async setWeights(sessionId: number, weights: CounselorWeights): Promise<void> {
     await this.sql.execute('UPDATE counselor_session SET weights_json = ? WHERE id = ?', [
       JSON.stringify(weights),
+      sessionId,
+    ]);
+  }
+
+  async getNotes(sessionId: number): Promise<CounselorNotes | null> {
+    const rows = await this.sql.query<{ notes_json: string | null }>(
+      'SELECT notes_json FROM counselor_session WHERE id = ? LIMIT 1',
+      [sessionId],
+    );
+    const parsed = counselorNotesSchema.safeParse(parseJson<unknown>(rows[0]?.notes_json ?? null, null));
+    return parsed.success ? parsed.data : null;
+  }
+
+  async setNotes(sessionId: number, notes: CounselorNotes): Promise<void> {
+    await this.sql.execute('UPDATE counselor_session SET notes_json = ? WHERE id = ?', [
+      JSON.stringify(notes),
       sessionId,
     ]);
   }

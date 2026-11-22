@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { CounselorNoteArea } from './contracts';
 
 /**
  * Zod schemas for every AI JSON response. They intentionally mirror
@@ -43,6 +44,37 @@ export const careerIdeasSchema = z.object({
 });
 
 export type CareerIdeasAI = z.infer<typeof careerIdeasSchema>;
+
+// ---------- Counselor notes (plan 30) ----------
+export const COUNSELOR_NOTE_AREAS = ['interests', 'strengths', 'values', 'workStyle', 'limits'] as const;
+
+/** Lenient: a missing or null list is empty; extra or long items are trimmed instead of rejected. */
+const noteList = z
+  .array(z.string())
+  .nullish()
+  .transform((items) =>
+    (items ?? [])
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map((item) => item.slice(0, 100))
+      .slice(0, 4),
+  );
+
+export const counselorNotesSchema = z.object({
+  interests: noteList,
+  strengths: noteList,
+  values: noteList,
+  workStyle: noteList,
+  limits: noteList,
+  gaps: z
+    .array(z.string())
+    .nullish()
+    .transform((items) =>
+      (items ?? []).filter((item): item is CounselorNoteArea =>
+        (COUNSELOR_NOTE_AREAS as readonly string[]).includes(item),
+      ),
+    ),
+});
 
 // ---------- Finder: query plan (Design §7.3 step 1) ----------
 export const queryPlanSchema = z.object({

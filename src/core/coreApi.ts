@@ -41,6 +41,7 @@ export function createCoreApi(options: CoreApiOptions): CoreApi {
         counselor.send(sessionId, text, onToken),
       careers: (sessionId: number, weights: CounselorWeights) =>
         counselor.careers(sessionId, weights),
+      updateNotes: (sessionId: number) => counselor.updateNotes(sessionId),
     },
     finder: {
       search: (input: SearchInput, onEvent) => finder.search(input, onEvent),

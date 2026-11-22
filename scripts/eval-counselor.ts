@@ -71,11 +71,13 @@ async function runPersona(persona: Persona, provider: Provider, judge: AiClient 
   const visibleReplies: string[] = [];
   const transcript: string[] = [`Counselor: ${question(1)}`];
   let state = initialDriverState;
+  let sessionId: number | null = null;
   try {
-    const { sessionId } = await counselor.start();
+    sessionId = (await counselor.start()).sessionId;
     for (const [index, answer] of persona.answers.entries()) {
       const turn = nextTurn(state, answer, question);
       const raw = await counselor.send(sessionId, turn.encoded);
+      await counselor.updateNotes(sessionId).catch(() => null);
       const outcome = afterReply(state, turn, raw, question);
       state = outcome.state;
       transcript.push(`Student: ${answer}`);
@@ -103,9 +105,9 @@ async function runPersona(persona: Persona, provider: Provider, judge: AiClient 
       if (outcome.appQuestion) transcript.push(`Counselor: ${outcome.appQuestion}`);
       process.stdout.write('.');
     }
-    return { persona, replies };
+    return { persona, replies, notes: sessionId === null ? null : await store.getNotes(sessionId) };
   } catch (error) {
-    return { persona, replies, error: message(error) };
+    return { persona, replies, error: message(error), notes: sessionId === null ? null : await store.getNotes(sessionId) };
   }
 }
 

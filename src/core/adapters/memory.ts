@@ -1,4 +1,11 @@
-import type { CareerPath, CounselorWeights, Provider, SearchInput, UniDetail } from '../contracts';
+import type {
+  CareerPath,
+  CounselorNotes,
+  CounselorWeights,
+  Provider,
+  SearchInput,
+  UniDetail,
+} from '../contracts';
 import type {
   CachedDetail,
   CachedSearch,
@@ -49,6 +56,7 @@ export class InMemoryCounselorStore implements CounselorPersistence {
   private readonly sessions = new Map<number, CounselorSession>();
   private readonly messages = new Map<number, StoredMessage[]>();
   private readonly careers = new Map<number, CareerPath[]>();
+  private readonly notes = new Map<number, CounselorNotes>();
 
   async createSession(provider: Provider, weights?: CounselorWeights | null): Promise<number> {
     const id = this.nextSession++;
@@ -65,6 +73,14 @@ export class InMemoryCounselorStore implements CounselorPersistence {
   async setWeights(sessionId: number, weights: CounselorWeights): Promise<void> {
     const session = this.sessions.get(sessionId);
     if (session) session.weights = weights;
+  }
+
+  async getNotes(sessionId: number): Promise<CounselorNotes | null> {
+    return this.notes.get(sessionId) ?? null;
+  }
+
+  async setNotes(sessionId: number, notes: CounselorNotes): Promise<void> {
+    this.notes.set(sessionId, notes);
   }
 
   async addMessage(sessionId: number, message: StoredMessage): Promise<void> {

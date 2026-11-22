@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import type { Profile } from '../contracts';
-import { counselorSystemPrompt, promptRules } from './prompts';
+import type { CounselorNotes, Profile } from '../contracts';
+import { careersPrompt, counselorSystemPrompt, notesPrompt, promptRules } from './prompts';
 
 const en: Profile = { name: 'Ana', primaryLang: 'en', uiLang: 'en', languages: [{ lang: 'en', level: 'C1' }], program: 'IB' };
 const es: Profile = { name: 'Lucía', primaryLang: 'es', uiLang: 'es', languages: [{ lang: 'es', level: 'native' }], program: 'IB' };
@@ -44,5 +44,38 @@ describe('counselorSystemPrompt', () => {
     expect(system).toContain('End the reply with <follow/>.');
     expect(system).toContain('Next topic: none');
     expect(system).not.toContain('Address the student by name');
+  });
+});
+
+describe('notes', () => {
+  const notes: CounselorNotes = {
+    interests: ['draws comics'],
+    strengths: [],
+    values: ['freedom'],
+    workStyle: [],
+    limits: [],
+    gaps: ['strengths', 'workStyle'],
+  };
+  const weights = { passions: 5, strengths: 5, goals: 5, earning: 5 };
+
+  it('puts the notes and gaps into the counselor prompt', () => {
+    const system = counselorSystemPrompt(en, { studentAnswers: 3, notes });
+    expect(system).toContain('Interests: draws comics');
+    expect(system).toContain('Strengths: (nothing yet)');
+    expect(system).toContain('Still unknown: strengths, work style');
+    expect(counselorSystemPrompt(en)).toContain('No notes yet: rely on the messages.');
+  });
+
+  it('builds a note-taker request with the previous notes', () => {
+    const [system, user] = notesPrompt(en, notes, 'Student: hi');
+    expect(system!.content).toContain('counselor note-taker');
+    expect(user!.content).toContain('"draws comics"');
+    expect(user!.content).toContain('Student: hi');
+    expect(notesPrompt(en, null, 'Student: hi')[1]!.content).toContain('none yet');
+  });
+
+  it('gives the career synthesizer the notes only when there are some', () => {
+    expect(careersPrompt(en, 'Student: hi', weights, notes)[1]!.content).toContain("Counselor's notes");
+    expect(careersPrompt(en, 'Student: hi', weights)[1]!.content).not.toContain("Counselor's notes");
   });
 });

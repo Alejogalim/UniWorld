@@ -108,6 +108,7 @@ export function createStubCoreApi(): CoreApi {
         return reply;
       },
       careers: async () => stubCareers,
+      updateNotes: async () => null,
     },
     finder: {
       search: async (_input, onEvent: (event: FinderEvent) => void) => {

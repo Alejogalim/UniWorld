@@ -36,6 +36,15 @@
     "show": "Show my career ideas",
     "need": "Answer a few more questions first ({{count}} of {{min}})"
   },
+  "notes": {
+    "title": "What I've learned",
+    "hint": "From your answers so far. It updates as you chat.",
+    "interests": "Interests",
+    "strengths": "Strengths",
+    "values": "Values",
+    "workStyle": "Work style",
+    "limits": "Practical limits"
+  },
   "reset": {
     "start": "Start a new conversation",
     "line": "This clears the chat on screen. Your saved careers stay.",

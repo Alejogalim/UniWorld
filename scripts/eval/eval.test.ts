@@ -183,4 +183,16 @@ describe('renderReport', () => {
     expect(report).toContain('| nameSpacing | 1 |');
     expect(report).toContain('**1. Student:** idk');
   });
+
+  it('prints the final notes when present', () => {
+    const report = renderReport({ startedAt: 'x', provider: 'p', model: 'm', judge: false }, [
+      {
+        persona: PERSONAS[0]!,
+        replies: [],
+        notes: { interests: ['games'], strengths: [], values: [], workStyle: [], limits: [], gaps: ['values'] },
+      },
+    ]);
+    expect(report).toContain('**Final notes:**');
+    expect(report).toContain('"games"');
+  });
 });

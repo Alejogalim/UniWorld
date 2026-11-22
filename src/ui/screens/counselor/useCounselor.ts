@@ -5,6 +5,7 @@ import {
   CAREER_IDEAS_MIN_STUDENT_MESSAGES,
   MissingKeyError,
   type CareerPath,
+  type CounselorNotes,
   type CounselorWeights,
 } from '@/core';
 import { createTauriSqlClient } from '@/core/adapters/tauri';
@@ -93,6 +94,8 @@ interface CounselorState {
   studentCount: number;
   weights: CounselorWeights;
   careers: CareerPath[];
+  /** What the counselor has noted so far (plan 30), or null before the first update. */
+  notes: CounselorNotes | null;
   /** Ids of the most recent batch of career ideas, or null when no batch is recorded. */
   latestBatchIds: number[] | null;
   status: CounselorStatus;
@@ -222,6 +225,19 @@ async function ensureSession(): Promise<number> {
   return sessionId;
 }
 
+/** Notes updates run one at a time, in order. A failure is logged and ignored: it never blocks the chat. */
+let notesChain: Promise<void> = Promise.resolve();
+function refreshNotes(sessionId: number): void {
+  notesChain = notesChain.then(async () => {
+    try {
+      const notes = await useCore().counselor.updateNotes(sessionId);
+      if (notes && useCounselor.getState().sessionId === sessionId) useCounselor.setState({ notes });
+    } catch (err) {
+      console.warn('Counselor notes were not updated:', err instanceof Error ? err.message : err);
+    }
+  });
+}
+
 /** Streams one exchange with the AI and records what it means for the intake. */
 async function runSend(pending: Pending): Promise<void> {
   const counselorId = uid();
@@ -259,6 +275,7 @@ async function runSend(pending: Pending): Promise<void> {
         pending: null,
       };
     });
+    refreshNotes(sessionId);
   } catch (err) {
     const failure = await failureFrom(err, 'chat', useCounselor.getState().sessionId);
     useCounselor.setState((s) => ({
@@ -288,6 +305,7 @@ export const useCounselor = create<CounselorState>((set, get) => ({
   studentCount: 0,
   weights: DEFAULT_WEIGHTS,
   careers: [],
+  notes: null,
   latestBatchIds: null,
   status: 'idle',
   error: null,
@@ -402,6 +420,7 @@ export const useCounselor = create<CounselorState>((set, get) => ({
       followUp: false,
       studentCount: 0,
       careers: [],
+      notes: null,
       latestBatchIds: null,
       error: null,
       pending: null,
@@ -423,6 +442,7 @@ export function resetCounselorState(): void {
     studentCount: 0,
     weights: DEFAULT_WEIGHTS,
     careers: [],
+    notes: null,
     latestBatchIds: null,
     status: 'idle',
     error: null,
@@ -444,19 +464,20 @@ async function loadLatest(): Promise<void> {
   );
   const sessionId = rows[0] ? Number(rows[0].id) : null;
   if (sessionId === null) {
-    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, followUp: false, studentCount: 0 });
+    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, followUp: false, studentCount: 0, notes: null });
     return;
   }
 
   const persisted = await store();
   const stored = await persisted.listMessages(sessionId);
   if (stored.length === 0) {
-    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, followUp: false, studentCount: 0 });
+    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, followUp: false, studentCount: 0, notes: null });
     return;
   }
 
   const session = await persisted.getSession(sessionId);
   const careers = await persisted.listCareers(sessionId);
+  const notes = await persisted.getNotes(sessionId).catch(() => null);
   const rebuilt = rebuildConversation(stored, questionText);
   const messages: ChatMessage[] = rebuilt.entries.map((entry) => ({ id: uid(), ...entry }));
   // The student's last message never got a reply: keep it, and offer to resend it.
@@ -470,6 +491,7 @@ async function loadLatest(): Promise<void> {
     studentCount: stored.filter((m) => m.role === 'user').length,
     weights: session?.weights ?? DEFAULT_WEIGHTS,
     careers,
+    notes,
     latestBatchIds: readLatestBatch(sessionId),
     pending: unanswered,
     error: unanswered

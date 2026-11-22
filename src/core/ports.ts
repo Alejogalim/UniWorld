@@ -5,6 +5,7 @@
  */
 import type {
   CareerPath,
+  CounselorNotes,
   CounselorWeights,
   Profile,
   Provider,
@@ -104,6 +105,9 @@ export interface CounselorPersistence {
   createSession(provider: Provider, weights?: CounselorWeights | null): Promise<number>;
   getSession(sessionId: number): Promise<CounselorSession | null>;
   setWeights(sessionId: number, weights: CounselorWeights): Promise<void>;
+  /** The running notes for a session, or null when none were saved yet. */
+  getNotes(sessionId: number): Promise<CounselorNotes | null>;
+  setNotes(sessionId: number, notes: CounselorNotes): Promise<void>;
   addMessage(sessionId: number, message: StoredMessage): Promise<void>;
   listMessages(sessionId: number): Promise<StoredMessage[]>;
   saveCareers(sessionId: number, careers: Omit<CareerPath, 'id' | 'saved'>[]): Promise<CareerPath[]>;

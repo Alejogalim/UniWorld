@@ -62,6 +62,7 @@ export function createAppCore(): CoreApi {
         (await getReady()).counselor.send(sessionId, text, onToken),
       careers: async (sessionId, weights) =>
         (await getReady()).counselor.careers(sessionId, weights),
+      updateNotes: async (sessionId) => (await getReady()).counselor.updateNotes(sessionId),
     },
     finder: {
       search: async (input, onEvent) => (await getReady()).finder.search(input, onEvent),

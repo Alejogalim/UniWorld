@@ -36,6 +36,15 @@
     "show": "Mostrar mis ideas de carrera",
     "need": "Responde a algunas preguntas más primero ({{count}} de {{min}})"
   },
+  "notes": {
+    "title": "Lo que he aprendido",
+    "hint": "Según tus respuestas hasta ahora. Se actualiza mientras hablamos.",
+    "interests": "Intereses",
+    "strengths": "Fortalezas",
+    "values": "Valores",
+    "workStyle": "Forma de trabajar",
+    "limits": "Límites prácticos"
+  },
   "reset": {
     "start": "Empezar una nueva conversación",
     "line": "Esto borra el chat en pantalla. Tus carreras guardadas se quedan.",
