@@ -66,7 +66,8 @@
       "label": "Nhà cung cấp của Tư vấn",
       "openrouter": "OpenRouter",
       "opencode": "OpenCode Go",
-      "needsKey": "OpenCode Go (hãy thêm khóa ở trên trước)"
+      "needsKey": "OpenCode Go (hãy thêm khóa ở trên trước)",
+      "hint": "Cố vấn dùng nhà cung cấp này. Thay đổi cũng áp dụng cho cuộc trò chuyện hiện tại của bạn."
     },
     "keySaving": "Đang lưu…",
     "loadFailed": "Không đọc được cài đặt AI: {{error}}"

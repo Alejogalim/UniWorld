@@ -49,7 +49,8 @@
     "missingKey": "Añade una clave de IA en Configuración.",
     "openSettings": "Abrir ajustes",
     "noReply": "El orientador no respondió. Inténtalo de nuevo para seguir.",
-    "tryAgain": "Intentar de nuevo"
+    "tryAgain": "Intentar de nuevo",
+    "switchAndRetry": "Cambiar a {{provider}} y reintentar"
   },
   "noProfile": {
     "title": "Termina tu perfil primero",

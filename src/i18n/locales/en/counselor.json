@@ -49,7 +49,8 @@
     "missingKey": "Add an AI key in Settings.",
     "openSettings": "Open settings",
     "noReply": "The counselor did not reply. Try again to continue.",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "switchAndRetry": "Switch to {{provider}} and retry"
   },
   "noProfile": {
     "title": "Finish your profile first",

@@ -243,7 +243,7 @@ export function AiSection() {
 
         <div className="flex flex-col gap-5 border-t border-hairline pt-6">
           <div className="grid max-w-[640px] gap-5 sm:grid-cols-2">
-            <Field label={t('ai.counselorProvider.label')}>
+            <Field label={t('ai.counselorProvider.label')} hint={t('ai.counselorProvider.hint')}>
               {(c) => (
                 <Select {...c} value={provider} onChange={(e) => void chooseProvider(e.target.value as Provider)}>
                   <option value="openrouter">{t('ai.counselorProvider.openrouter')}</option>

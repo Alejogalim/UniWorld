@@ -8,10 +8,14 @@ import {
   type CounselorWeights,
 } from '@/core';
 import { createTauriSqlClient } from '@/core/adapters/tauri';
+import type { Provider } from '@/core/contracts';
 import { getDb } from '@/db/client';
 import { SqlCounselorStore } from '@/store/counselor';
 import { useProfile } from '@/store/profile';
+import { getSecret } from '@/store/secrets';
+import { getSetting, setSetting } from '@/store/settings';
 import { decodeIntake, encodeIntake, INTAKE_TOTAL } from './intake';
+import { chooseSessionProvider, otherProvider } from './providerChoice';
 
 export interface ChatMessage {
   id: string;
@@ -29,6 +33,8 @@ export interface CounselorError {
   scope: 'chat' | 'careers' | 'save';
   missingKey: boolean;
   message: string;
+  /** Set when the other provider has a stored key: the note offers to switch to it and retry. */
+  switchTo?: Provider;
 }
 
 /** The last student text that did not get a reply, so "Try again" can resend it unchanged. */
@@ -91,6 +97,7 @@ interface CounselorState {
   ensureLoaded(): Promise<void>;
   sendAnswer(text: string): Promise<void>;
   retry(): Promise<void>;
+  switchProviderAndRetry(): Promise<void>;
   generateCareers(): Promise<void>;
   toggleSaved(careerId: number): Promise<void>;
   setWeight(dimension: keyof CounselorWeights, value: number): void;
@@ -123,6 +130,51 @@ function errorFrom(err: unknown, scope: CounselorError['scope']): CounselorError
     missingKey: isMissingKey(err),
     message: err instanceof Error ? err.message : String(err),
   };
+}
+
+/** The other provider, when it has a stored key. Never throws: a failed lookup just means no switch button. */
+async function switchOptionFor(sessionId: number | null): Promise<Provider | undefined> {
+  if (sessionId === null) return undefined;
+  try {
+    const db = await getDb();
+    const rows = await db.select<{ provider: string }[]>(
+      'SELECT provider FROM counselor_session WHERE id = $1',
+      [sessionId],
+    );
+    const current = rows[0]?.provider;
+    if (current !== 'openrouter' && current !== 'opencode') return undefined;
+    const other = otherProvider(current);
+    const key = await getSecret(other);
+    return key?.trim() ? other : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function failureFrom(
+  err: unknown,
+  scope: CounselorError['scope'],
+  sessionId: number | null,
+): Promise<CounselorError> {
+  const base = errorFrom(err, scope);
+  if (base.missingKey) return base;
+  const switchTo = await switchOptionFor(sessionId);
+  return switchTo ? { ...base, switchTo } : base;
+}
+
+/**
+ * Points the session at the provider the user chose in Settings, so it applies to the existing chat.
+ * Only switches when the chosen provider has a key; otherwise the session keeps its provider.
+ */
+async function syncSessionProvider(sessionId: number): Promise<void> {
+  const setting = await getSetting('default_provider');
+  const [openrouter, opencode] = await Promise.all([getSecret('openrouter'), getSecret('opencode')]);
+  const provider = chooseSessionProvider(setting, (p) =>
+    Boolean((p === 'openrouter' ? openrouter : opencode)?.trim()),
+  );
+  if (!provider) return;
+  const db = await getDb();
+  await db.execute('UPDATE counselor_session SET provider = $1 WHERE id = $2', [provider, sessionId]);
 }
 
 let persistence: Promise<SqlCounselorStore> | null = null;
@@ -177,6 +229,7 @@ async function runSend(pending: Pending): Promise<void> {
 
   try {
     const sessionId = await ensureSession();
+    await syncSessionProvider(sessionId);
     const reply = await useCore().counselor.send(sessionId, pending.encoded, (token) => {
       useCounselor.setState((s) => ({
         messages: s.messages.map((m) => (m.id === counselorId ? { ...m, text: m.text + token } : m)),
@@ -199,9 +252,10 @@ async function runSend(pending: Pending): Promise<void> {
       return { messages, intakeStep, status: 'idle', pending: null };
     });
   } catch (err) {
+    const failure = await failureFrom(err, 'chat', useCounselor.getState().sessionId);
     useCounselor.setState((s) => ({
       status: 'idle',
-      error: errorFrom(err, 'chat'),
+      error: failure,
       messages: s.messages.flatMap((m) => {
         if (m.id !== counselorId) return [m];
         if (m.text === '') return [];
@@ -269,18 +323,33 @@ export const useCounselor = create<CounselorState>((set, get) => ({
     }
   },
 
+  async switchProviderAndRetry() {
+    const { error } = get();
+    if (!error?.switchTo) return;
+    try {
+      await setSetting('default_provider', error.switchTo);
+    } catch (err) {
+      set({ error: errorFrom(err, error.scope) });
+      return;
+    }
+    // retry() resends through runSend or generateCareers, which sync the session provider first.
+    await get().retry();
+  },
+
   async generateCareers() {
     const { sessionId, status, studentCount, weights } = get();
     if (sessionId === null || status !== 'idle' || studentCount < CAREER_IDEAS_MIN_STUDENT_MESSAGES) return;
 
     set({ status: 'thinking-careers', error: null });
     try {
+      await syncSessionProvider(sessionId);
       const fresh = await useCore().counselor.careers(sessionId, weights);
       const ids = fresh.map((career) => career.id);
       writeLatestBatch(sessionId, ids);
       set((s) => ({ careers: [...s.careers, ...fresh], latestBatchIds: ids, status: 'idle' }));
     } catch (err) {
-      set({ status: 'idle', error: errorFrom(err, 'careers') });
+      const failure = await failureFrom(err, 'careers', sessionId);
+      set({ status: 'idle', error: failure });
     }
   },
 
