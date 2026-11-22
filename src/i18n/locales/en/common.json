@@ -13,7 +13,9 @@
     "counselor": "Counselor",
     "finder": "Finder",
     "myUnis": "My universities",
-    "settings": "Settings"
+    "settings": "Settings",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
   },
   "screens": {
     "onboarding": "Your profile",

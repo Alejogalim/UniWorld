@@ -13,7 +13,9 @@
     "counselor": "Tư vấn",
     "finder": "Tìm trường",
     "myUnis": "Trường của tôi",
-    "settings": "Cài đặt"
+    "settings": "Cài đặt",
+    "collapse": "Thu gọn thanh bên",
+    "expand": "Mở rộng thanh bên"
   },
   "screens": {
     "onboarding": "Hồ sơ của bạn",

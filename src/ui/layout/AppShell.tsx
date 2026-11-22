@@ -1,8 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation, useOutlet } from 'react-router';
-import { ListChecks, MessageCircle, Globe, Settings, Sparkles, type LucideIcon } from 'lucide-react';
+import {
+  ListChecks,
+  MessageCircle,
+  Globe,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Settings,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ErrorBoundary } from '@/app/ErrorBoundary';
 import { useProfile } from '@/store/profile';
@@ -34,6 +43,8 @@ export function AppShell() {
   // Onboarding is the first-run step; once a profile exists it is no longer a destination.
   const visibleNav = NAV.filter((item) => !(hasProfile && item.to === '/onboarding'));
   const starsOn = useStars((s) => s.on);
+  // Collapsed, the rail keeps the icons only, like a dock.
+  const [railCollapsed, setRailCollapsed] = useState(false);
 
   useEffect(() => {
     initStars();
@@ -43,14 +54,44 @@ export function AppShell() {
   const rightRail = location.pathname.startsWith('/counselor');
 
   return (
-    <div className="isolate grid h-screen grid-cols-[220px_1fr] grid-rows-[auto_1fr] overflow-hidden bg-background text-foreground">
+    <div
+      className={cn(
+        'isolate grid h-screen grid-rows-[auto_1fr] overflow-hidden bg-background text-foreground',
+        railCollapsed ? 'grid-cols-[72px_1fr]' : 'grid-cols-[220px_1fr]',
+      )}
+    >
       <Starfield enabled={starsOn} />
       <div className="ambient-haze" aria-hidden="true" />
-      <div className="app-rail flex items-baseline gap-2 self-stretch px-4 py-4">
-        <span className="wordmark">{t('appName')}</span>
-        <span className="rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
-          {t('beta')}
-        </span>
+      <div className={cn('app-rail flex items-center self-stretch py-4', railCollapsed ? 'justify-between px-1' : 'gap-2 px-4')}>
+        {railCollapsed ? (
+          // No logo yet: a placeholder mark until the brand exists.
+          <span aria-hidden="true" className="rim grid size-8 place-items-center rounded-control bg-shoal">
+            <span className="size-1.5 rounded-full bg-signal" />
+          </span>
+        ) : (
+          <>
+            <span className="wordmark">{t('appName')}</span>
+            <span className="rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
+              {t('beta')}
+            </span>
+          </>
+        )}
+        <button
+          type="button"
+          onClick={() => setRailCollapsed((v) => !v)}
+          aria-label={t(railCollapsed ? 'nav.expand' : 'nav.collapse')}
+          title={t(railCollapsed ? 'nav.expand' : 'nav.collapse')}
+          className={cn(
+            'grid size-7 shrink-0 place-items-center rounded-control text-chart-grey outline-none transition-colors hover:bg-shoal hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
+            !railCollapsed && 'ml-auto',
+          )}
+        >
+          {railCollapsed ? (
+            <PanelLeftOpen className="size-4" aria-hidden="true" />
+          ) : (
+            <PanelLeftClose className="size-4" aria-hidden="true" />
+          )}
+        </button>
       </div>
 
       <header
@@ -64,15 +105,18 @@ export function AppShell() {
         </h1>
       </header>
 
-      <aside className="app-rail flex flex-col px-4 pb-4">
+      <aside className={cn('app-rail flex flex-col pb-4', railCollapsed ? 'items-center px-2' : 'px-4')}>
         <nav className="flex flex-col gap-1">
           {visibleNav.map(({ to, key, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
+              title={t(key)}
+              aria-label={railCollapsed ? t(key) : undefined}
               className={({ isActive }) =>
                 cn(
-                  'nav-item relative flex h-10 items-center gap-2 rounded-control px-3 font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
+                  'nav-item relative flex h-10 items-center rounded-control font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
+                  railCollapsed ? 'w-10 justify-center' : 'w-full gap-2 px-3',
                   isActive
                     ? 'rim bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))] font-semibold text-foreground'
                     : 'text-chart-grey hover:bg-shoal hover:text-foreground',
@@ -82,7 +126,7 @@ export function AppShell() {
               {({ isActive }) => (
                 <>
                   <Icon className="nav-item__icon size-4" strokeWidth={1.75} aria-hidden="true" />
-                  {t(key)}
+                  {!railCollapsed && t(key)}
                   {isActive && (
                     <span
                       aria-hidden="true"
@@ -94,7 +138,7 @@ export function AppShell() {
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto flex gap-2">
+        <div className={cn('mt-auto flex gap-2', railCollapsed && 'flex-col items-center')}>
           <LanguageSwitcher />
           <ThemeSwitcher />
           <StarsSwitcher />
