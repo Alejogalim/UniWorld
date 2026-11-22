@@ -39,6 +39,9 @@ export function AppShell() {
     initStars();
   }, []);
 
+  // The counselor screen owns a right sidebar; the title is centered in what is left of it.
+  const rightRail = location.pathname.startsWith('/counselor');
+
   return (
     <div className="isolate grid h-screen grid-cols-[220px_1fr] grid-rows-[auto_1fr] overflow-hidden bg-background text-foreground">
       <Starfield enabled={starsOn} />
@@ -50,7 +53,12 @@ export function AppShell() {
         </span>
       </div>
 
-      <header className="flex items-baseline justify-between self-stretch bg-transparent px-8 py-4">
+      <header
+        className={cn(
+          'flex items-baseline justify-center self-stretch bg-transparent px-8 py-4',
+          rightRail && 'min-[900px]:pr-[272px]',
+        )}
+      >
         <h1 key={location.pathname} className="screen-title">
           <span className="screen-title__type">{t(active?.titleKey ?? 'appName')}</span>
         </h1>
