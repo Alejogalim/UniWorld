@@ -543,13 +543,23 @@
   50% { opacity: 1; }
 }
 
-/* Rail: transparent over the ground. A 1px hairline separates it in light mode only. */
+/* Rail: transparent over the ground. A 1px hairline separates it in light mode only. It sits above the content
+   layer so the Finder globe, which runs under it, never takes its pointer events. */
 .app-rail {
+  position: relative;
+  z-index: 10;
   background: transparent;
   border-right: 1px solid var(--hairline);
 }
 .dark .app-rail {
   border-right-color: transparent;
+}
+/* Finder (plan 34): the globe continues under the rail. A static wash of the ground colour keeps the icons legible
+   and fades to nothing at the rail's edge, so rail and map are one scene. Never a backdrop blur here: the globe
+   canvas redraws every frame and a full-height blur over it is too slow on software WebKitGTK. */
+.app-rail--over-globe {
+  border-right-color: transparent;
+  background: linear-gradient(to right, color-mix(in srgb, var(--background) 70%, transparent), transparent);
 }
 
 /* Nav item: Inter labels, 40px rows with 14px corners. The ember dot lands on the active item. */
@@ -617,5 +627,18 @@
   }
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .finder-glass { background-color: color-mix(in srgb, var(--panel) 94%, transparent); }
+  }
+}
+
+/* Finder chip rows (plan 34): one line that scrolls sideways, scrollbar hidden (wheel, drag and Tab still scroll it),
+   with a 24px fade at the right edge. The row's 24px right padding lets the last chip scroll clear of the fade. */
+@layer components {
+  .chip-scroll {
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  }
+  .chip-scroll::-webkit-scrollbar {
+    display: none;
   }
 }

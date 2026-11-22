@@ -1,6 +1,6 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode, type WheelEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/ui/components/Chip';
 import { Flag } from '@/ui/components/Flag';
@@ -12,15 +12,24 @@ import { useFinder } from './useFinder';
 interface CountryPickerProps {
   /** Fires with an ISO code on row hover/focus, and null when the pointer or focus leaves the list. */
   onHoverCountry: (iso: string | null) => void;
-  /** Fill the parent height and let only the list scroll (used by the split countries tab). */
+  /** Fill the parent height and let only the list scroll (used by the countries tab). */
   fill?: boolean;
-  /** Hide the selected-countries summary when it lives in the other column. */
+  /** Show the removable selected-countries row above the list (default). */
   showSelected?: boolean;
+  /** Rendered between the filter and the list (the Finder's region chips). */
+  beforeList?: ReactNode;
 }
 
 /** Accent-insensitive, case-insensitive match on the name, or an exact code. */
 function fold(s: string): string {
   return s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+}
+
+/** Lets a vertical wheel scroll a one-line chip row sideways (the rows hide their scrollbar). */
+export function wheelToX(event: WheelEvent<HTMLElement>) {
+  const el = event.currentTarget;
+  if (el.scrollWidth <= el.clientWidth || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+  el.scrollLeft += event.deltaY;
 }
 
 /**
@@ -31,6 +40,7 @@ export function CountryPicker({
   onHoverCountry,
   fill = false,
   showSelected = true,
+  beforeList,
 }: CountryPickerProps) {
   const { t, i18n } = useTranslation('finder');
   const scope = useFinder((s) => s.scope);
@@ -59,9 +69,15 @@ export function CountryPicker({
   hoverRef.current = onHoverCountry;
   useEffect(() => () => hoverRef.current(null), []);
 
+  // Scroll the list only: scrollIntoView would also scroll the dock and clip the filter field.
   useEffect(() => {
     if (activeIndex < 0) return;
-    document.getElementById(optionId(activeIndex))?.scrollIntoView({ block: 'nearest' });
+    const list = document.getElementById(listboxId);
+    const row = document.getElementById(optionId(activeIndex));
+    if (!list || !row) return;
+    if (row.offsetTop < list.scrollTop) list.scrollTop = row.offsetTop;
+    else if (row.offsetTop + row.offsetHeight > list.scrollTop + list.clientHeight)
+      list.scrollTop = row.offsetTop + row.offsetHeight - list.clientHeight;
   }, [activeIndex]);
 
   const focusActive = (index: number) => {
@@ -72,8 +88,7 @@ export function CountryPicker({
 
   return (
     <div
-      className={cn('flex flex-col gap-3', fill && 'h-full min-h-0 overflow-hidden')}
-      onMouseLeave={() => onHoverCountry(null)}
+      className={cn('flex flex-col gap-3', fill && 'h-full min-h-0')}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) onHoverCountry(null);
       }}
@@ -109,16 +124,21 @@ export function CountryPicker({
         }}
       />
 
+      {/* Region chips and the selected row sit between the filter and the list; focusing them clears the globe focus. */}
+      <div className="flex shrink-0 flex-col gap-3 empty:hidden" onFocus={() => onHoverCountry(null)}>
+        {beforeList}
+        {showSelected && <SelectedCountries />}
+      </div>
+
       <div
         id={listboxId}
         role="listbox"
         aria-multiselectable="true"
         aria-label={t('sections.countries')}
+        onMouseLeave={() => onHoverCountry(null)}
         className={cn(
-          'grid min-h-0 grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[560px]:grid-cols-2',
-          fill
-            ? 'flex-1 @max-[679px]:max-h-[clamp(160px,24vh,260px)] @max-[679px]:flex-none'
-            : 'max-h-[min(38vh,360px)]',
+          'relative grid min-h-0 grid-cols-1 content-start gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[560px]:grid-cols-2',
+          fill ? 'flex-1' : 'max-h-[min(38vh,360px)]',
         )}
       >
         {filtered.length === 0 ? (
@@ -164,17 +184,16 @@ export function CountryPicker({
           })
         )}
       </div>
-
-      {showSelected && <SelectedCountries />}
     </div>
   );
 }
 
-/** Read-only summary of the chosen countries. Deselection happens by toggling a row in the list. */
+/** The chosen countries: a removable chip row (countries tab), or a compact inline summary (results header). */
 export function SelectedCountries({ compact = false }: { compact?: boolean }) {
   const { t, i18n } = useTranslation('finder');
   const scope = useFinder((s) => s.scope);
   const setScope = useFinder((s) => s.setScope);
+  const toggleCountry = useFinder((s) => s.toggleCountry);
   const uiLang = i18n.resolvedLanguage ?? 'en';
   const codes = scope.kind === 'countries' ? scope.codes : [];
 
@@ -191,7 +210,7 @@ export function SelectedCountries({ compact = false }: { compact?: boolean }) {
       <button
         type="button"
         onClick={() => setScope({ kind: 'global' })}
-        className="text-xs text-chart-grey outline-none transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+        className="shrink-0 whitespace-nowrap text-xs text-chart-grey outline-none transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
       >
         {t('scope.clear')}
       </button>
@@ -207,17 +226,36 @@ export function SelectedCountries({ compact = false }: { compact?: boolean }) {
     );
   }
 
+  if (codes.length === 0) return null;
+
   return (
-    <section aria-live="polite" aria-label={t('scope.selected')} className="flex flex-col gap-2">
-      <div className="flex items-baseline justify-between gap-2">
-        <h3 className="text-sm font-medium text-foreground">{t('scope.selected')}</h3>
-        {clear}
-      </div>
-      {codes.length === 0 ? (
-        <p className="text-sm text-chart-grey">{t('scope.selectedEmpty')}</p>
-      ) : (
-        <div className="flex flex-wrap gap-2">{badges}</div>
-      )}
-    </section>
+    <div
+      role="group"
+      aria-label={t('scope.selected')}
+      onWheel={wheelToX}
+      className="chip-scroll -my-1 flex items-center gap-2 overflow-x-auto py-1 pr-6"
+    >
+      {codes.map((iso) => {
+        const name = countryName(iso, uiLang);
+        return (
+          <span
+            key={iso}
+            className="inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-pill border border-hairline bg-shoal py-0.5 pr-1 pl-2 text-[0.8125rem] leading-tight text-foreground"
+          >
+            <Flag code={iso} className="size-4" />
+            <span className="whitespace-nowrap">{name}</span>
+            <button
+              type="button"
+              onClick={() => toggleCountry(iso)}
+              aria-label={t('scope.remove', { name })}
+              className="grid size-5 place-items-center rounded-full text-chart-grey outline-none transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-signal"
+            >
+              <X className="size-3" strokeWidth={2} aria-hidden="true" />
+            </button>
+          </span>
+        );
+      })}
+      {clear}
+    </div>
   );
 }

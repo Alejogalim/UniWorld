@@ -46,6 +46,8 @@ export function AppShell() {
   const [railCollapsed, setRailCollapsed] = useState(false);
 
   const onCounselor = location.pathname.startsWith('/counselor');
+  // The Finder globe runs under the rail; the rail then takes a soft wash for legibility.
+  const onFinder = location.pathname === '/finder';
   // The counselor, the Finder and My universities fill the working column: the Finder's globe needs the
   // space above its bottom dock, and the university cards/editor start at the top.
   const hideTitle = onCounselor || location.pathname === '/finder' || location.pathname === '/my-unis';
@@ -61,7 +63,7 @@ export function AppShell() {
       <Starfield />
       <div className="ambient-haze" aria-hidden="true" />
 
-      <aside className="app-rail flex min-h-0 flex-col gap-4 px-3 py-4">
+      <aside className={cn('app-rail flex min-h-0 flex-col gap-4 px-3 py-4', onFinder && 'app-rail--over-globe')}>
         {railCollapsed ? (
           // Collapsed: the logo alone, then the expand button below it. The -mb-2 trims the
           // aside's 16px gap to 8px so the nav sits a small gap under the expand button.

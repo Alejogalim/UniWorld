@@ -82,6 +82,8 @@ export function FinderScreen() {
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState<{ rorId: string; program: string; uni: UniResult } | null>(null);
   const panelRef = useRef<HTMLElement>(null);
+  // The working column: the globe (full window) keeps its sphere centred here.
+  const sceneRef = useRef<HTMLDivElement>(null);
   const pointerInsideRef = useRef(false);
   const keyboardOpenRef = useRef(false);
   const phaseRef = useRef(phase);
@@ -221,6 +223,7 @@ export function FinderScreen() {
         focusCountry={focusIso}
         listHover={hoverIso !== null}
         fill
+        centerOn={sceneRef}
         theme={theme}
       />
     </Suspense>
@@ -369,9 +372,9 @@ export function FinderScreen() {
   );
 
   return (
-    <div className="relative flex min-h-full w-full flex-col">
-      {/* The globe is the tab background: full-bleed, no square frame. */}
-      <div className="absolute inset-0 overflow-hidden">{globe}</div>
+    <div ref={sceneRef} className="relative flex min-h-full w-full flex-col">
+      {/* The globe is the tab background: the whole window, running under the rail (plan 34), centred on this column. */}
+      <div className="fixed inset-0 overflow-hidden">{globe}</div>
 
       <div className="pointer-events-none relative z-10 flex w-full flex-1 flex-col px-4 py-6 sm:px-6">
         <div className="mt-auto flex w-full justify-end">

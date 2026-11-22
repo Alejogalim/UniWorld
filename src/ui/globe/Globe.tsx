@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import Globe, { type GlobeInstance } from 'globe.gl';
 import { useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,8 @@ export interface GlobeViewProps {
   listHover: boolean;
   /** Fill the parent (full-bleed background) instead of drawing a square. */
   fill?: boolean;
+  /** Keep the sphere centred on this element instead of the canvas (the Finder globe runs under the rail). */
+  centerOn?: RefObject<HTMLElement | null>;
   theme: 'light' | 'dark';
 }
 
@@ -98,6 +100,7 @@ export default function GlobeView({
   focusCountry,
   listHover,
   fill = false,
+  centerOn,
   theme,
 }: GlobeViewProps) {
   const { t, i18n } = useTranslation('finder');
@@ -116,6 +119,9 @@ export default function GlobeView({
     pointerInside: false,
     pointerOverGlobe: false,
     fill,
+    centerOn: (centerOn ?? null) as RefObject<HTMLElement | null> | null,
+    /** The globeOffset in px currently applied (the pointer hit test uses it). */
+    offset: [0, 0] as [number, number],
     palette: null as Palette | null,
     uiLang: i18n.language as UiLang,
     onToggleCountry,
@@ -134,6 +140,7 @@ export default function GlobeView({
   state.current.highlightContinent = highlightContinent;
   state.current.focusCountry = focusCountry;
   state.current.fill = fill;
+  state.current.centerOn = centerOn ?? null;
   state.current.onToggleCountry = onToggleCountry;
   state.current.reduceMotion = reduceMotion;
   state.current.uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
@@ -265,8 +272,8 @@ export default function GlobeView({
       const angularRadius = Math.asin(Math.min(1, 100 / distance));
       const tanHalfFov = Math.tan((camera.fov * Math.PI) / 360);
       const projectedRadius = (Math.tan(angularRadius) / tanHalfFov) * (rect.height / 2);
-      const dx = event.clientX - rect.left - rect.width / 2;
-      const dy = event.clientY - rect.top - rect.height / 2;
+      const dx = event.clientX - rect.left - rect.width / 2 - state.current.offset[0];
+      const dy = event.clientY - rect.top - rect.height / 2 - state.current.offset[1];
       const over = dx * dx + dy * dy <= projectedRadius * projectedRadius;
       if (over === state.current.pointerOverGlobe) return;
       state.current.pointerOverGlobe = over;
@@ -293,9 +300,33 @@ export default function GlobeView({
     });
     resize.observe(el);
 
+    // With an anchor, the canvas may be wider than the column (the Finder runs it under the rail); offset the
+    // sphere so its centre stays on the anchor's centre. Re-measured on canvas and anchor resizes (rail toggle).
+    const syncOffset = () => {
+      const anchor = state.current.centerOn?.current ?? null;
+      let next: [number, number] = [0, 0];
+      if (anchor) {
+        const a = anchor.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        next = [
+          Math.round(a.left + a.width / 2 - (r.left + r.width / 2)),
+          Math.round(a.top + a.height / 2 - (r.top + r.height / 2)),
+        ];
+      }
+      const [x, y] = state.current.offset;
+      if (next[0] === x && next[1] === y) return;
+      state.current.offset = next;
+      globe.globeOffset(next);
+    };
+    const offsetResize = new ResizeObserver(syncOffset);
+    offsetResize.observe(el);
+    const anchorEl = state.current.centerOn?.current ?? null;
+    if (anchorEl) offsetResize.observe(anchorEl);
+
     globeRef.current = globe;
     return () => {
       resize.disconnect();
+      offsetResize.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
       cancelAnimationFrame(s.frame);
       s.frame = 0;
