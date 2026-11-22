@@ -69,7 +69,7 @@ export function AppShell() {
           // aside's 16px gap to 8px so the nav sits a small gap under the expand button.
           <div className="-mb-2 flex flex-col gap-2">
             <span className="grid size-9 shrink-0 place-items-center">
-              <Logo className="size-7" />
+              <Logo className="size-9" />
             </span>
             <button
               type="button"
@@ -84,7 +84,7 @@ export function AppShell() {
         ) : (
           <div className="flex h-9 items-center gap-2">
             <span className="grid size-9 shrink-0 place-items-center">
-              <Logo className="size-7" />
+              <Logo className="size-9" />
             </span>
             <span className="wordmark shrink-0">{t('appName')}</span>
             <button
