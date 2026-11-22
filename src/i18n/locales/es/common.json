@@ -9,18 +9,18 @@
   },
   "nav": {
     "onboarding": "Perfil",
-    "counselor": "Orientador",
-    "finder": "Buscador",
-    "myUnis": "Mis universidades",
+    "counselor": "Brújula",
+    "finder": "Atlas",
+    "myUnis": "Preselección",
     "settings": "Configuración",
     "collapse": "Contraer la barra lateral",
     "expand": "Expandir la barra lateral"
   },
   "screens": {
     "onboarding": "Tu perfil",
-    "counselor": "Orientador",
-    "finder": "Buscador de universidades",
-    "myUnis": "Mis universidades",
+    "counselor": "Brújula",
+    "finder": "Atlas",
+    "myUnis": "Preselección",
     "settings": "Configuración"
   },
   "theme": {

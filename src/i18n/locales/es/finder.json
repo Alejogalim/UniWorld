@@ -10,13 +10,13 @@
     "results": "Resultados"
   },
   "tabs": {
-    "label": "Secciones del buscador",
+    "label": "Secciones de Atlas",
     "careers": "Carreras",
     "countries": "Países",
     "search": "Buscar"
   },
   "careers": {
-    "none": "Todavía no hay carreras guardadas. Guarda una carrera en el Consejero o escríbela abajo.",
+    "none": "Todavía no hay carreras guardadas. Guarda una carrera en Brújula o escríbela abajo.",
     "placeholder": "Escribe una carrera y pulsa Intro"
   },
   "scope": {
@@ -102,7 +102,7 @@
     "inList": "En tu lista",
     "openList": "Abrir mi lista",
     "lastChecked": "Última revisión",
-    "noProgram": "Abre esta universidad desde el buscador o desde Mis universidades. Al enlace le falta el programa.",
+    "noProgram": "Abre esta universidad desde Atlas o Preselección. Al enlace le falta el programa.",
     "addError": "No se pudo añadir la universidad. Inténtalo de nuevo.",
     "errorTitle": "No se pudo cargar esta página",
     "tryAgain": "Intentar de nuevo",
@@ -120,7 +120,7 @@
       "apply": "Cómo solicitar"
     },
     "untitled": "Detalles de la universidad",
-    "addNeedsName": "Abre esta universidad desde el Buscador para añadirla a tu lista."
+    "addNeedsName": "Abre esta universidad desde Atlas para añadirla a tu lista."
   },
   "source": {
     "ownPages": "Encontrado en las páginas de las propias universidades. Puede haber menos resultados que con la búsqueda web."

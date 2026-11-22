@@ -29,7 +29,7 @@
     },
     "openrouter": {
       "title": "OpenRouter",
-      "finderNeedsKey": "Finder needs an OpenRouter key."
+      "finderNeedsKey": "Atlas needs an OpenRouter key."
     },
     "opencode": {
       "title": "OpenCode Go"
@@ -50,8 +50,8 @@
     "connected": "Connection works",
     "testFailed": "Connection failed",
     "removeKey": "Remove key",
-    "removeOpenrouterConfirm": "Remove the OpenRouter key from this computer? Finder will not search until you add a key again.",
-    "removeOpencodeConfirm": "Remove the OpenCode Go key from this computer? The counselor will use OpenRouter instead.",
+    "removeOpenrouterConfirm": "Remove the OpenRouter key from this computer? Atlas will not search until you add a key again.",
+    "removeOpencodeConfirm": "Remove the OpenCode Go key from this computer? Compass will use OpenRouter instead.",
     "removeYes": "Yes, remove key",
     "cancel": "Cancel",
     "keySaved": "Key saved in your keychain.",

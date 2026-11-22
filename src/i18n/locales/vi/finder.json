@@ -10,13 +10,13 @@
     "results": "Kết quả"
   },
   "tabs": {
-    "label": "Các mục tìm kiếm",
+    "label": "Các mục của Bản đồ",
     "careers": "Nghề nghiệp",
     "countries": "Quốc gia",
     "search": "Tìm kiếm"
   },
   "careers": {
-    "none": "Chưa có nghề nghiệp nào được lưu. Hãy lưu một nghề trong Tư vấn viên hoặc nhập bên dưới.",
+    "none": "Chưa có nghề nghiệp nào được lưu. Hãy lưu một nghề trong La bàn hoặc nhập bên dưới.",
     "placeholder": "Nhập tên nghề rồi nhấn Enter"
   },
   "scope": {
@@ -102,7 +102,7 @@
     "inList": "Đã có trong danh sách",
     "openList": "Mở danh sách của tôi",
     "lastChecked": "Kiểm tra lần cuối",
-    "noProgram": "Hãy mở trường này từ Tìm trường hoặc Trường của tôi. Liên kết thiếu tên chương trình.",
+    "noProgram": "Hãy mở trường này từ Bản đồ hoặc Danh sách chọn. Liên kết thiếu tên chương trình.",
     "addError": "Không thể thêm trường. Hãy thử lại.",
     "errorTitle": "Không thể tải trang này",
     "tryAgain": "Thử lại",
@@ -120,7 +120,7 @@
       "apply": "Cách nộp hồ sơ"
     },
     "untitled": "Thông tin trường",
-    "addNeedsName": "Hãy mở trường này từ Tìm trường để thêm vào danh sách."
+    "addNeedsName": "Hãy mở trường này từ Bản đồ để thêm vào danh sách."
   },
   "source": {
     "ownPages": "Tìm thấy từ trang của chính các trường đại học. Số kết quả có thể ít hơn so với tìm kiếm web."

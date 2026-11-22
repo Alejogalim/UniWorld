@@ -15,10 +15,10 @@
     "progress": "Pregunta {{n}} de {{total}}"
   },
   "chat": {
-    "label": "Orientador",
-    "log": "Conversación con el orientador",
+    "label": "Brújula",
+    "log": "Conversación con Brújula",
     "placeholderAnswer": "Escribe tu respuesta…",
-    "placeholderReply": "Responde al orientador",
+    "placeholderReply": "Responde a Brújula",
     "send": "Enviar",
     "sending": "Enviando…",
     "startTitle": "Orientación profesional",
@@ -62,18 +62,18 @@
     "savedHeading": "Carreras guardadas"
   },
   "errors": {
-    "chatTitle": "El orientador no pudo responder",
+    "chatTitle": "Brújula no pudo responder",
     "careersTitle": "No se pudieron generar ideas de carrera",
     "saveTitle": "No se pudo actualizar esa carrera",
     "missingKey": "Añade una clave de IA en Configuración.",
     "openSettings": "Abrir ajustes",
-    "noReply": "El orientador no respondió. Inténtalo de nuevo para seguir.",
+    "noReply": "Brújula no respondió. Inténtalo de nuevo para seguir.",
     "tryAgain": "Intentar de nuevo",
     "switchAndRetry": "Cambiar a {{provider}} y reintentar"
   },
   "noProfile": {
     "title": "Termina tu perfil primero",
-    "description": "El orientador necesita tu nombre, tus idiomas y tu programa para hacer las preguntas adecuadas.",
+    "description": "Brújula necesita tu nombre, tus idiomas y tu programa para hacer las preguntas adecuadas.",
     "action": "Empezar el perfil"
   }
 }

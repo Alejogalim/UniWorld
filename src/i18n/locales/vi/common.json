@@ -9,18 +9,18 @@
   },
   "nav": {
     "onboarding": "Hồ sơ",
-    "counselor": "Tư vấn",
-    "finder": "Tìm trường",
-    "myUnis": "Trường của tôi",
+    "counselor": "La bàn",
+    "finder": "Bản đồ",
+    "myUnis": "Danh sách chọn",
     "settings": "Cài đặt",
     "collapse": "Thu gọn thanh bên",
     "expand": "Mở rộng thanh bên"
   },
   "screens": {
     "onboarding": "Hồ sơ của bạn",
-    "counselor": "Tư vấn hướng nghiệp",
-    "finder": "Tìm trường đại học",
-    "myUnis": "Trường của tôi",
+    "counselor": "La bàn",
+    "finder": "Bản đồ",
+    "myUnis": "Danh sách chọn",
     "settings": "Cài đặt"
   },
   "theme": {

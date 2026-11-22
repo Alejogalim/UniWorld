@@ -15,10 +15,10 @@
     "progress": "Question {{n}} of {{total}}"
   },
   "chat": {
-    "label": "Counselor",
-    "log": "Conversation with the counselor",
+    "label": "Compass",
+    "log": "Conversation with Compass",
     "placeholderAnswer": "Type your answer…",
-    "placeholderReply": "Reply to the counselor",
+    "placeholderReply": "Reply to Compass",
     "send": "Send",
     "sending": "Sending…",
     "startTitle": "Career Guidance",
@@ -62,18 +62,18 @@
     "savedHeading": "Saved careers"
   },
   "errors": {
-    "chatTitle": "The counselor could not reply",
+    "chatTitle": "Compass could not reply",
     "careersTitle": "Career ideas could not be made",
     "saveTitle": "That career could not be updated",
     "missingKey": "Add an AI key in Settings.",
     "openSettings": "Open settings",
-    "noReply": "The counselor did not reply. Try again to continue.",
+    "noReply": "Compass did not reply. Try again to continue.",
     "tryAgain": "Try again",
     "switchAndRetry": "Switch to {{provider}} and retry"
   },
   "noProfile": {
     "title": "Finish your profile first",
-    "description": "The counselor needs your name, languages and program to ask the right questions.",
+    "description": "Compass needs your name, languages and program to ask the right questions.",
     "action": "Start onboarding"
   }
 }

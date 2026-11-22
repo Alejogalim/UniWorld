@@ -1,8 +1,8 @@
 {
   "empty": {
     "title": "Danh sách của bạn đang trống",
-    "description": "Mở một trường trong Tìm trường và thêm vào danh sách.",
-    "action": "Mở Tìm trường"
+    "description": "Mở một trường trong Bản đồ và thêm vào danh sách.",
+    "action": "Mở Bản đồ"
   },
   "summary": {
     "total_one": "trường đại học",

@@ -1,8 +1,8 @@
 {
   "empty": {
     "title": "Tu lista está vacía",
-    "description": "Abre una universidad en el buscador y añádela a tu lista.",
-    "action": "Abrir el buscador"
+    "description": "Abre una universidad en Atlas y añádela a tu lista.",
+    "action": "Abrir Atlas"
   },
   "summary": {
     "total_one": "universidad",

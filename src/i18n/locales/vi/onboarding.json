@@ -1,7 +1,7 @@
 {
   "welcome": {
     "title": "Chào mừng đến với UniWorld. <strong>Tìm những trường đại học phù hợp với nghề nghiệp của bạn.</strong>",
-    "subtitle": "Sáu câu hỏi ngắn, khoảng một phút. Sau đó, một cố vấn giúp bạn suy nghĩ về nghề nghiệp, còn mục Tìm trường tìm các trường đại học thật có dạy những ngành đó.",
+    "subtitle": "Sáu câu hỏi ngắn, khoảng một phút. Sau đó, La bàn giúp bạn suy nghĩ về nghề nghiệp, còn Bản đồ tìm các trường đại học thật có dạy những ngành đó.",
     "switchLabel": "Ngôn ngữ giao diện",
     "getStarted": "Bắt đầu"
   },
@@ -91,11 +91,11 @@
     "title": "Kết nối khóa AI của bạn",
     "openrouter": {
       "label": "Khóa OpenRouter",
-      "recommended": "Được khuyến nghị. Công cụ tìm kiếm cần khóa này để tìm kiếm web đã xác minh."
+      "recommended": "Được khuyến nghị. Bản đồ cần khóa này để tìm kiếm web đã xác minh."
     },
     "opencode": {
       "label": "Khóa OpenCode Go",
-      "optional": "Không bắt buộc. Chỉ khóa này cũng đủ cho cố vấn.",
+      "optional": "Không bắt buộc. Chỉ khóa này cũng đủ cho La bàn.",
       "experimental": "Thử nghiệm"
     },
     "errorAtLeastOne": "Thêm ít nhất một khóa để tiếp tục.",

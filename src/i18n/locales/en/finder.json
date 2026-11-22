@@ -10,13 +10,13 @@
     "results": "Results"
   },
   "tabs": {
-    "label": "Finder sections",
+    "label": "Atlas sections",
     "careers": "Careers",
     "countries": "Countries",
     "search": "Search"
   },
   "careers": {
-    "none": "No saved careers yet. Save a career in the Counselor, or type one below.",
+    "none": "No saved careers yet. Save a career in Compass, or type one below.",
     "placeholder": "Type a career and press Enter"
   },
   "scope": {
@@ -102,7 +102,7 @@
     "inList": "In your list",
     "openList": "Open my list",
     "lastChecked": "Last checked",
-    "noProgram": "Open this university from the Finder or My universities. The program is missing from the link.",
+    "noProgram": "Open this university from Atlas or Shortlist. The program is missing from the link.",
     "addError": "Could not add this university. Try again.",
     "errorTitle": "This page could not load",
     "tryAgain": "Try again",
@@ -120,7 +120,7 @@
       "apply": "How to apply"
     },
     "untitled": "University details",
-    "addNeedsName": "Open this university from the Finder to add it to your list."
+    "addNeedsName": "Open this university from Atlas to add it to your list."
   },
   "source": {
     "ownPages": "Found from universities' own pages. Results can be fewer than with web search."

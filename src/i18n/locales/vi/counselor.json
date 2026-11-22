@@ -15,10 +15,10 @@
     "progress": "Câu hỏi {{n}} trên {{total}}"
   },
   "chat": {
-    "label": "Cố vấn",
-    "log": "Cuộc trò chuyện với cố vấn",
+    "label": "La bàn",
+    "log": "Cuộc trò chuyện với La bàn",
     "placeholderAnswer": "Nhập câu trả lời của bạn…",
-    "placeholderReply": "Trả lời cố vấn",
+    "placeholderReply": "Trả lời La bàn",
     "send": "Gửi",
     "sending": "Đang gửi…",
     "startTitle": "Hướng nghiệp",
@@ -62,18 +62,18 @@
     "savedHeading": "Nghề nghiệp đã lưu"
   },
   "errors": {
-    "chatTitle": "Cố vấn chưa thể trả lời",
+    "chatTitle": "La bàn chưa thể trả lời",
     "careersTitle": "Chưa thể tạo gợi ý nghề nghiệp",
     "saveTitle": "Chưa thể cập nhật nghề này",
     "missingKey": "Hãy thêm khóa AI trong Cài đặt.",
     "openSettings": "Mở cài đặt",
-    "noReply": "Cố vấn chưa trả lời. Hãy thử lại để tiếp tục.",
+    "noReply": "La bàn chưa trả lời. Hãy thử lại để tiếp tục.",
     "tryAgain": "Thử lại",
     "switchAndRetry": "Chuyển sang {{provider}} và thử lại"
   },
   "noProfile": {
     "title": "Hãy hoàn tất hồ sơ trước",
-    "description": "Cố vấn cần tên, ngôn ngữ và chương trình học của bạn để đặt đúng câu hỏi.",
+    "description": "La bàn cần tên, ngôn ngữ và chương trình học của bạn để đặt đúng câu hỏi.",
     "action": "Bắt đầu hồ sơ"
   }
 }

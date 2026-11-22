@@ -3,8 +3,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation, useOutlet } from 'react-router';
 import {
-  ListChecks,
-  MessageCircle,
+  Bookmark,
+  Compass,
   Globe,
   PanelLeftClose,
   PanelLeftOpen,
@@ -22,9 +22,9 @@ import { Logo } from './Logo';
 
 const NAV: { to: string; key: string; titleKey: string; icon: LucideIcon }[] = [
   { to: '/onboarding', key: 'nav.onboarding', titleKey: 'screens.onboarding', icon: Sparkles },
-  { to: '/counselor', key: 'nav.counselor', titleKey: 'screens.counselor', icon: MessageCircle },
+  { to: '/counselor', key: 'nav.counselor', titleKey: 'screens.counselor', icon: Compass },
   { to: '/finder', key: 'nav.finder', titleKey: 'screens.finder', icon: Globe },
-  { to: '/my-unis', key: 'nav.myUnis', titleKey: 'screens.myUnis', icon: ListChecks },
+  { to: '/my-unis', key: 'nav.myUnis', titleKey: 'screens.myUnis', icon: Bookmark },
   { to: '/settings', key: 'nav.settings', titleKey: 'screens.settings', icon: Settings },
 ];
 

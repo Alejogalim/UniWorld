@@ -1,7 +1,7 @@
 {
   "welcome": {
     "title": "Welcome to UniWorld. <strong>Find the universities that fit your career.</strong>",
-    "subtitle": "Six short questions, about a minute. Then a counselor helps you think about careers, and the Finder looks for real universities that teach them.",
+    "subtitle": "Six short questions, about a minute. Then Compass helps you think about careers, and Atlas looks for real universities that teach them.",
     "switchLabel": "Interface language",
     "getStarted": "Get started"
   },
@@ -91,11 +91,11 @@
     "title": "Connect your AI key",
     "openrouter": {
       "label": "OpenRouter key",
-      "recommended": "Recommended. The Finder needs it for verified web search."
+      "recommended": "Recommended. Atlas needs it for verified web search."
     },
     "opencode": {
       "label": "OpenCode Go key",
-      "optional": "Optional. Enough on its own for the Counselor.",
+      "optional": "Optional. Enough on its own for Compass.",
       "experimental": "Experimental"
     },
     "errorAtLeastOne": "Add at least one key to continue.",

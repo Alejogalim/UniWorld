@@ -29,7 +29,7 @@
     },
     "openrouter": {
       "title": "OpenRouter",
-      "finderNeedsKey": "Tìm trường cần khóa OpenRouter."
+      "finderNeedsKey": "Bản đồ cần khóa OpenRouter."
     },
     "opencode": {
       "title": "OpenCode Go"
@@ -50,8 +50,8 @@
     "connected": "Kết nối hoạt động",
     "testFailed": "Kết nối thất bại",
     "removeKey": "Xóa khóa",
-    "removeOpenrouterConfirm": "Xóa khóa OpenRouter khỏi máy tính này? Tìm trường sẽ không tìm kiếm cho đến khi bạn thêm lại khóa.",
-    "removeOpencodeConfirm": "Xóa khóa OpenCode Go khỏi máy tính này? Tư vấn sẽ dùng OpenRouter.",
+    "removeOpenrouterConfirm": "Xóa khóa OpenRouter khỏi máy tính này? Bản đồ sẽ không tìm kiếm cho đến khi bạn thêm lại khóa.",
+    "removeOpencodeConfirm": "Xóa khóa OpenCode Go khỏi máy tính này? La bàn sẽ dùng OpenRouter.",
     "removeYes": "Có, xóa khóa",
     "cancel": "Hủy",
     "keySaved": "Đã lưu khóa vào chuỗi khóa của máy.",

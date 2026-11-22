@@ -29,7 +29,7 @@
     },
     "openrouter": {
       "title": "OpenRouter",
-      "finderNeedsKey": "El Buscador necesita una clave de OpenRouter."
+      "finderNeedsKey": "Atlas necesita una clave de OpenRouter."
     },
     "opencode": {
       "title": "OpenCode Go"
@@ -50,8 +50,8 @@
     "connected": "La conexión funciona",
     "testFailed": "La conexión falló",
     "removeKey": "Quitar clave",
-    "removeOpenrouterConfirm": "¿Quitar la clave de OpenRouter de esta computadora? El Buscador no buscará hasta que añadas otra clave.",
-    "removeOpencodeConfirm": "¿Quitar la clave de OpenCode Go de esta computadora? El orientador usará OpenRouter.",
+    "removeOpenrouterConfirm": "¿Quitar la clave de OpenRouter de esta computadora? Atlas no buscará hasta que añadas otra clave.",
+    "removeOpencodeConfirm": "¿Quitar la clave de OpenCode Go de esta computadora? Brújula usará OpenRouter.",
     "removeYes": "Sí, quitar clave",
     "cancel": "Cancelar",
     "keySaved": "Clave guardada en tu llavero.",

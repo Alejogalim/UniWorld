@@ -9,18 +9,18 @@
   },
   "nav": {
     "onboarding": "Profile",
-    "counselor": "Counselor",
-    "finder": "Finder",
-    "myUnis": "My universities",
+    "counselor": "Compass",
+    "finder": "Atlas",
+    "myUnis": "Shortlist",
     "settings": "Settings",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"
   },
   "screens": {
     "onboarding": "Your profile",
-    "counselor": "Counselor",
-    "finder": "University Finder",
-    "myUnis": "My universities",
+    "counselor": "Compass",
+    "finder": "Atlas",
+    "myUnis": "Shortlist",
     "settings": "Settings"
   },
   "theme": {
