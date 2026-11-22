@@ -4,7 +4,7 @@ import { useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { Continent, UiLang } from '@/core/contracts';
 import { countryName } from '@/ui/data/countries';
-import { continentOf, loadCountries, type CountryFeature, type GeoView } from './geo';
+import { continentOf, loadCountries, viewForCountry, type CountryFeature, type GeoView } from './geo';
 
 export interface GlobeViewProps {
   /** ISO codes of the selected countries. */
@@ -13,7 +13,10 @@ export interface GlobeViewProps {
   onToggleCountry: (iso: string) => void;
   /** Changes identity to request a camera move. */
   flyTo: GeoView | null;
-  compact: boolean;
+  /** Country to focus from the list; null restores auto-rotation. */
+  focusCountry: string | null;
+  /** Raw list hover, applied immediately so the globe stops turning before the camera tween starts. */
+  listHover: boolean;
   theme: 'light' | 'dark';
 }
 
@@ -89,7 +92,8 @@ export default function GlobeView({
   highlightContinent,
   onToggleCountry,
   flyTo,
-  compact,
+  focusCountry,
+  listHover,
   theme,
 }: GlobeViewProps) {
   const { t, i18n } = useTranslation('finder');
@@ -103,7 +107,8 @@ export default function GlobeView({
   const state = useRef({
     selected,
     highlightContinent,
-    hovered: null as string | null,
+    focusCountry,
+    globeHover: null as string | null,
     pointerInside: false,
     palette: null as Palette | null,
     uiLang: i18n.language as UiLang,
@@ -116,9 +121,12 @@ export default function GlobeView({
     /** Set once the scene exists: re-applies styles now, and schedules them for the next frame. */
     applyNow: (() => {}) as () => void,
     schedule: (() => {}) as () => void,
+    /** Pauses/resumes auto-rotation from the latest pointer and hover state. */
+    syncRotation: (() => {}) as () => void,
   });
   state.current.selected = selected;
   state.current.highlightContinent = highlightContinent;
+  state.current.focusCountry = focusCountry;
   state.current.onToggleCountry = onToggleCountry;
   state.current.reduceMotion = reduceMotion;
   state.current.uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
@@ -133,14 +141,16 @@ export default function GlobeView({
       s.selected.has(iso) || (s.highlightContinent !== null && continentOf(iso) === s.highlightContinent);
     // Accessors are created once here and read everything from `s`, so they are never re-created on render.
     const isoOf = (d: object) => (d as CountryFeature).properties.iso;
-    const altitude = (d: object) => (isoOf(d) === s.hovered ? 0.03 : 0.006);
+    // The pointer on the globe wins while it is inside; otherwise the list's focus is the highlight.
+    const highlighted = () => (s.pointerInside && s.globeHover ? s.globeHover : s.focusCountry);
+    const altitude = (d: object) => (isoOf(d) === highlighted() ? 0.03 : 0.01);
     const capColor = (d: object) => (isOn(isoOf(d)) ? s.palette?.signal : s.palette?.land) ?? 'transparent';
     const sideColor = (d: object) =>
       (isOn(isoOf(d)) ? (s.palette ? shade(s.palette.signal, 0.82) : undefined) : s.palette?.landSide) ??
       'transparent';
     const strokeColor = (d: object) => {
       const iso = isoOf(d);
-      if (iso === s.hovered) return s.palette?.ink ?? 'transparent';
+      if (iso === highlighted()) return s.palette?.ink ?? 'transparent';
       return (isOn(iso) ? s.palette?.signal : s.palette?.hairline) ?? 'transparent';
     };
 
@@ -149,7 +159,12 @@ export default function GlobeView({
       s.frame = 0;
       const globe = globeRef.current;
       if (!globe || !s.palette) return;
-      const key = [s.hovered ?? '', [...s.selected].sort().join(','), s.highlightContinent ?? ''].join('|');
+      const key = [
+        s.globeHover ?? '',
+        s.focusCountry ?? '',
+        [...s.selected].sort().join(','),
+        s.highlightContinent ?? '',
+      ].join('|');
       if (key === s.appliedKey) return;
       s.appliedKey = key;
       globe
@@ -170,8 +185,8 @@ export default function GlobeView({
       .backgroundColor('rgba(0,0,0,0)')
       .showGraticules(true)
       .atmosphereAltitude(0.12)
-      .polygonsTransitionDuration(0)
-      .polygonCapCurvatureResolution(10)
+      .polygonsTransitionDuration(state.current.reduceMotion ? 0 : 180)
+      .polygonCapCurvatureResolution(2)
       .polygonAltitude(altitude)
       .polygonCapColor(capColor)
       .polygonSideColor(sideColor)
@@ -182,9 +197,17 @@ export default function GlobeView({
           'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:20px;padding:6px 12px;font:500 12px/1.3 "Inter Variable", system-ui, sans-serif;box-shadow:var(--shadow-float);white-space:nowrap';
         return `<div style="${style}">${escapeHtml(countryName(iso, state.current.uiLang))}</div>`;
       })
+      // A marker for countries with no polygon in the 110m geometry (small islands and territories).
+      .labelsData([])
+      .labelText((d: object) => (d as { text: string }).text)
+      .labelColor(() => state.current.palette?.signal ?? '#ff6a2b')
+      .labelSize(0.55)
+      .labelDotRadius(0.22)
+      .labelAltitude(0.02)
+      .labelResolution(3)
       .onPolygonHover((polygon: object | null) => {
         const iso = polygon ? (polygon as CountryFeature).properties.iso : null;
-        state.current.hovered = iso;
+        state.current.globeHover = iso;
         syncRotation();
         schedule();
         el.style.cursor = iso ? 'pointer' : '';
@@ -208,24 +231,37 @@ export default function GlobeView({
     // Rotation pauses while the pointer is over the globe or a country is hovered.
     const syncRotation = () => {
       const s = state.current;
-      globe.controls().autoRotate = !s.reduceMotion && !s.pointerInside && s.hovered === null;
+      globe.controls().autoRotate =
+        !s.reduceMotion && !s.pointerInside && s.globeHover === null && s.focusCountry === null;
     };
+    state.current.syncRotation = syncRotation;
     const onEnter = () => {
       state.current.pointerInside = true;
       syncRotation();
     };
     const onLeave = () => {
       state.current.pointerInside = false;
+      state.current.globeHover = null;
       syncRotation();
+      schedule();
     };
     syncRotation();
     el.addEventListener('pointerenter', onEnter);
     el.addEventListener('pointerleave', onLeave);
 
+    let lastCompact: boolean | null = null;
     const resize = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
       globe.width(Math.floor(width)).height(Math.floor(height));
       globe.renderer().setPixelRatio(1);
+      // Keep the sphere a little further away in a narrow column, whatever the search phase.
+      const compact = width < 480;
+      if (compact !== lastCompact) {
+        lastCompact = compact;
+        if (!state.current.focusCountry) {
+          globe.pointOfView({ altitude: compact ? 2.4 : 2.1 }, 0);
+        }
+      }
     });
     resize.observe(el);
 
@@ -305,12 +341,44 @@ export default function GlobeView({
     globe.pointOfView(flyTo, state.current.reduceMotion ? 0 : 900);
   }, [flyTo]);
 
-  // Compact mode keeps the sphere a little further away inside the 380px column.
+  // Reduced motion turns off the polygon rise transition.
+  useEffect(() => {
+    globeRef.current?.polygonsTransitionDuration(reduceMotion ? 0 : 180);
+  }, [reduceMotion]);
+
+  // Stop turning the moment the pointer enters the list, before the debounced camera tween.
   useEffect(() => {
     const globe = globeRef.current;
     if (!globe) return;
-    globe.pointOfView({ altitude: compact ? 2.4 : 2.1 }, 0);
-  }, [compact]);
+    if (listHover) globe.controls().autoRotate = false;
+    else state.current.syncRotation();
+  }, [listHover]);
+
+  // List hover focus: fly the camera and keep the country raised until the pointer leaves the list.
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    const s = state.current;
+    if (!focusCountry) {
+      globe.labelsData([]);
+      s.syncRotation();
+      s.schedule();
+      return;
+    }
+    if (!countries) return;
+    const view = viewForCountry(focusCountry, countries);
+    if (!view) return;
+    // Countries without geometry get a label so the camera target is still visible.
+    const hasShape = countries.some((f) => f.properties.iso === focusCountry.toUpperCase());
+    globe.labelsData(
+      hasShape
+        ? []
+        : [{ lat: view.lat, lng: view.lng, text: countryName(focusCountry, s.uiLang) }],
+    );
+    globe.controls().autoRotate = false;
+    globe.pointOfView(view, s.reduceMotion ? 0 : 700);
+    s.schedule();
+  }, [focusCountry, countries]);
 
   return (
     <div className="relative aspect-square w-full" aria-label={t('globe.label')} role="application">

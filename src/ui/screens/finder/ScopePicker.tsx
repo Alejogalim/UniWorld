@@ -1,31 +1,24 @@
 import { useTranslation } from 'react-i18next';
 import { CONTINENTS, CONTINENT_VIEWS, type GeoView } from '@/ui/globe/geo';
 import { Chip } from '@/ui/components/Chip';
-import { Flag } from '@/ui/components/Flag';
-import { countryName } from '@/ui/data/countries';
-import { Combobox } from '@/ui/components/Combobox';
-import { countryOptions } from '@/ui/screens/onboarding/options';
+import { CountryPicker } from './CountryPicker';
 import { useFinder } from './useFinder';
 import type { Continent } from '@/core/contracts';
 
 interface ScopePickerProps {
   onFlyTo: (view: GeoView) => void;
-  /** Hides the hint line when the chips sit in the narrow column. */
+  onHoverCountry: (iso: string | null) => void;
+  /** Hides the hint line when the picker sits in a narrow column. */
   compact?: boolean;
 }
 
-/** Continent chips and the current scope as removable chips. Countries are picked on the globe. */
-export function ScopePicker({ onFlyTo, compact = false }: ScopePickerProps) {
-  const { t, i18n } = useTranslation('finder');
+/** World/continent chips plus the persistent country list. The globe follows list hover. */
+export function ScopePicker({ onFlyTo, onHoverCountry, compact = false }: ScopePickerProps) {
+  const { t } = useTranslation('finder');
   const scope = useFinder((s) => s.scope);
   const setScope = useFinder((s) => s.setScope);
   const setContinent = useFinder((s) => s.setContinent);
-  const toggleCountry = useFinder((s) => s.toggleCountry);
-  const uiLang = i18n.resolvedLanguage ?? 'en';
   const active: Continent | null = scope.kind === 'continent' ? scope.continent : null;
-  // Keyboard path for countries (the globe is pointer-only). Chosen countries are left out, so the picker only adds.
-  const chosen = scope.kind === 'countries' ? scope.codes : [];
-  const addableCountries = countryOptions(uiLang).filter((o) => !chosen.includes(o.value));
   const key = (c: Continent) => `continent.${c}`;
 
   const pickContinent = (continent: Continent) => {
@@ -35,7 +28,10 @@ export function ScopePicker({ onFlyTo, compact = false }: ScopePickerProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
+      <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">
+        {t('sections.countries')}
+      </h2>
       <div className="flex flex-wrap gap-2">
         <Chip selected={scope.kind === 'global'} onClick={() => setScope({ kind: 'global' })}>
           {t('scope.world')}
@@ -46,42 +42,9 @@ export function ScopePicker({ onFlyTo, compact = false }: ScopePickerProps) {
           </Chip>
         ))}
       </div>
-      <div className="max-w-xs">
-        <Combobox
-          id="finder-scope-country"
-          aria-label={t('scope.addCountry')}
-          options={addableCountries}
-          value={null}
-          onChange={(iso) => toggleCountry(iso)}
-          placeholder={t('scope.addCountry')}
-          noMatchesLabel={t('scope.noMatches')}
-        />
-      </div>
       {!compact && <p className="text-sm text-chart-grey">{t('scope.hint')}</p>}
-      {scope.kind === 'countries' && (
-        <div className="flex flex-wrap gap-2" aria-label={t('scope.current')}>
-          {scope.codes.map((iso) => (
-            <Chip
-              key={iso}
-              code={iso}
-              selected
-              onRemove={() => toggleCountry(iso)}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <Flag code={iso} className="size-4" />
-                {countryName(iso, uiLang)}
-              </span>
-            </Chip>
-          ))}
-        </div>
-      )}
-      {scope.kind === 'continent' && (
-        <div className="flex flex-wrap gap-2">
-          <Chip selected onRemove={() => setScope({ kind: 'global' })}>
-            {t(key(scope.continent))}
-          </Chip>
-        </div>
-      )}
+      <CountryPicker onHoverCountry={onHoverCountry} />
+      {!compact && <p className="text-xs text-chart-grey">{t('scope.hoverHint')}</p>}
     </div>
   );
 }
