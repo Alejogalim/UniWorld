@@ -1,28 +1,40 @@
 {
   "welcome": {
     "title": "Chào mừng đến với UniWorld",
-    "subtitle": "Cách nhẹ nhàng, từng bước để tìm những trường đại học phù hợp với bạn. Chỉ mất khoảng một phút.",
-    "switchLabel": "Ngôn ngữ giao diện"
+    "subtitle": "Sáu câu hỏi ngắn, khoảng một phút. Sau đó, một cố vấn giúp bạn suy nghĩ về nghề nghiệp, còn mục Tìm trường tìm các trường đại học thật có dạy những ngành đó.",
+    "switchLabel": "Ngôn ngữ giao diện",
+    "getStarted": "Bắt đầu"
   },
   "name": {
+    "title": "Tên bạn là gì?",
     "label": "Tên của bạn",
     "placeholder": "Chúng tôi nên gọi bạn là gì?",
-    "hint": "AI sẽ dùng tên này khi trò chuyện với bạn."
+    "hint": "AI dùng tên này để xưng hô với bạn.",
+    "errorRequired": "Nhập tên mà AI nên dùng để gọi bạn.",
+    "errorTooLong": "Dùng tối đa {{max}} ký tự."
   },
   "languages": {
+    "title": "Bạn nói những ngôn ngữ nào?",
     "primaryLabel": "Ngôn ngữ chính",
     "searchPlaceholder": "Tìm ngôn ngữ…",
     "extraLabel": "Ngôn ngữ khác",
     "addLanguage": "Thêm ngôn ngữ",
     "remove": "Xóa",
     "levelLabel": "Trình độ",
+    "levelPlaceholder": "Chọn trình độ",
+    "noMatches": "Không có kết quả. Thử cách viết khác.",
     "switchPrompt": "Chuyển giao diện sang {{lang}}?",
     "switchYes": "Có, chuyển",
-    "switchNo": "Giữ tiếng Anh"
+    "switchNo": "Giữ tiếng Anh",
+    "errorPrimaryRequired": "Chọn ngôn ngữ bạn thành thạo nhất.",
+    "errorLangMissing": "Chọn ngôn ngữ cho dòng này, hoặc xóa dòng.",
+    "errorPrimaryRepeat": "Đây đã là ngôn ngữ chính của bạn.",
+    "errorDuplicate": "Bạn đã thêm ngôn ngữ này rồi.",
+    "errorLevelMissing": "Chọn trình độ của bạn trong ngôn ngữ này."
   },
   "levels": {
     "A1": "A1 (sơ cấp)",
-    "A2": "A2 (căn bản)",
+    "A2": "A2 (sơ trung cấp)",
     "B1": "B1 (trung cấp)",
     "B2": "B2 (trung cao cấp)",
     "C1": "C1 (cao cấp)",
@@ -30,67 +42,86 @@
     "native": "Tiếng mẹ đẻ"
   },
   "program": {
+    "title": "Bạn đang học hoặc dự định theo chương trình nào?",
     "label": "Chương trình học",
-    "IB": "IB Diploma",
+    "IB": "Chương trình IB Diploma",
     "AP": "AP (Advanced Placement)",
-    "US": "Chương trình phổ thông Mỹ"
+    "US": "Chương trình tiêu chuẩn Hoa Kỳ (trung học)",
+    "errorRequired": "Chọn chương trình bạn đang học hoặc dự định theo học."
   },
   "grades": {
     "title": "Điểm số (không bắt buộc)",
-    "note": "Giúp chúng tôi gợi ý những lựa chọn thực tế hơn.",
-    "add": "Thêm điểm số",
+    "note": "Giúp chúng tôi gợi ý các lựa chọn phù hợp. Để trống những gì bạn không có.",
+    "range": "Nhập số từ {{min}} đến {{max}}.",
+    "whole": "Nhập số nguyên từ {{min}} đến {{max}}.",
+    "subjectName": "Nhập tên môn học.",
+    "examName": "Nhập tên kỳ thi.",
+    "scoreMissing": "Nhập điểm từ {{min}} đến {{max}}, hoặc xóa dòng.",
     "ib": {
       "predictedTotal": "Tổng điểm dự kiến (trên 45)",
-      "subjects": "Các môn học",
-      "subjectName": "Môn",
+      "subjects": "Môn học",
+      "subjectName": "Môn học",
       "subjectLevel": "Cấp độ",
       "subjectScore": "Điểm (1–7)",
-      "addSubject": "Thêm môn"
+      "addSubject": "Thêm môn",
+      "removeSubject": "Xóa"
     },
     "ap": {
-      "gpa": "Điểm GPA",
-      "exams": "Các kỳ thi",
+      "gpa": "Điểm trung bình (trên 5.0)",
+      "exams": "Kỳ thi",
       "examName": "Kỳ thi",
       "examScore": "Điểm (1–5)",
-      "addExam": "Thêm kỳ thi"
+      "addExam": "Thêm kỳ thi",
+      "removeExam": "Xóa"
     },
     "us": {
-      "gpaUnweighted": "GPA không trọng số (trên 4.0)",
-      "sat": "Điểm SAT",
-      "act": "Điểm ACT"
+      "gpaUnweighted": "GPA chưa có trọng số (trên 4.0)",
+      "sat": "Điểm SAT (400–1600)",
+      "act": "Điểm ACT (1–36)"
     }
   },
   "residence": {
     "title": "Quốc tịch và nơi cư trú (không bắt buộc)",
-    "note": "Học phí miễn phí thường phụ thuộc vào hai mục này.",
+    "note": "Việc miễn học phí thường phụ thuộc vào những thông tin này.",
     "citizenship": "Quốc tịch (quốc gia)",
     "residence": "Quốc gia cư trú",
-    "optional": "Không bắt buộc"
+    "skip": "Bỏ qua"
   },
   "ai": {
     "title": "Kết nối khóa AI của bạn",
     "openrouter": {
       "label": "Khóa OpenRouter",
-      "required": "Bắt buộc. Mục Tìm trường cần khóa này để tìm kiếm web có xác minh."
+      "required": "Bắt buộc. Tìm trường cần khóa này để tìm kiếm trên web có nguồn đã xác minh.",
+      "errorRequired": "Dán khóa OpenRouter của bạn. Tìm trường không thể tìm kiếm nếu thiếu khóa."
     },
     "opencode": {
       "label": "Khóa OpenCode Go",
-      "optional": "Không bắt buộc. Chỉ dùng cho chat tư vấn.",
+      "optional": "Không bắt buộc. Chỉ dùng cho trò chuyện với cố vấn.",
       "experimental": "Thử nghiệm"
     },
     "keyPlaceholder": "Dán khóa của bạn",
-    "keyStored": "Khóa được lưu trong kho khóa của hệ điều hành, không bao giờ lưu trong cơ sở dữ liệu.",
+    "showKey": "Hiện khóa",
+    "hideKey": "Ẩn khóa",
+    "keyStored": "Được lưu trong kho khóa của hệ thống, không bao giờ trong cơ sở dữ liệu.",
+    "getKey": "Lấy khóa OpenRouter tại",
+    "openKeysPage": "Mở trang khóa của OpenRouter",
+    "openFailed": "Không thể mở liên kết: {{error}}",
     "testConnection": "Kiểm tra kết nối",
     "testing": "Đang kiểm tra…",
     "connected": "Kết nối hoạt động",
-    "failed": "Kết nối thất bại: {{error}}"
+    "failedTitle": "Kết nối thất bại",
+    "noDetail": "Nhà cung cấp không nêu lý do. Kiểm tra khóa và thử lại."
   },
   "actions": {
     "next": "Tiếp",
     "back": "Quay lại",
-    "finish": "Hoàn tất"
+    "finish": "Hoàn tất",
+    "saving": "Đang lưu…"
   },
   "steps": {
     "progress": "Bước {{current}} trên {{total}}"
+  },
+  "errors": {
+    "saveFailed": "Chưa lưu được hồ sơ. {{error}} Hãy thử lại."
   }
 }

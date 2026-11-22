@@ -1,24 +1,36 @@
 {
   "welcome": {
     "title": "Bienvenido a UniWorld",
-    "subtitle": "Una forma tranquila y paso a paso de encontrar universidades que se ajusten a ti. Tarda alrededor de un minuto.",
-    "switchLabel": "Idioma de la interfaz"
+    "subtitle": "Seis preguntas breves, en alrededor de un minuto. Después, un consejero te ayuda a pensar en carreras, y el buscador encuentra universidades reales que las enseñan.",
+    "switchLabel": "Idioma de la interfaz",
+    "getStarted": "Empezar"
   },
   "name": {
+    "title": "¿Cómo te llamas?",
     "label": "Tu nombre",
     "placeholder": "¿Cómo quieres que te llamemos?",
-    "hint": "La IA lo usa para hablar contigo."
+    "hint": "La IA lo usa para dirigirse a ti.",
+    "errorRequired": "Escribe el nombre con el que la IA debe dirigirse a ti.",
+    "errorTooLong": "Usa {{max}} caracteres o menos."
   },
   "languages": {
+    "title": "¿Qué idiomas hablas?",
     "primaryLabel": "Idioma principal",
     "searchPlaceholder": "Buscar idiomas…",
     "extraLabel": "Otros idiomas",
     "addLanguage": "Añadir idioma",
     "remove": "Quitar",
     "levelLabel": "Nivel",
+    "levelPlaceholder": "Elige un nivel",
+    "noMatches": "Sin resultados. Prueba otra forma de escribirlo.",
     "switchPrompt": "¿Cambiar la interfaz a {{lang}}?",
     "switchYes": "Sí, cambiar",
-    "switchNo": "Mantener inglés"
+    "switchNo": "Mantener inglés",
+    "errorPrimaryRequired": "Elige el idioma que mejor hablas.",
+    "errorLangMissing": "Elige un idioma para esta fila, o quita la fila.",
+    "errorPrimaryRepeat": "Ya es tu idioma principal.",
+    "errorDuplicate": "Ya añadiste este idioma.",
+    "errorLevelMissing": "Elige tu nivel en este idioma."
   },
   "levels": {
     "A1": "A1 (principiante)",
@@ -30,67 +42,86 @@
     "native": "Nativo"
   },
   "program": {
+    "title": "¿En qué programa estás o planeas entrar?",
     "label": "Programa académico",
     "IB": "Diploma IB",
     "AP": "AP (Advanced Placement)",
-    "US": "Estándar de EE. UU. (secundaria)"
+    "US": "Estándar de EE. UU. (preparatoria)",
+    "errorRequired": "Elige el programa en el que estás o en el que planeas entrar."
   },
   "grades": {
     "title": "Calificaciones (opcional)",
-    "note": "Nos ayuda a sugerir opciones realistas.",
-    "add": "Añadir calificaciones",
+    "note": "Ayuda a sugerir opciones realistas. Deja en blanco lo que no tengas.",
+    "range": "Escribe un número de {{min}} a {{max}}.",
+    "whole": "Escribe un número entero de {{min}} a {{max}}.",
+    "subjectName": "Escribe el nombre de la materia.",
+    "examName": "Escribe el nombre del examen.",
+    "scoreMissing": "Escribe una calificación de {{min}} a {{max}}, o vacía la fila.",
     "ib": {
-      "predictedTotal": "Total previsto (sobre 45)",
-      "subjects": "Asignaturas",
-      "subjectName": "Asignatura",
+      "predictedTotal": "Total previsto (de 45)",
+      "subjects": "Materias",
+      "subjectName": "Materia",
       "subjectLevel": "Nivel",
-      "subjectScore": "Nota (1–7)",
-      "addSubject": "Añadir asignatura"
+      "subjectScore": "Calificación (1–7)",
+      "addSubject": "Añadir materia",
+      "removeSubject": "Quitar"
     },
     "ap": {
-      "gpa": "Promedio (GPA)",
+      "gpa": "Promedio (de 5.0)",
       "exams": "Exámenes",
       "examName": "Examen",
-      "examScore": "Nota (1–5)",
-      "addExam": "Añadir examen"
+      "examScore": "Calificación (1–5)",
+      "addExam": "Añadir examen",
+      "removeExam": "Quitar"
     },
     "us": {
-      "gpaUnweighted": "GPA sin ponderar (sobre 4.0)",
-      "sat": "Puntuación SAT",
-      "act": "Puntuación ACT"
+      "gpaUnweighted": "Promedio sin ponderar (de 4.0)",
+      "sat": "Puntaje SAT (400–1600)",
+      "act": "Puntaje ACT (1–36)"
     }
   },
   "residence": {
-    "title": "Nacionalidad y residencia (opcional)",
+    "title": "Ciudadanía y residencia (opcional)",
     "note": "La gratuidad de la matrícula suele depender de estos datos.",
-    "citizenship": "Nacionalidad (país)",
+    "citizenship": "Ciudadanía (país)",
     "residence": "País de residencia",
-    "optional": "Opcional"
+    "skip": "Omitir"
   },
   "ai": {
     "title": "Conecta tu clave de IA",
     "openrouter": {
       "label": "Clave de OpenRouter",
-      "required": "Obligatoria. El buscador la necesita para la búsqueda web verificada."
+      "required": "Obligatoria. El buscador la necesita para buscar en la web con fuentes verificadas.",
+      "errorRequired": "Pega tu clave de OpenRouter. Sin ella el buscador no puede buscar."
     },
     "opencode": {
       "label": "Clave de OpenCode Go",
-      "optional": "Opcional. Solo para el chat del orientador.",
+      "optional": "Opcional. Solo para el chat con el consejero.",
       "experimental": "Experimental"
     },
     "keyPlaceholder": "Pega tu clave",
+    "showKey": "Mostrar clave",
+    "hideKey": "Ocultar clave",
     "keyStored": "Se guarda en el llavero de tu sistema, nunca en la base de datos.",
+    "getKey": "Consigue una clave de OpenRouter en",
+    "openKeysPage": "Abrir la página de claves de OpenRouter",
+    "openFailed": "No se pudo abrir el enlace: {{error}}",
     "testConnection": "Probar conexión",
     "testing": "Probando…",
     "connected": "La conexión funciona",
-    "failed": "La conexión falló: {{error}}"
+    "failedTitle": "La conexión falló",
+    "noDetail": "El proveedor no indicó el motivo. Revisa la clave e inténtalo de nuevo."
   },
   "actions": {
     "next": "Siguiente",
     "back": "Atrás",
-    "finish": "Terminar"
+    "finish": "Terminar",
+    "saving": "Guardando…"
   },
   "steps": {
     "progress": "Paso {{current}} de {{total}}"
+  },
+  "errors": {
+    "saveFailed": "No se pudo guardar tu perfil. {{error}} Inténtalo de nuevo."
   }
 }

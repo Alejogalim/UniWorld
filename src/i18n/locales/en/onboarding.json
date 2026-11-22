@@ -1,24 +1,36 @@
 {
   "welcome": {
     "title": "Welcome to UniWorld",
-    "subtitle": "A calm, step-by-step way to find universities that fit you. It takes about a minute.",
-    "switchLabel": "Interface language"
+    "subtitle": "Six short questions, about a minute. Then a counselor helps you think about careers, and the Finder looks for real universities that teach them.",
+    "switchLabel": "Interface language",
+    "getStarted": "Get started"
   },
   "name": {
+    "title": "What is your name?",
     "label": "Your name",
     "placeholder": "What should we call you?",
-    "hint": "The AI uses it to talk to you."
+    "hint": "The AI uses it to address you.",
+    "errorRequired": "Enter the name the AI should use for you.",
+    "errorTooLong": "Use {{max}} characters or fewer."
   },
   "languages": {
+    "title": "Which languages do you speak?",
     "primaryLabel": "Primary language",
     "searchPlaceholder": "Search languages…",
     "extraLabel": "Other languages",
     "addLanguage": "Add language",
     "remove": "Remove",
     "levelLabel": "Level",
+    "levelPlaceholder": "Choose a level",
+    "noMatches": "No matches. Try another spelling.",
     "switchPrompt": "Switch the interface to {{lang}}?",
     "switchYes": "Yes, switch",
-    "switchNo": "Keep English"
+    "switchNo": "Keep English",
+    "errorPrimaryRequired": "Choose the language you speak best.",
+    "errorLangMissing": "Choose a language for this row, or remove the row.",
+    "errorPrimaryRepeat": "That is already your primary language.",
+    "errorDuplicate": "You already added this language.",
+    "errorLevelMissing": "Choose your level in this language."
   },
   "levels": {
     "A1": "A1 (beginner)",
@@ -30,34 +42,42 @@
     "native": "Native"
   },
   "program": {
+    "title": "Which program are you in, or planning to join?",
     "label": "Academic program",
     "IB": "IB Diploma",
     "AP": "AP (Advanced Placement)",
-    "US": "US standard (high school)"
+    "US": "US standard (high school)",
+    "errorRequired": "Choose the program you are in or plan to join."
   },
   "grades": {
     "title": "Grades (optional)",
-    "note": "Helps us suggest realistic options.",
-    "add": "Add grades",
+    "note": "Helps us suggest realistic options. Leave anything blank that you do not have.",
+    "range": "Enter a number from {{min}} to {{max}}.",
+    "whole": "Enter a whole number from {{min}} to {{max}}.",
+    "subjectName": "Enter the subject name.",
+    "examName": "Enter the exam name.",
+    "scoreMissing": "Enter a score from {{min}} to {{max}}, or clear the row.",
     "ib": {
       "predictedTotal": "Predicted total (out of 45)",
       "subjects": "Subjects",
       "subjectName": "Subject",
       "subjectLevel": "Level",
       "subjectScore": "Score (1–7)",
-      "addSubject": "Add subject"
+      "addSubject": "Add subject",
+      "removeSubject": "Remove"
     },
     "ap": {
-      "gpa": "GPA",
+      "gpa": "GPA (out of 5.0)",
       "exams": "Exams",
       "examName": "Exam",
       "examScore": "Score (1–5)",
-      "addExam": "Add exam"
+      "addExam": "Add exam",
+      "removeExam": "Remove"
     },
     "us": {
       "gpaUnweighted": "Unweighted GPA (out of 4.0)",
-      "sat": "SAT score",
-      "act": "ACT score"
+      "sat": "SAT score (400–1600)",
+      "act": "ACT score (1–36)"
     }
   },
   "residence": {
@@ -65,13 +85,14 @@
     "note": "Tuition-free status often depends on these.",
     "citizenship": "Citizenship (country)",
     "residence": "Country of residence",
-    "optional": "Optional"
+    "skip": "Skip"
   },
   "ai": {
     "title": "Connect your AI key",
     "openrouter": {
       "label": "OpenRouter key",
-      "required": "Required. Finder needs it for verified web search."
+      "required": "Required. Finder needs it for verified web search.",
+      "errorRequired": "Paste your OpenRouter key. Finder cannot search without it."
     },
     "opencode": {
       "label": "OpenCode Go key",
@@ -79,18 +100,28 @@
       "experimental": "Experimental"
     },
     "keyPlaceholder": "Paste your key",
+    "showKey": "Show key",
+    "hideKey": "Hide key",
     "keyStored": "Stored in your system keychain, never in the database.",
+    "getKey": "Get an OpenRouter key at",
+    "openKeysPage": "Open the OpenRouter keys page",
+    "openFailed": "Could not open the link: {{error}}",
     "testConnection": "Test connection",
     "testing": "Testing…",
     "connected": "Connection works",
-    "failed": "Connection failed: {{error}}"
+    "failedTitle": "Connection failed",
+    "noDetail": "The provider did not say why. Check the key and try again."
   },
   "actions": {
     "next": "Next",
     "back": "Back",
-    "finish": "Finish"
+    "finish": "Finish",
+    "saving": "Saving…"
   },
   "steps": {
     "progress": "Step {{current}} of {{total}}"
+  },
+  "errors": {
+    "saveFailed": "Your profile was not saved. {{error}} Try again."
   }
 }

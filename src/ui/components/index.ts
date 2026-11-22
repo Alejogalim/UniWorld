@@ -11,3 +11,4 @@ export { EmptyState } from "./EmptyState";
 export { ErrorNote } from "./ErrorNote";
 export { Spinner } from "./Spinner";
 export { ProgressLine } from "./ProgressLine";
+export { Combobox, type ComboboxOption } from "./Combobox";
