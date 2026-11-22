@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="584" height="584" viewBox="220 220 584 584">
-  <defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="252" x2="0" y2="772"><stop offset="0" stop-color="#0a0a0a"/><stop offset="0.45" stop-color="#0a0a0a"/><stop offset="0.8" stop-color="#7a1204"/><stop offset="1" stop-color="#e2450f"/></linearGradient></defs>
-  <g fill="none" stroke-linecap="round">
-    <circle cx="512" cy="512" r="260" stroke="rgba(0,0,0,0.45)" stroke-width="8"/>
-    <path d="M252 512 A260 260 0 0 0 772 512" stroke="url(#g)" stroke-width="64"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d7" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b8" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b8)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d7)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg>
