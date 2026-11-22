@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/ui/components/Input";
 import { Button } from "@/ui/components/ui/button";
@@ -9,12 +8,11 @@ import { INTAKE_TOTAL } from "./intake";
 import { useCounselor, type ChatMessage } from "./useCounselor";
 
 const SIX_LINES_PX = 6 * 22 + 16; // 6 lines at 1.55 * 14px, plus 8px padding top and bottom
-const SUGGESTIONS = [1, 2, 3] as const;
 
 /**
  * The counselor conversation. With no answer yet it is a start screen: the opening question
- * heads a centered column, the composer sits under it, and example answers fill the field.
- * Once an answer exists the same centered column carries the log.
+ * heads a centered block with the composer under it. Once an answer exists the same centered
+ * column carries the log.
  */
 export function ChatPane() {
   const { t } = useTranslation("counselor");
@@ -76,16 +74,11 @@ export function ChatPane() {
     }
   }
 
-  function chooseSuggestion(text: string) {
-    setDraft(text);
-    textareaRef.current?.focus();
-  }
-
   return (
     <section
       className={cn(
         "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
-        fresh ? "gap-8 pt-[7vh]" : "gap-6",
+        fresh ? "min-h-[70vh] justify-center gap-8" : "gap-6",
       )}
     >
       {fresh ? (
@@ -143,21 +136,6 @@ export function ChatPane() {
             {busy ? t("chat.sending") : t("chat.send")}
           </Button>
         </div>
-        {fresh && (
-          <div className="flex flex-col items-stretch gap-1 px-2 pt-2">
-            {SUGGESTIONS.map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => chooseSuggestion(t(`chat.suggestion${n}`))}
-                className="flex items-center gap-3 rounded-pill px-4 py-2.5 text-left type-label text-foreground outline-none transition-colors hover:bg-shoal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
-              >
-                <Sparkles className="size-4 shrink-0 text-chart-grey" aria-hidden="true" />
-                {t(`chat.suggestion${n}`)}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </section>
   );

@@ -4,8 +4,9 @@ import { cn } from "@/lib/utils";
 interface PanelProps extends React.ComponentProps<"div"> {
   /** Nested region: shoal instead of the card surface. */
   inset?: boolean;
-  /** `ember`: the one memorable element on a screen, with a soft glow around the outside of the box. */
-  variant?: "default" | "ember";
+  /** `ember`: the one memorable element on a screen, with a soft glow around the outside of the box.
+   *  `bare`: no card fill or rim, so it sits straight on the background. */
+  variant?: "default" | "ember" | "bare";
 }
 
 /** Plan 16 card: 28px corners, a soft surface, a 1px rim (dark) or a 6% ring (light). No shadow at rest. */
@@ -13,7 +14,8 @@ export function Panel({ inset = false, variant = "default", className, ...props 
   return (
     <div
       className={cn(
-        "rim surface p-6 text-foreground",
+        "p-6 text-foreground",
+        variant === "bare" ? "panel-ember relative rounded-card" : "rim surface",
         inset && "bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))]",
         variant === "ember" && "panel-ember",
         className,

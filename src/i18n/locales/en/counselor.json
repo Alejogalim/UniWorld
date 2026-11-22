@@ -15,10 +15,7 @@
     "placeholderReply": "Reply to the counselor",
     "send": "Send",
     "sending": "Sending…",
-    "startTitle": "Where should we start?",
-    "suggestion1": "Building small apps for problems I run into",
-    "suggestion2": "Explaining things until they click for someone",
-    "suggestion3": "Sketching products I wish existed"
+    "startTitle": "Where should we start?"
   },
   "priorities": {
     "title": "Your priorities",
