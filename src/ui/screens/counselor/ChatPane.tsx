@@ -91,7 +91,7 @@ export function ChatPane() {
         <div className="flex flex-col gap-3 px-2 text-center">
           <p className="type-label text-chart-grey">{t("chat.startTitle")}</p>
           <h2 className="type-headline mx-auto max-w-[26ch] text-balance">{opening}</h2>
-          {hint && <p className="text-sm text-chart-grey">{hint}</p>}
+          {intake && <IntakeProgress step={intakeStep} />}
         </div>
       ) : (
         <div
@@ -118,33 +118,7 @@ export function ChatPane() {
       )}
 
       <div className="flex flex-col gap-3">
-        {intake && (
-          <div className={cn("flex items-center gap-3", fresh ? "justify-center" : "justify-between")}>
-            <div
-              role="progressbar"
-              aria-valuemin={1}
-              aria-valuemax={INTAKE_TOTAL}
-              aria-valuenow={intakeStep}
-              aria-label={t("intake.progress", { n: intakeStep, total: INTAKE_TOTAL })}
-              className="flex w-full max-w-48 gap-1.5"
-            >
-              {Array.from({ length: INTAKE_TOTAL }, (_, i) => (
-                <span
-                  key={i}
-                  className={cn(
-                    "h-1 flex-1 rounded-pill",
-                    i + 1 < intakeStep && "bg-foreground/60",
-                    i + 1 === intakeStep && "bg-signal",
-                    i + 1 > intakeStep && "bg-hairline",
-                  )}
-                />
-              ))}
-            </div>
-            <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
-              {t("chat.notSureButton")}
-            </Button>
-          </div>
-        )}
+        {!fresh && intake && <IntakeProgress step={intakeStep} />}
         {hint && !fresh && <p className="text-sm text-chart-grey">{hint}</p>}
         {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
         <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
@@ -167,8 +141,42 @@ export function ChatPane() {
           </Button>
         </div>
         {!touch && <p className={cn("text-xs text-chart-grey", fresh && "text-center")}>{t("chat.enterHint")}</p>}
+        {intake && (
+          <div className="flex justify-center">
+            <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
+              {t("chat.notSureButton")}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
+  );
+}
+
+/** The six-step intake progress, centered. */
+function IntakeProgress({ step }: { step: number }) {
+  const { t } = useTranslation("counselor");
+  return (
+    <div
+      role="progressbar"
+      aria-valuemin={1}
+      aria-valuemax={INTAKE_TOTAL}
+      aria-valuenow={step}
+      aria-label={t("intake.progress", { n: step, total: INTAKE_TOTAL })}
+      className="mx-auto flex w-full max-w-48 gap-1.5"
+    >
+      {Array.from({ length: INTAKE_TOTAL }, (_, i) => (
+        <span
+          key={i}
+          className={cn(
+            "h-1 flex-1 rounded-pill",
+            i + 1 < step && "bg-foreground/60",
+            i + 1 === step && "bg-signal",
+            i + 1 > step && "bg-hairline",
+          )}
+        />
+      ))}
+    </div>
   );
 }
 
