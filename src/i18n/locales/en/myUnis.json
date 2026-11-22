@@ -4,38 +4,54 @@
     "description": "Open a university in the Finder and add it to your list.",
     "action": "Open the Finder"
   },
-  "columns": {
-    "university": "University",
+  "summary": {
+    "total_one": "university",
+    "total_other": "universities",
+    "urgent": "with a deadline in the next 30 days"
+  },
+  "card": {
+    "edit": "Edit",
+    "editFor": "Edit {{name}}",
+    "deadline": "Deadline",
     "program": "Program",
     "language": "Language",
-    "deadline": "Deadline",
     "exams": "Required exams",
-    "status": "Status",
-    "notes": "Notes",
-    "actions": "Actions"
+    "notes": "Notes"
+  },
+  "editor": {
+    "title": "Edit university",
+    "back": "Back",
+    "save": "Save",
+    "saving": "Saving…",
+    "removing": "Removing…",
+    "remove": "Remove from list",
+    "discard": "Discard your unsaved changes?",
+    "discardConfirm": "Discard changes",
+    "discardCancel": "Keep editing",
+    "programRequired": "Enter a program name.",
+    "languageHint": "Comma-separated language codes, for example en, de.",
+    "examsHint": "Separate exams with commas."
   },
   "deadline": {
     "none": "No deadline",
     "passed": "Passed",
     "daysLeft_one": "{{count}} day left",
     "daysLeft_other": "{{count}} days left",
-    "label": "Deadline for {{name}}"
+    "label": "Deadline for {{name}}",
+    "clear": "Clear"
   },
   "exams": {
-    "edit": "Edit",
-    "empty": "None",
     "placeholder": "SAT, IELTS",
-    "label": "Required exams for {{name}}",
-    "hint": "Separate with commas. Enter saves, Escape cancels."
-  },
-  "inline": {
-    "hint": "Enter saves, Escape cancels.",
-    "editProgram": "Edit program for {{name}}",
-    "editLanguage": "Edit language for {{name}}",
-    "empty": "Add"
+    "label": "Required exams for {{name}}"
   },
   "status": {
     "label": "Status for {{name}}",
+    "current": "Current status: {{status}}",
+    "pipeline": "Application progress",
+    "outcome": "Outcome",
+    "afterApplying": "After applying",
+    "none": "No outcome yet",
+    "final": "Final status",
     "considering": "Considering",
     "preparing": "Preparing",
     "applied": "Applied",
@@ -45,9 +61,8 @@
     "rejected": "Rejected"
   },
   "notes": {
-    "empty": "Add a note",
     "label": "Notes for {{name}}",
-    "done": "Done"
+    "placeholder": "Anything you want to remember"
   },
   "remove": {
     "button": "Remove",
@@ -60,10 +75,5 @@
     "save": "That change could not be saved, so it was undone. Try again.",
     "remove": "This university could not be removed. Try again.",
     "load": "Your list could not load. Try again."
-  },
-  "summary": {
-    "total_one": "university",
-    "total_other": "universities",
-    "urgent": "with a deadline in the next 30 days"
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { daysUntil, parseDeadline } from './deadline';
+import { daysUntil, formatDeadline, isUrgent, parseDeadline } from './deadline';
 
 describe('parseDeadline', () => {
   it('reads ISO dates', () => {
@@ -39,5 +39,24 @@ describe('daysUntil', () => {
 
   it('crosses month and leap-day boundaries', () => {
     expect(daysUntil('2028-03-01', '2028-02-28')).toBe(2);
+  });
+});
+
+describe('isUrgent', () => {
+  it('counts only future deadlines within 30 days', () => {
+    expect(isUrgent(-1)).toBe(false);
+    expect(isUrgent(0)).toBe(true);
+    expect(isUrgent(29)).toBe(true);
+    expect(isUrgent(30)).toBe(false);
+  });
+});
+
+describe('formatDeadline', () => {
+  it('formats an ISO date in the UI language', () => {
+    expect(formatDeadline('2026-11-22', 'en')).toBe('Nov 22, 2026');
+  });
+
+  it('falls back to the input when the date is invalid', () => {
+    expect(formatDeadline('not-a-date', 'en')).toBe('not-a-date');
   });
 });
