@@ -36,23 +36,55 @@ function formatCheckedAt(value: string, lang: string): string {
   return new Intl.DateTimeFormat(lang, { dateStyle: 'medium' }).format(date);
 }
 
-/**
- * University detail (Design §7.3 "Detail page", "Add to my list"). Facts come from the core
- * (cached for 30 days); every fact is a FactLine so its source, quote and link travel with it.
- */
+/** The detail route: read the university from the URL and route state. */
 export function UniDetailScreen() {
-  const { t, i18n } = useTranslation(['finder', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
   const { rorId = '' } = useParams();
   const [search] = useSearchParams();
-  const core = useCore();
-  const uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
-
   const state = (location.state ?? null) as DetailLocationState | null;
   const uni = state?.uni;
   const tracked = state?.tracked;
   const program = (search.get('program') || uni?.program || tracked?.programName || '').trim();
+
+  return (
+    <UniDetailView
+      rorId={rorId}
+      program={program}
+      uni={uni}
+      tracked={tracked}
+      onBack={() => navigate(-1)}
+    />
+  );
+}
+
+interface UniDetailViewProps {
+  rorId: string;
+  program: string;
+  uni?: UniResult;
+  tracked?: TrackedUni;
+  onBack: () => void;
+  /** Render inside the Finder dock instead of as a full page. */
+  embedded?: boolean;
+}
+
+/**
+ * University detail (Design §7.3 "Detail page", "Add to my list"). Facts come from the core
+ * (cached for 30 days); every fact is a FactLine so its source, quote and link travel with it.
+ */
+export function UniDetailView({
+  rorId,
+  program,
+  uni,
+  tracked,
+  onBack,
+  embedded = false,
+}: UniDetailViewProps) {
+  const { t, i18n } = useTranslation(['finder', 'common']);
+  const navigate = useNavigate();
+  const core = useCore();
+  const uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
+
   const trackedByRor = useTracked((s) => s.items.find((i) => i.rorId === rorId));
   const trackedLoaded = useTracked((s) => s.loaded);
   // Route state first, then the tracked list. The rorId is never shown or saved as a name.
@@ -95,6 +127,7 @@ export function UniDetailScreen() {
     setDetail(null);
     load(false);
     // Reload only when the university or program changes; Refresh is explicit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rorId, program]);
 
   useEffect(() => {
@@ -129,18 +162,27 @@ export function UniDetailScreen() {
   };
 
   const back = (
-    <Button variant="quiet" size="sm" onClick={() => navigate(-1)}>
+    <Button variant="quiet" size="sm" onClick={onBack}>
       <ArrowLeft aria-hidden="true" />
       {t('detail.back')}
     </Button>
   );
 
   if (!program) {
+    const content = <ErrorNote message={t('detail.noProgram')} />;
+    if (embedded) {
+      return (
+        <div className="flex h-full min-h-0 flex-1 flex-col">
+          <div className="shrink-0 px-4 pt-4">{back}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">{content}</div>
+        </div>
+      );
+    }
     return (
       <div className="max-w-[1120px] px-12 py-8">
         <div className="flex flex-col gap-6">
           {back}
-          <ErrorNote message={t('detail.noProgram')} />
+          {content}
         </div>
       </div>
     );
@@ -193,12 +235,9 @@ export function UniDetailScreen() {
     </div>
   );
 
-  return (
-    <div className="max-w-[1120px] px-12 py-8">
-      <div className="flex flex-col gap-6">
-        {back}
-
-        <Panel variant="ember">
+  const body = (
+    <div className={embedded ? 'flex flex-col gap-4' : 'flex flex-col gap-6'}>
+      <Panel variant="ember" className={embedded ? 'p-4' : undefined}>
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-2">
             <div className="flex min-w-0 items-center gap-2">
@@ -228,51 +267,68 @@ export function UniDetailScreen() {
             {primaryAction}
           </div>
         </header>
-        </Panel>
+      </Panel>
 
-        {listError ? <ErrorNote message={messageOf(listError)} /> : null}
-        {addError ? <ErrorNote title={t('detail.addError')} message={messageOf(addError)} /> : null}
-        {busy && <ProgressLine message={t('detail.loading')} />}
-        {loadNote}
+      {listError ? <ErrorNote message={messageOf(listError)} /> : null}
+      {addError ? <ErrorNote title={t('detail.addError')} message={messageOf(addError)} /> : null}
+      {busy && <ProgressLine message={t('detail.loading')} />}
+      {loadNote}
 
-        {detail && (
-          <div className="flex flex-col border-t border-hairline">
-            <FactLine label={t('detail.sections.overview')} fact={detail.overview} index={mark(detail.overview)} />
-            <FactLine
-              label={t('detail.sections.language')}
-              fact={detail.languages}
-              index={mark(detail.languages)}
-              format={(codes) => codes.map((c) => languageName(c, uiLang)).join(', ')}
-            />
-            <FactLine label={t('detail.sections.tuition')} fact={detail.tuition} index={mark(detail.tuition)} />
-            <FactLine label={t('detail.sections.scholarships')} fact={detail.scholarships} index={mark(detail.scholarships)} />
-            <FactLine label={t('detail.sections.deadlines')} fact={detail.deadlines} index={mark(detail.deadlines)} />
-            <FactLine label={t('detail.sections.nextDeadline')} fact={detail.nextDeadline} index={mark(detail.nextDeadline)} />
-            <FactLine label={t('detail.sections.exams')} fact={detail.exams} index={mark(detail.exams)} />
-            <FactLine label={t('detail.sections.requirements')} fact={detail.requirements} index={mark(detail.requirements)} />
-            <FactLine
-              label={t('detail.sections.apply')}
-              fact={detail.applyUrl}
-              index={mark(detail.applyUrl)}
-              format={(url) =>
-                isWebUrl(url) ? (
-                  <a
-                    href={url}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      openUrl(url).catch((err: unknown) => console.error('Could not open the application link', err));
-                    }}
-                    className="break-all underline decoration-hairline underline-offset-2 hover:text-signal"
-                  >
-                    {url}
-                  </a>
-                ) : (
-                  url
-                )
-              }
-            />
-          </div>
-        )}
+      {detail && (
+        <div className="flex flex-col border-t border-hairline">
+          <FactLine label={t('detail.sections.overview')} fact={detail.overview} index={mark(detail.overview)} />
+          <FactLine
+            label={t('detail.sections.language')}
+            fact={detail.languages}
+            index={mark(detail.languages)}
+            format={(codes) => codes.map((c) => languageName(c, uiLang)).join(', ')}
+          />
+          <FactLine label={t('detail.sections.tuition')} fact={detail.tuition} index={mark(detail.tuition)} />
+          <FactLine label={t('detail.sections.scholarships')} fact={detail.scholarships} index={mark(detail.scholarships)} />
+          <FactLine label={t('detail.sections.deadlines')} fact={detail.deadlines} index={mark(detail.deadlines)} />
+          <FactLine label={t('detail.sections.nextDeadline')} fact={detail.nextDeadline} index={mark(detail.nextDeadline)} />
+          <FactLine label={t('detail.sections.exams')} fact={detail.exams} index={mark(detail.exams)} />
+          <FactLine label={t('detail.sections.requirements')} fact={detail.requirements} index={mark(detail.requirements)} />
+          <FactLine
+            label={t('detail.sections.apply')}
+            fact={detail.applyUrl}
+            index={mark(detail.applyUrl)}
+            format={(url) =>
+              isWebUrl(url) ? (
+                <a
+                  href={url}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openUrl(url).catch((err: unknown) => console.error('Could not open the application link', err));
+                  }}
+                  className="break-all underline decoration-hairline underline-offset-2 hover:text-signal"
+                >
+                  {url}
+                </a>
+              ) : (
+                url
+              )
+            }
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  if (embedded) {
+    return (
+      <div className="flex h-full min-h-0 flex-1 flex-col">
+        <div className="shrink-0 px-4 pt-4">{back}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pt-3 pb-4">{body}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-[1120px] px-12 py-8">
+      <div className="flex flex-col gap-6">
+        {back}
+        {body}
       </div>
     </div>
   );

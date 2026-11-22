@@ -9,6 +9,12 @@
     "filters": "Filtros",
     "results": "Resultados"
   },
+  "tabs": {
+    "label": "Secciones del buscador",
+    "careers": "Carreras",
+    "countries": "Países",
+    "search": "Buscar"
+  },
   "careers": {
     "none": "Todavía no hay carreras guardadas. Guarda una carrera en el Consejero o escríbela abajo.",
     "placeholder": "Escribe una carrera y pulsa Intro"

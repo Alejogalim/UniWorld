@@ -25,17 +25,24 @@ interface ResultRowProps {
   rank: number;
   /** Position in the list, used for the 24ms entrance stagger (capped at eight rows). */
   index: number;
+  /** Embedded Finder dock: open the detail in place instead of navigating to its page. */
+  onOpen?: (uni: UniResult) => void;
 }
 
 /** DESIGN.md "Result row": a ranked hairline row, not a card. */
-export function ResultRow({ uni, rank, index }: ResultRowProps) {
+export function ResultRow({ uni, rank, index, onOpen }: ResultRowProps) {
   const { t, i18n } = useTranslation('finder');
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
 
-  const open = () =>
+  const open = () => {
+    if (onOpen) {
+      onOpen(uni);
+      return;
+    }
     navigate(`/finder/uni/${encodeURIComponent(uni.rorId)}?program=${encodeURIComponent(uni.program)}`, { state: { uni } });
+  };
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();

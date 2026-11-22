@@ -12,6 +12,10 @@ import { useFinder } from './useFinder';
 interface CountryPickerProps {
   /** Fires with an ISO code on row hover/focus, and null when the pointer or focus leaves the list. */
   onHoverCountry: (iso: string | null) => void;
+  /** Fill the parent height and let only the list scroll (used by the split countries tab). */
+  fill?: boolean;
+  /** Hide the selected-countries summary when it lives in the other column. */
+  showSelected?: boolean;
 }
 
 /** Accent-insensitive, case-insensitive match on the name, or an exact code. */
@@ -23,7 +27,11 @@ function fold(s: string): string {
  * Persistent multi-select country list: a filter input over every country, with rows that
  * toggle in place. Hovering or arrowing onto a row asks the globe to focus that country.
  */
-export function CountryPicker({ onHoverCountry }: CountryPickerProps) {
+export function CountryPicker({
+  onHoverCountry,
+  fill = false,
+  showSelected = true,
+}: CountryPickerProps) {
   const { t, i18n } = useTranslation('finder');
   const scope = useFinder((s) => s.scope);
   const toggleCountry = useFinder((s) => s.toggleCountry);
@@ -64,7 +72,7 @@ export function CountryPicker({ onHoverCountry }: CountryPickerProps) {
 
   return (
     <div
-      className="flex flex-col gap-3"
+      className={cn('flex flex-col gap-3', fill && 'h-full min-h-0 overflow-hidden')}
       onMouseLeave={() => onHoverCountry(null)}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) onHoverCountry(null);
@@ -106,7 +114,12 @@ export function CountryPicker({ onHoverCountry }: CountryPickerProps) {
         role="listbox"
         aria-multiselectable="true"
         aria-label={t('sections.countries')}
-        className="grid max-h-[min(60vh,560px)] min-h-0 grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[680px]:grid-cols-2 @min-[1000px]:grid-cols-1"
+        className={cn(
+          'grid min-h-0 grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[520px]:grid-cols-2',
+          fill
+            ? 'flex-1 @max-[679px]:max-h-[38vh] @max-[679px]:flex-none'
+            : 'max-h-[min(38vh,360px)]',
+        )}
       >
         {filtered.length === 0 ? (
           <p className="col-span-full px-3 py-2 text-sm text-chart-grey">{t('scope.noMatches')}</p>
@@ -152,7 +165,7 @@ export function CountryPicker({ onHoverCountry }: CountryPickerProps) {
         )}
       </div>
 
-      <SelectedCountries />
+      {showSelected && <SelectedCountries />}
     </div>
   );
 }

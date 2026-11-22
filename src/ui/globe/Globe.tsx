@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Globe, { type GlobeInstance } from 'globe.gl';
 import { useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import type { Continent, UiLang } from '@/core/contracts';
 import { countryName } from '@/ui/data/countries';
 import { continentOf, loadCountries, viewForCountry, type CountryFeature, type GeoView } from './geo';
@@ -17,6 +18,8 @@ export interface GlobeViewProps {
   focusCountry: string | null;
   /** Raw list hover, applied immediately so the globe stops turning before the camera tween starts. */
   listHover: boolean;
+  /** Fill the parent (full-bleed background) instead of drawing a square. */
+  fill?: boolean;
   theme: 'light' | 'dark';
 }
 
@@ -94,6 +97,7 @@ export default function GlobeView({
   flyTo,
   focusCountry,
   listHover,
+  fill = false,
   theme,
 }: GlobeViewProps) {
   const { t, i18n } = useTranslation('finder');
@@ -110,6 +114,8 @@ export default function GlobeView({
     focusCountry,
     globeHover: null as string | null,
     pointerInside: false,
+    pointerOverGlobe: false,
+    fill,
     palette: null as Palette | null,
     uiLang: i18n.language as UiLang,
     onToggleCountry,
@@ -127,6 +133,7 @@ export default function GlobeView({
   state.current.selected = selected;
   state.current.highlightContinent = highlightContinent;
   state.current.focusCountry = focusCountry;
+  state.current.fill = fill;
   state.current.onToggleCountry = onToggleCountry;
   state.current.reduceMotion = reduceMotion;
   state.current.uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
@@ -232,7 +239,7 @@ export default function GlobeView({
     const syncRotation = () => {
       const s = state.current;
       globe.controls().autoRotate =
-        !s.reduceMotion && !s.pointerInside && s.globeHover === null && s.focusCountry === null;
+        !s.reduceMotion && !s.pointerOverGlobe && s.globeHover === null && s.focusCountry === null;
     };
     state.current.syncRotation = syncRotation;
     const onEnter = () => {
@@ -241,25 +248,46 @@ export default function GlobeView({
     };
     const onLeave = () => {
       state.current.pointerInside = false;
+      state.current.pointerOverGlobe = false;
       state.current.globeHover = null;
       syncRotation();
       schedule();
     };
+    // Whether the pointer is actually over the sphere, not the empty canvas around it.
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const camera = globe.camera() as unknown as {
+        fov: number;
+        position: { length: () => number };
+      };
+      const distance = Math.max(camera.position.length(), 100);
+      const angularRadius = Math.asin(Math.min(1, 100 / distance));
+      const tanHalfFov = Math.tan((camera.fov * Math.PI) / 360);
+      const projectedRadius = (Math.tan(angularRadius) / tanHalfFov) * (rect.height / 2);
+      const dx = event.clientX - rect.left - rect.width / 2;
+      const dy = event.clientY - rect.top - rect.height / 2;
+      const over = dx * dx + dy * dy <= projectedRadius * projectedRadius;
+      if (over === state.current.pointerOverGlobe) return;
+      state.current.pointerOverGlobe = over;
+      syncRotation();
+    };
     syncRotation();
     el.addEventListener('pointerenter', onEnter);
     el.addEventListener('pointerleave', onLeave);
+    el.addEventListener('pointermove', onPointerMove);
 
-    let lastCompact: boolean | null = null;
+    let lastAltitude: number | null = null;
     const resize = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
       globe.width(Math.floor(width)).height(Math.floor(height));
       globe.renderer().setPixelRatio(1);
-      // Keep the sphere a little further away in a narrow column, whatever the search phase.
-      const compact = width < 480;
-      if (compact !== lastCompact) {
-        lastCompact = compact;
+      // Fill mode frames the background globe; otherwise keep the sphere a little further away in a narrow column.
+      const altitude = state.current.fill ? 1.85 : width < 480 ? 2.4 : 2.1;
+      if (altitude !== lastAltitude) {
+        lastAltitude = altitude;
         if (!state.current.focusCountry) {
-          globe.pointOfView({ altitude: compact ? 2.4 : 2.1 }, 0);
+          globe.pointOfView({ altitude }, 0);
         }
       }
     });
@@ -274,6 +302,7 @@ export default function GlobeView({
       s.appliedKey = '';
       el.removeEventListener('pointerenter', onEnter);
       el.removeEventListener('pointerleave', onLeave);
+      el.removeEventListener('pointermove', onPointerMove);
       globe.controls().autoRotate = false;
       // Browsers cap live WebGL contexts; the globe remounts often, so release the context explicitly.
       globe.renderer().forceContextLoss();
@@ -381,7 +410,11 @@ export default function GlobeView({
   }, [focusCountry, countries]);
 
   return (
-    <div className="relative aspect-square w-full" aria-label={t('globe.label')} role="application">
+    <div
+      className={cn('relative', fill ? 'size-full' : 'aspect-square w-full')}
+      aria-label={t('globe.label')}
+      role="application"
+    >
       <div ref={containerRef} className="absolute inset-0" />
       {loadError && (
         <p role="alert" className="absolute inset-x-0 bottom-2 text-center text-sm text-chart-grey">
