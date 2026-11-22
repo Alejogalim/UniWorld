@@ -10,7 +10,6 @@ import type { UniResult } from '@/core/contracts';
 import { Button } from '@/ui/components/ui/button';
 import { EmptyState } from '@/ui/components/EmptyState';
 import { ErrorNote } from '@/ui/components/ErrorNote';
-import { Panel } from '@/ui/components/Panel';
 import { ProgressLine } from '@/ui/components/ProgressLine';
 import { Spinner } from '@/ui/components/Spinner';
 import type { GeoView } from '@/ui/globe/geo';
@@ -246,25 +245,25 @@ export function FinderScreen() {
           <Filters />
         </section>
 
-        <Panel variant="ember" className="flex flex-col gap-3 p-4">
+        <div className="flex flex-col items-center gap-3 pt-2 text-center">
           {hasKey === false && (
-            <ErrorNote
-              message={t('key.message')}
-              action={
-                <Button variant="secondary" onClick={() => navigate('/settings')}>
-                  {t('key.openSettings')}
-                </Button>
-              }
-            />
+            <div className="self-stretch text-left">
+              <ErrorNote
+                message={t('key.message')}
+                action={
+                  <Button variant="secondary" onClick={() => navigate('/settings')}>
+                    {t('key.openSettings')}
+                  </Button>
+                }
+              />
+            </div>
           )}
 
-          <div>
-            <Button onClick={runSearch} disabled={!canSearch}>
-              {t('search.button')}
-            </Button>
-          </div>
+          <Button onClick={runSearch} disabled={!canSearch}>
+            {t('search.button')}
+          </Button>
           {reason && <p className="text-sm text-chart-grey">{reason}</p>}
-        </Panel>
+        </div>
       </div>
     </div>
   );
