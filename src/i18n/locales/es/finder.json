@@ -1,0 +1,80 @@
+{
+  "globe": {
+    "label": "Mapa del mundo. Haz clic en un país para añadirlo o quitarlo de la búsqueda."
+  },
+  "sections": {
+    "careers": "Carreras",
+    "scope": "Dónde estudiar",
+    "filters": "Filtros",
+    "results": "Resultados"
+  },
+  "careers": {
+    "none": "Todavía no hay carreras guardadas. Guarda una carrera en el Consejero o escríbela abajo.",
+    "placeholder": "Escribe una carrera y pulsa Intro"
+  },
+  "scope": {
+    "world": "Todo el mundo",
+    "hint": "Haz clic en un país del globo para añadirlo. Haz clic otra vez para quitarlo.",
+    "current": "Buscando en"
+  },
+  "continent": {
+    "Africa": "África",
+    "Asia": "Asia",
+    "Europe": "Europa",
+    "North America": "América del Norte",
+    "South America": "América del Sur",
+    "Oceania": "Oceanía"
+  },
+  "filters": {
+    "tuitionFreeOnly": "Solo matrícula gratuita",
+    "spokenLanguagesOnly": "Solo idiomas que hablo",
+    "includeNeedToLearn": "Incluir idiomas que tendría que aprender"
+  },
+  "search": {
+    "button": "Buscar universidades",
+    "noCareer": "Elige al menos una carrera para buscar.",
+    "newSearch": "Nueva búsqueda",
+    "edit": "Editar búsqueda",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "key": {
+    "message": "La búsqueda de universidades necesita una clave de OpenRouter (para la búsqueda web verificada).",
+    "openSettings": "Abrir ajustes"
+  },
+  "progress": {
+    "searching": "Buscando en la web…",
+    "cached": "Resultados guardados cargados.",
+    "checking": "Comprobando {{count}} candidatas en el registro de universidades…",
+    "verified": "{{verified}} verificadas, {{removed}} descartadas.",
+    "tooFew": "No se pudieron verificar suficientes resultados. Prueba con un ámbito más reducido."
+  },
+  "warning": {
+    "tooFew": "No se pudieron verificar suficientes resultados. Prueba con un ámbito más reducido."
+  },
+  "admission": {
+    "Reach": "Ambiciosa",
+    "Match": "Equilibrada",
+    "Safety": "Segura",
+    "Unknown": "Desconocida"
+  },
+  "row": {
+    "rank": "{{rank}}",
+    "tuitionUnknown": "Matrícula desconocida",
+    "overviewMissing": "No encontrado — consulta el sitio oficial",
+    "costDepends": "Depende de la ciudadanía",
+    "needToLearn": "Tendrías que aprender {{language}}",
+    "usualLevel": "Nivel habitual {{level}}",
+    "sources": "Fuentes: {{count}}",
+    "why": "Por qué encaja contigo"
+  },
+  "fit": {
+    "car": "CAR",
+    "adm": "ADM",
+    "lng": "LNG",
+    "cst": "CST"
+  },
+  "empty": {
+    "title": "Ninguna universidad verificada coincide con esta búsqueda",
+    "description": "Prueba con un ámbito más amplio o con otras carreras."
+  }
+}

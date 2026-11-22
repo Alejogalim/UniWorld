@@ -9,18 +9,21 @@ import viOnboarding from './locales/vi/onboarding.json';
 import enCounselor from './locales/en/counselor.json';
 import esCounselor from './locales/es/counselor.json';
 import viCounselor from './locales/vi/counselor.json';
+import enFinder from './locales/en/finder.json';
+import esFinder from './locales/es/finder.json';
+import viFinder from './locales/vi/finder.json';
 
 export const resources = {
-  en: { common: enCommon, onboarding: enOnboarding, counselor: enCounselor },
-  es: { common: esCommon, onboarding: esOnboarding, counselor: esCounselor },
-  vi: { common: viCommon, onboarding: viOnboarding, counselor: viCounselor },
+  en: { common: enCommon, onboarding: enOnboarding, counselor: enCounselor, finder: enFinder },
+  es: { common: esCommon, onboarding: esOnboarding, counselor: esCounselor, finder: esFinder },
+  vi: { common: viCommon, onboarding: viOnboarding, counselor: viCounselor, finder: viFinder },
 } as const;
 
 void i18n.use(initReactI18next).init({
   resources,
   lng: 'en',
   fallbackLng: 'en',
-  ns: ['common', 'onboarding', 'counselor'],
+  ns: ['common', 'onboarding', 'counselor', 'finder'],
   defaultNS: 'common',
   interpolation: { escapeValue: false },
 });

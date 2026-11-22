@@ -1,0 +1,80 @@
+{
+  "globe": {
+    "label": "Map of the world. Click a country to add or remove it from the search."
+  },
+  "sections": {
+    "careers": "Careers",
+    "scope": "Where to study",
+    "filters": "Filters",
+    "results": "Results"
+  },
+  "careers": {
+    "none": "No saved careers yet. Save a career in the Counselor, or type one below.",
+    "placeholder": "Type a career and press Enter"
+  },
+  "scope": {
+    "world": "Whole world",
+    "hint": "Click a country on the globe to add it. Click it again to remove it.",
+    "current": "Searching in"
+  },
+  "continent": {
+    "Africa": "Africa",
+    "Asia": "Asia",
+    "Europe": "Europe",
+    "North America": "North America",
+    "South America": "South America",
+    "Oceania": "Oceania"
+  },
+  "filters": {
+    "tuitionFreeOnly": "Free tuition only",
+    "spokenLanguagesOnly": "Only languages I speak",
+    "includeNeedToLearn": "Include languages I would need to learn"
+  },
+  "search": {
+    "button": "Search universities",
+    "noCareer": "Choose at least one career to search.",
+    "newSearch": "New search",
+    "edit": "Edit search",
+    "tryAgain": "Try again"
+  },
+  "key": {
+    "message": "University search needs an OpenRouter key (for verified web search).",
+    "openSettings": "Open settings"
+  },
+  "progress": {
+    "searching": "Searching the web…",
+    "cached": "Loaded cached results.",
+    "checking": "Checking {{count}} candidates against the university registry…",
+    "verified": "{{verified}} verified, {{removed}} removed.",
+    "tooFew": "Couldn't verify enough results. Try a narrower scope."
+  },
+  "warning": {
+    "tooFew": "Couldn't verify enough results. Try a narrower scope."
+  },
+  "admission": {
+    "Reach": "Reach",
+    "Match": "Match",
+    "Safety": "Safety",
+    "Unknown": "Unknown"
+  },
+  "row": {
+    "rank": "{{rank}}",
+    "tuitionUnknown": "Tuition unknown",
+    "overviewMissing": "Not found — check official site",
+    "costDepends": "Depends on citizenship",
+    "needToLearn": "You'd need to learn {{language}}",
+    "usualLevel": "Usual level {{level}}",
+    "sources": "Sources: {{count}}",
+    "why": "Why this fits you"
+  },
+  "fit": {
+    "car": "CAR",
+    "adm": "ADM",
+    "lng": "LNG",
+    "cst": "CST"
+  },
+  "empty": {
+    "title": "No verified universities matched this search",
+    "description": "Try a wider scope, or different careers."
+  }
+}

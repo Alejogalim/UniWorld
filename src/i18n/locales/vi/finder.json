@@ -1,0 +1,80 @@
+{
+  "globe": {
+    "label": "Bản đồ thế giới. Nhấn vào một quốc gia để thêm hoặc bỏ khỏi tìm kiếm."
+  },
+  "sections": {
+    "careers": "Nghề nghiệp",
+    "scope": "Nơi muốn học",
+    "filters": "Bộ lọc",
+    "results": "Kết quả"
+  },
+  "careers": {
+    "none": "Chưa có nghề nghiệp nào được lưu. Hãy lưu một nghề trong Tư vấn viên hoặc nhập bên dưới.",
+    "placeholder": "Nhập tên nghề rồi nhấn Enter"
+  },
+  "scope": {
+    "world": "Toàn thế giới",
+    "hint": "Nhấn vào một quốc gia trên quả địa cầu để thêm. Nhấn lại để bỏ.",
+    "current": "Đang tìm ở"
+  },
+  "continent": {
+    "Africa": "Châu Phi",
+    "Asia": "Châu Á",
+    "Europe": "Châu Âu",
+    "North America": "Bắc Mỹ",
+    "South America": "Nam Mỹ",
+    "Oceania": "Châu Đại Dương"
+  },
+  "filters": {
+    "tuitionFreeOnly": "Chỉ học phí miễn phí",
+    "spokenLanguagesOnly": "Chỉ ngôn ngữ tôi nói được",
+    "includeNeedToLearn": "Bao gồm ngôn ngữ tôi cần học thêm"
+  },
+  "search": {
+    "button": "Tìm trường đại học",
+    "noCareer": "Chọn ít nhất một nghề nghiệp để tìm.",
+    "newSearch": "Tìm kiếm mới",
+    "edit": "Chỉnh sửa tìm kiếm",
+    "tryAgain": "Thử lại"
+  },
+  "key": {
+    "message": "Tìm trường đại học cần khóa OpenRouter (để tìm kiếm web đã xác minh).",
+    "openSettings": "Mở cài đặt"
+  },
+  "progress": {
+    "searching": "Đang tìm trên web…",
+    "cached": "Đã tải kết quả đã lưu.",
+    "checking": "Đang kiểm tra {{count}} ứng viên trong danh sách trường đại học…",
+    "verified": "{{verified}} đã xác minh, {{removed}} đã loại.",
+    "tooFew": "Không xác minh đủ kết quả. Hãy thử phạm vi hẹp hơn."
+  },
+  "warning": {
+    "tooFew": "Không xác minh đủ kết quả. Hãy thử phạm vi hẹp hơn."
+  },
+  "admission": {
+    "Reach": "Thử thách",
+    "Match": "Phù hợp",
+    "Safety": "An toàn",
+    "Unknown": "Chưa rõ"
+  },
+  "row": {
+    "rank": "{{rank}}",
+    "tuitionUnknown": "Chưa rõ học phí",
+    "overviewMissing": "Không tìm thấy — hãy xem trang chính thức",
+    "costDepends": "Phụ thuộc quốc tịch",
+    "needToLearn": "Bạn sẽ cần học {{language}}",
+    "usualLevel": "Trình độ thường gặp {{level}}",
+    "sources": "Nguồn: {{count}}",
+    "why": "Vì sao phù hợp với bạn"
+  },
+  "fit": {
+    "car": "CAR",
+    "adm": "ADM",
+    "lng": "LNG",
+    "cst": "CST"
+  },
+  "empty": {
+    "title": "Không có trường đại học đã xác minh nào khớp với tìm kiếm này",
+    "description": "Hãy thử phạm vi rộng hơn hoặc nghề nghiệp khác."
+  }
+}

@@ -4,6 +4,7 @@ import { CounselorScreen } from '@/ui/screens/Counselor';
 import { FinderScreen } from '@/ui/screens/Finder';
 import { MyUnisScreen } from '@/ui/screens/MyUnis';
 import { OnboardingScreen } from '@/ui/screens/Onboarding';
+import { PlaceholderScreen } from '@/ui/screens/PlaceholderScreen';
 import { SettingsScreen } from '@/ui/screens/Settings';
 import { FirstLaunchGate, RootRedirect } from './FirstLaunchGate';
 
@@ -19,6 +20,8 @@ export const router = createMemoryRouter([
           { path: 'onboarding', element: <OnboardingScreen /> },
           { path: 'counselor', element: <CounselorScreen /> },
           { path: 'finder', element: <FinderScreen /> },
+          // Detail page is the next slice; this temporary screen replaces it there.
+          { path: 'finder/uni/:rorId', element: <PlaceholderScreen /> },
           { path: 'my-unis', element: <MyUnisScreen /> },
           { path: 'settings', element: <SettingsScreen /> },
         ],
