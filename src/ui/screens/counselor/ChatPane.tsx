@@ -84,9 +84,9 @@ export function ChatPane() {
   return (
     <section
       className={cn(
-        // The start screen is centered; a running conversation starts at the top with the composer at the bottom.
-        "mx-auto flex min-h-[calc(100vh-10rem)] w-full min-w-0 max-w-[40rem] flex-col",
-        fresh ? "justify-center gap-8" : "gap-6",
+        // The start screen is centered; a running conversation fills the pane, latest message at the bottom.
+        "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
+        fresh ? "min-h-[calc(100vh-10rem)] justify-center gap-8" : "h-[calc(100vh-10rem)] gap-6",
       )}
     >
       {fresh ? (
@@ -102,7 +102,7 @@ export function ChatPane() {
           aria-live="polite"
           aria-label={t("chat.log")}
           onScroll={onLogScroll}
-          className="flex max-h-[min(60vh,560px)] min-h-32 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)]"
+          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)] [&>*:first-child]:mt-auto"
         >
           {messages.map((m, i) => (
             <MessageView
@@ -125,9 +125,9 @@ export function ChatPane() {
         <CounselorErrorNote error={error} title="errors.chatTitle" canRetry={pending !== null} />
       )}
 
-      <div className={cn("flex flex-col gap-3", !fresh && "mt-auto")}>
+      <div className="flex flex-col gap-3">
         {!fresh && intake && <IntakeProgress step={intakeStep} />}
-        {hint && !fresh && <p className="text-sm text-chart-grey">{hint}</p>}
+        {hint && !fresh && <p className="text-center text-sm text-chart-grey">{hint}</p>}
         {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
         <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
           <Textarea
@@ -148,7 +148,7 @@ export function ChatPane() {
             {busy ? t("chat.sending") : t("chat.send")}
           </Button>
         </div>
-        {!touch && <p className={cn("text-xs text-chart-grey", fresh && "text-center")}>{t("chat.enterHint")}</p>}
+        {!touch && <p className="text-center text-xs text-chart-grey">{t("chat.enterHint")}</p>}
         {intake && (
           <div className="flex justify-center">
             <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
