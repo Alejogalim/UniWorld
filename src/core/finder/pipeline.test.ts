@@ -259,7 +259,7 @@ describe('Finder search pipeline', () => {
     expect(events.at(-1)).toEqual({ type: 'done', verified: 1, removed: 0 });
   });
 
-  it('reports the missing-key message when only OpenCode is configured', async () => {
+  it('reports the missing-key message when neither key is configured', async () => {
     const http = new FakeHttp();
     const d = deps(http);
     const events: FinderEvent[] = [];
@@ -267,7 +267,7 @@ describe('Finder search pipeline', () => {
       {
         deps: {
           ...d.deps,
-          secrets: { get: async (provider: Provider) => (provider === 'opencode' ? 'k' : null) },
+          secrets: { get: async () => null },
         },
         ror,
       },
@@ -277,9 +277,11 @@ describe('Finder search pipeline', () => {
     expect(events).toEqual([
       {
         type: 'error',
-        message: 'University search needs an OpenRouter key (for verified web search).',
+        message:
+          'University search needs an AI key. Add an OpenRouter key (best, verified web search) or an OpenCode Go key in Settings.',
       },
     ]);
+    expect(http.calls).toBe(0);
   });
 });
 

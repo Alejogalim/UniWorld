@@ -63,11 +63,11 @@
       "saved": "Model saved."
     },
     "counselorProvider": {
-      "label": "Counselor provider",
+      "label": "AI provider",
       "openrouter": "OpenRouter",
       "opencode": "OpenCode Go",
       "needsKey": "OpenCode Go (add its key above first)",
-      "hint": "The Counselor uses this provider. Changing it applies to your current chat too."
+      "hint": "Used by the Counselor, the Finder and university pages. OpenRouter gives verified web search; OpenCode Go reads each university's own site instead."
     },
     "keySaving": "Saving…",
     "loadFailed": "The AI settings could not be read: {{error}}"

@@ -1,7 +1,7 @@
 import type { Fact, UniDetail } from '../contracts';
 import { callJson } from '../ai/json';
 import { detailPrompt } from '../ai/prompts';
-import { createAiClient, hasKey } from '../ai/index';
+import { createAiClient, pickFinderProvider } from '../ai/index';
 import type { SearchHit } from '../ai/types';
 import {
   DETAIL_CACHE_TTL_MS,
@@ -63,8 +63,8 @@ export interface DetailOptions {
  * and extracting facts from that same text (the quote check never relaxes).
  */
 async function detailProvider(deps: CoreDeps): Promise<'openrouter' | 'opencode'> {
-  if (await hasKey(deps, 'openrouter')) return 'openrouter';
-  if (await hasKey(deps, 'opencode')) return 'opencode';
+  const provider = await pickFinderProvider(deps);
+  if (provider) return provider;
   throw new Error(
     'University detail needs an OpenRouter key (verified web search) or an OpenCode key (direct official-page fetch).',
   );

@@ -37,10 +37,11 @@
     "noCareer": "Choose at least one career to search.",
     "newSearch": "New search",
     "edit": "Edit search",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "switchProvider": "Search with {{provider}} instead"
   },
   "key": {
-    "message": "University search needs an OpenRouter key (for verified web search).",
+    "message": "University search needs an AI key. Add an OpenRouter key (best, verified web search) or an OpenCode Go key in Settings.",
     "openSettings": "Open settings"
   },
   "progress": {
@@ -48,7 +49,10 @@
     "cached": "Loaded cached results.",
     "checking": "Checking {{count}} candidates against the university registry…",
     "verified": "{{verified}} verified, {{removed}} removed.",
-    "tooFew": "Couldn't verify enough results. Try a narrower scope."
+    "tooFew": "Couldn't verify enough results. Try a narrower scope.",
+    "suggesting": "Suggesting universities…",
+    "readingPages": "Reading official pages ({{done}} of {{total}})…",
+    "readingFacts": "Reading the pages for facts…"
   },
   "warning": {
     "tooFew": "Couldn't verify enough results. Try a narrower scope."
@@ -106,5 +110,8 @@
     },
     "untitled": "University details",
     "addNeedsName": "Open this university from the Finder to add it to your list."
+  },
+  "source": {
+    "ownPages": "Found from universities' own pages. Results can be fewer than with web search."
   }
 }

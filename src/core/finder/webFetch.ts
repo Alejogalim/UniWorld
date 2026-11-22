@@ -231,6 +231,7 @@ export async function fetchUniversityPages(
   record: UniversityRecord,
   program: string,
   logger?: Logger,
+  maxPages = MAX_PAGES,
 ): Promise<SearchHit[]> {
   const allowed = allowedHostSet(record);
   if (allowed.size === 0) return [];
@@ -338,7 +339,7 @@ export async function fetchUniversityPages(
     ...guessedPaths,
   ]);
 
-  while (hits.length < MAX_PAGES && queue.length > 0) {
+  while (hits.length < maxPages && queue.length > 0) {
     queue.sort((a, b) => urlPriority(b, program) - urlPriority(a, program));
     const url = queue.shift();
     if (!url) break;

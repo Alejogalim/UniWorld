@@ -37,10 +37,11 @@
     "noCareer": "Chọn ít nhất một nghề nghiệp để tìm.",
     "newSearch": "Tìm kiếm mới",
     "edit": "Chỉnh sửa tìm kiếm",
-    "tryAgain": "Thử lại"
+    "tryAgain": "Thử lại",
+    "switchProvider": "Tìm bằng {{provider}} thay thế"
   },
   "key": {
-    "message": "Tìm trường đại học cần khóa OpenRouter (để tìm kiếm web đã xác minh).",
+    "message": "Tìm trường đại học cần một khóa AI. Hãy thêm khóa OpenRouter (tốt nhất, có tìm kiếm web đã xác minh) hoặc khóa OpenCode Go trong Cài đặt.",
     "openSettings": "Mở cài đặt"
   },
   "progress": {
@@ -48,7 +49,10 @@
     "cached": "Đã tải kết quả đã lưu.",
     "checking": "Đang kiểm tra {{count}} ứng viên trong danh sách trường đại học…",
     "verified": "{{verified}} đã xác minh, {{removed}} đã loại.",
-    "tooFew": "Không xác minh đủ kết quả. Hãy thử phạm vi hẹp hơn."
+    "tooFew": "Không xác minh đủ kết quả. Hãy thử phạm vi hẹp hơn.",
+    "suggesting": "Đang gợi ý các trường đại học…",
+    "readingPages": "Đang đọc trang chính thức ({{done}}/{{total}})…",
+    "readingFacts": "Đang đọc các trang để lấy thông tin…"
   },
   "warning": {
     "tooFew": "Không xác minh đủ kết quả. Hãy thử phạm vi hẹp hơn."
@@ -106,5 +110,8 @@
     },
     "untitled": "Thông tin trường",
     "addNeedsName": "Hãy mở trường này từ Tìm trường để thêm vào danh sách."
+  },
+  "source": {
+    "ownPages": "Tìm thấy từ trang của chính các trường đại học. Số kết quả có thể ít hơn so với tìm kiếm web."
   }
 }

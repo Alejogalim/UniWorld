@@ -35,6 +35,11 @@ export {
   resolveModel,
   MissingKeyError,
   FINDER_NEEDS_OPENROUTER,
+  chooseFinderProvider,
+  finderProvider,
+  pickFinderProvider,
 } from './ai/index';
+export type { FinderKeyState } from './ai/index';
+export { OPENCODE_MAX_UNIVERSITIES } from './finder/suggest';
 export { callJson, AiFormatError } from './ai/json';
 export * from './schemas';

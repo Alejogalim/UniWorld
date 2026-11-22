@@ -63,11 +63,11 @@
       "saved": "Đã lưu mô hình."
     },
     "counselorProvider": {
-      "label": "Nhà cung cấp của Tư vấn",
+      "label": "Nhà cung cấp AI",
       "openrouter": "OpenRouter",
       "opencode": "OpenCode Go",
       "needsKey": "OpenCode Go (hãy thêm khóa ở trên trước)",
-      "hint": "Cố vấn dùng nhà cung cấp này. Thay đổi cũng áp dụng cho cuộc trò chuyện hiện tại của bạn."
+      "hint": "Dùng cho Cố vấn, Tìm trường và trang từng trường. OpenRouter có tìm kiếm web đã xác minh; OpenCode Go thay vào đó đọc trang chính thức của từng trường."
     },
     "keySaving": "Đang lưu…",
     "loadFailed": "Không đọc được cài đặt AI: {{error}}"

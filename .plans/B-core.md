@@ -54,6 +54,15 @@ ROR matcher, citation validator, Zod schemas.
 - `UNIFINDER_DEFAULT_PROVIDER` only chooses the Counselor provider. Finder search still needs OpenRouter; detail uses OpenRouter if present, otherwise OpenCode + direct official-page fetch.
 - `src-tauri/capabilities/default.json` now allows `https://*` for the OpenCode detail fallback; keep that scope or restrict it to a curated list.
 - Note: B's `bun install` rewrote the lockfile to `lockfileVersion: 1` because Bun 1.3 cannot read A's v2 lock. Re-run `bun install` on your Bun version if needed.
+- Plan 13 (OpenCode Go Finder search) changed these core files, for B to review:
+  - `src/core/ai/index.ts`: `pickFinderProvider` / `finderProvider` / pure `chooseFinderProvider` (setting x keys rule); `FINDER_NEEDS_OPENROUTER` text now says "AI key" (neither key stored).
+  - `src/core/finder/index.ts`: `finderSearch` picks the provider; OpenRouter path unchanged; OpenCode path uses `pageCandidates`. Shared verify/rank/emit tail.
+  - `src/core/finder/suggest.ts` (new): OpenCode path. Suggest names (`{name,country}` only), ROR ground, fetch official pages (4 pages, concurrency 3), extract in batches of 3, then the existing `verifyCandidates`. `OPENCODE_MAX_UNIVERSITIES = 12` lives here, not in `config.ts`.
+  - `src/core/finder/webFetch.ts`: `fetchUniversityPages` takes an optional `maxPages` (default 8, unchanged).
+  - `src/core/finder/detail.ts`: `detailProvider` uses `pickFinderProvider` (same rule as Finder).
+  - `src/core/index.ts`: exports `chooseFinderProvider`, `finderProvider`, `pickFinderProvider`, `FinderKeyState`, `OPENCODE_MAX_UNIVERSITIES`.
+  - Tests: `src/core/finder/opencodeSearch.test.ts` (new), `src/core/finder/pipeline.test.ts` (missing-key test now asserts the no-keys case).
+  - Superseded by this: the line above saying "Finder search still requires OpenRouter" (it no longer does).
 
 ## Implementation status (this session)
 - [x] `src/core/contracts.ts` already frozen on `main`.

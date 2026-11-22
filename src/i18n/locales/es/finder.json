@@ -37,10 +37,11 @@
     "noCareer": "Elige al menos una carrera para buscar.",
     "newSearch": "Nueva búsqueda",
     "edit": "Editar búsqueda",
-    "tryAgain": "Intentar de nuevo"
+    "tryAgain": "Intentar de nuevo",
+    "switchProvider": "Buscar con {{provider}} en su lugar"
   },
   "key": {
-    "message": "La búsqueda de universidades necesita una clave de OpenRouter (para la búsqueda web verificada).",
+    "message": "La búsqueda de universidades necesita una clave de IA. Añade una clave de OpenRouter (la mejor, con búsqueda web verificada) o una clave de OpenCode Go en Configuración.",
     "openSettings": "Abrir ajustes"
   },
   "progress": {
@@ -48,7 +49,10 @@
     "cached": "Resultados guardados cargados.",
     "checking": "Comprobando {{count}} candidatas en el registro de universidades…",
     "verified": "{{verified}} verificadas, {{removed}} descartadas.",
-    "tooFew": "No se pudieron verificar suficientes resultados. Prueba con un ámbito más reducido."
+    "tooFew": "No se pudieron verificar suficientes resultados. Prueba con un ámbito más reducido.",
+    "suggesting": "Sugiriendo universidades…",
+    "readingPages": "Leyendo las páginas oficiales ({{done}} de {{total}})…",
+    "readingFacts": "Leyendo las páginas para extraer datos…"
   },
   "warning": {
     "tooFew": "No se pudieron verificar suficientes resultados. Prueba con un ámbito más reducido."
@@ -106,5 +110,8 @@
     },
     "untitled": "Detalles de la universidad",
     "addNeedsName": "Abre esta universidad desde el Buscador para añadirla a tu lista."
+  },
+  "source": {
+    "ownPages": "Encontrado en las páginas de las propias universidades. Puede haber menos resultados que con la búsqueda web."
   }
 }

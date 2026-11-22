@@ -1,5 +1,6 @@
-import type { FinderEvent, SearchInput, UniDetail } from '../contracts';
-import { createAiClient, FINDER_NEEDS_OPENROUTER, hasKey } from '../ai/index';
+import type { FinderEvent, Profile, Provider, SearchInput, UniDetail } from '../contracts';
+import { createAiClient, FINDER_NEEDS_OPENROUTER, pickFinderProvider } from '../ai/index';
+import type { AiClient } from '../ai/types';
 import {
   MAX_RESULTS,
   MIN_VERIFIED_RESULTS,
@@ -12,6 +13,7 @@ import { loadDetail, type DetailOptions } from './detail';
 import { extractCandidates } from './extract';
 import { planQueries } from './planQueries';
 import { rankVerified } from './rank';
+import { pageCandidates, type PageCandidates } from './suggest';
 import { verifyCandidates } from './verify';
 
 export interface FinderContext {
@@ -25,6 +27,26 @@ export interface FinderApi {
 }
 
 const TOO_FEW = "Couldn't verify enough results, try a narrower scope.";
+
+type EmitFn = (event: FinderEvent) => void;
+
+/** OpenRouter path: planned web search, then extraction from the hits. */
+async function webCandidates(
+  client: AiClient,
+  profile: Profile,
+  input: SearchInput,
+  deps: CoreDeps,
+  onEvent: EmitFn,
+): Promise<PageCandidates> {
+  onEvent({ type: 'progress', message: 'Searching the web…' });
+  const queries = await planQueries(client, profile, input, deps.logger);
+  const hits = await client.search(queries, { maxResults: SEARCH_MAX_RESULTS_PER_QUERY });
+  if (hits.length === 0) {
+    return { candidates: [], index: CitationIndex.fromHits([]), removed: 0 };
+  }
+  const candidates = await extractCandidates(client, profile, input.careers, hits, deps.logger);
+  return { candidates, index: CitationIndex.fromHits(hits), removed: 0 };
+}
 
 export async function finderSearch(
   ctx: FinderContext,
@@ -42,7 +64,8 @@ export async function finderSearch(
       return;
     }
 
-    if (!(await hasKey(deps, 'openrouter'))) {
+    const provider: Provider | null = await pickFinderProvider(deps);
+    if (!provider) {
       onEvent({ type: 'error', message: FINDER_NEEDS_OPENROUTER });
       return;
     }
@@ -57,34 +80,35 @@ export async function finderSearch(
       }
     }
 
-    const client = await createAiClient('openrouter', deps);
+    const client = await createAiClient(provider, deps);
 
-    onEvent({ type: 'progress', message: 'Searching the web…' });
-    const queries = await planQueries(client, profile, input, deps.logger);
-    const hits = await client.search(queries, { maxResults: SEARCH_MAX_RESULTS_PER_QUERY });
+    const found =
+      provider === 'openrouter'
+        ? await webCandidates(client, profile, input, deps, onEvent)
+        : await pageCandidates(
+            deps.http,
+            client,
+            profile,
+            input,
+            ror,
+            deps.logger,
+            (message) => onEvent({ type: 'progress', message }),
+          );
 
-    if (hits.length === 0) {
+    if (found.candidates.length === 0) {
       onEvent({ type: 'progress', message: TOO_FEW });
-      onEvent({ type: 'done', verified: 0, removed: 0 });
-      return;
-    }
-
-    const candidates = await extractCandidates(client, profile, input.careers, hits, deps.logger);
-    if (candidates.length === 0) {
-      onEvent({ type: 'progress', message: TOO_FEW });
-      onEvent({ type: 'done', verified: 0, removed: 0 });
+      onEvent({ type: 'done', verified: 0, removed: found.removed });
       return;
     }
 
     onEvent({
       type: 'progress',
-      message: `Checking ${candidates.length} candidates against the university registry…`,
+      message: `Checking ${found.candidates.length} candidates against the university registry…`,
     });
 
-    const index = CitationIndex.fromHits(hits);
-    const { verified, removed } = verifyCandidates(candidates, {
+    const { verified, removed } = verifyCandidates(found.candidates, {
       ror,
-      index,
+      index: found.index,
       profile,
       input,
       checkedAt,
@@ -97,7 +121,7 @@ export async function finderSearch(
     const ranked = await rankVerified(client, profile, input, verified, deps.logger);
     const results = ranked.slice(0, MAX_RESULTS).map((entry) => entry.result);
     const capped = Math.max(0, ranked.length - results.length);
-    const totalRemoved = removed + capped;
+    const totalRemoved = found.removed + removed + capped;
 
     for (const result of results) onEvent({ type: 'result', uni: result });
 

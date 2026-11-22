@@ -63,11 +63,11 @@
       "saved": "Modelo guardado."
     },
     "counselorProvider": {
-      "label": "Proveedor del orientador",
+      "label": "Proveedor de IA",
       "openrouter": "OpenRouter",
       "opencode": "OpenCode Go",
       "needsKey": "OpenCode Go (añade primero su clave arriba)",
-      "hint": "El orientador usa este proveedor. Al cambiarlo, se aplica también a tu chat actual."
+      "hint": "Lo usan el orientador, el buscador y las páginas de universidades. OpenRouter ofrece búsqueda web verificada; OpenCode Go lee en su lugar el sitio de cada universidad."
     },
     "keySaving": "Guardando…",
     "loadFailed": "No se pudo leer la configuración de IA: {{error}}"

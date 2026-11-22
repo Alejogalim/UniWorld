@@ -17,7 +17,7 @@ export class MissingKeyError extends Error {
 }
 
 export const FINDER_NEEDS_OPENROUTER =
-  'University search needs an OpenRouter key (for verified web search).';
+  'University search needs an AI key. Add an OpenRouter key (best, verified web search) or an OpenCode Go key in Settings.';
 
 export async function hasKey(deps: CoreDeps, provider: Provider): Promise<boolean> {
   const key = await deps.secrets.get(provider);
@@ -52,6 +52,38 @@ export async function createAiClient(
   }
   const model = options.model ?? (await resolveModel(deps));
   return new OpenRouterClient({ http: deps.http, apiKey: key.trim(), model });
+}
+
+export interface FinderKeyState {
+  preferred?: Provider | null;
+  hasOpenRouter: boolean;
+  hasOpenCode: boolean;
+}
+
+/**
+ * Finder and university pages (Design §7.3): the user's `default_provider`
+ * wins when its key exists, otherwise OpenRouter, otherwise OpenCode Go.
+ * Null when neither key is stored.
+ */
+export function chooseFinderProvider(state: FinderKeyState): Provider | null {
+  if (state.preferred === 'opencode' && state.hasOpenCode) return 'opencode';
+  if (state.hasOpenRouter) return 'openrouter';
+  if (state.hasOpenCode) return 'opencode';
+  return null;
+}
+
+export async function pickFinderProvider(deps: CoreDeps): Promise<Provider | null> {
+  return chooseFinderProvider({
+    preferred: (await deps.settings?.getDefaultProvider?.()) ?? null,
+    hasOpenRouter: await hasKey(deps, 'openrouter'),
+    hasOpenCode: await hasKey(deps, 'opencode'),
+  });
+}
+
+export async function finderProvider(deps: CoreDeps): Promise<Provider> {
+  const provider = await pickFinderProvider(deps);
+  if (!provider) throw new MissingKeyError('openrouter');
+  return provider;
 }
 
 /** Counselor prefers OpenRouter, then OpenCode Go (Design §5.1). */

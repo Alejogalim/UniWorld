@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { getSecret } from '@/store/secrets';
+import { setSetting } from '@/store/settings';
 import { useTheme } from '@/app/theme';
 import { cn } from '@/lib/utils';
 import { Button } from '@/ui/components/ui/button';
@@ -16,6 +16,12 @@ import { FinderForm } from './finder/FinderForm';
 import { ResultRow } from './finder/ResultRow';
 import { ScopePicker } from './finder/ScopePicker';
 import { isTooFew, translateProgress } from './finder/progress';
+import {
+  loadFinderProviderState,
+  PROVIDER_NAME,
+  switchTargetFor,
+  type FinderProviderState,
+} from './finder/providerState';
 import { useFinder } from './finder/useFinder';
 
 // three.js (through globe.gl) is only fetched when the Finder opens.
@@ -42,25 +48,38 @@ export function FinderScreen() {
   const reset = useFinder((s) => s.reset);
   const setEditing = useFinder((s) => s.setEditing);
 
-  const [hasKey, setHasKey] = useState<boolean | null>(null);
+  const [providers, setProviders] = useState<FinderProviderState | null>(null);
   const [keyError, setKeyError] = useState<string | null>(null);
   const [flyTo, setFlyTo] = useState<GeoView | null>(null);
+  const hasKey = providers === null ? null : providers.hasOpenRouter || providers.hasOpenCode;
+  const switchTo = providers ? switchTargetFor(providers) : null;
 
   useEffect(() => {
     let cancelled = false;
-    getSecret('openrouter')
-      .then((key) => {
-        if (!cancelled) setHasKey(Boolean(key && key.trim()));
+    loadFinderProviderState()
+      .then((state) => {
+        if (!cancelled) setProviders(state);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
         setKeyError(err instanceof Error ? err.message : String(err));
-        setHasKey(false);
+        setProviders({ used: null, hasOpenRouter: false, hasOpenCode: false });
       });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const switchAndSearch = async (provider: NonNullable<typeof switchTo>) => {
+    try {
+      await setSetting('default_provider', provider);
+      setProviders(await loadFinderProviderState());
+    } catch (err) {
+      setKeyError(err instanceof Error ? err.message : String(err));
+      return;
+    }
+    void search();
+  };
 
   const split = phase !== 'idle';
   const selected = useMemo(
@@ -162,12 +181,23 @@ export function FinderScreen() {
                 <ErrorNote
                   message={error.message}
                   action={
-                    <Button variant="secondary" onClick={() => void search()}>
-                      {t('search.tryAgain')}
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="secondary" onClick={() => void search()}>
+                        {t('search.tryAgain')}
+                      </Button>
+                      {switchTo && (
+                        <Button variant="secondary" onClick={() => void switchAndSearch(switchTo)}>
+                          {t('search.switchProvider', { provider: PROVIDER_NAME[switchTo] })}
+                        </Button>
+                      )}
+                    </div>
                   }
                 />
               )
+            )}
+
+            {results.length > 0 && providers?.used === 'opencode' && (
+              <p className="text-sm text-chart-grey">{t('source.ownPages')}</p>
             )}
 
             {results.length > 0 && (
