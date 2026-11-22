@@ -43,22 +43,3 @@ export function finalOutcomeOf(status: TrackedStatus): FinalOutcomeStatus | null
 export function outcomeOf(status: TrackedStatus): OutcomeStatus | null {
   return (OUTCOMES as readonly TrackedStatus[]).includes(status) ? (status as OutcomeStatus) : null;
 }
-
-/**
- * The accent colour for a status, as a CSS colour. Completion warms from neutral grey to the
- * evidence green; outcomes sit around the same green with different weights.
- */
-const STATUS_ACCENTS: Record<TrackedStatus, string> = {
-  considering: 'var(--chart-grey)',
-  preparing: 'color-mix(in oklch, var(--evidence) 45%, var(--chart-grey))',
-  applied: 'var(--evidence)',
-  waiting: 'color-mix(in oklch, var(--evidence) 80%, var(--chart-grey))',
-  admitted: 'var(--evidence)',
-  waitlisted: 'color-mix(in oklch, var(--evidence) 55%, var(--chart-grey))',
-  rejected: 'var(--chart-grey)',
-};
-
-/** A CSS colour that reflects how far the application has progressed. */
-export function statusAccent(status: TrackedStatus): string {
-  return STATUS_ACCENTS[status];
-}

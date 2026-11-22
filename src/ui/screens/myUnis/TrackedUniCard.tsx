@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { UiLang } from '@/core/contracts';
 import type { TrackedUni } from '@/store/tracked';
@@ -11,7 +10,6 @@ import { Panel } from '@/ui/components/Panel';
 import { Button } from '@/ui/components/ui/button';
 import { daysUntil, formatDeadline, isUrgent } from './deadline';
 import { StatusProgress } from './StatusProgress';
-import { statusAccent } from './status';
 
 interface DeadlineNoteProps {
   deadline: string | null;
@@ -64,8 +62,8 @@ interface TrackedUniCardProps {
 
 /**
  * One wide, read-only university card. Name and place sit top-left, the deadline top-right, the
- * facts run through the middle, and the status track owns the bottom line. The rim and outer glow
- * take their colour from the status accent.
+ * facts run through the middle, and the status track owns the bottom line. The card keeps the
+ * standard panel rim for every status: the status lives on the track alone.
  */
 export function TrackedUniCard({ uni, today, onEdit, onOpen, introIndex }: TrackedUniCardProps) {
   const { t, i18n } = useTranslation('myUnis');
@@ -78,13 +76,9 @@ export function TrackedUniCard({ uni, today, onEdit, onOpen, introIndex }: Track
     .map((code) => languageName(code, uiLang));
   const date = uni.deadline ? formatDeadline(uni.deadline, uiLang) : null;
   const hasFacts = languages.length > 0 || uni.requiredExams.length > 0 || Boolean(uni.notes);
-  const accent = statusAccent(uni.status);
 
   return (
-    <Panel
-      className="status-card flex min-w-0 flex-col gap-4 p-5 md:p-6"
-      style={{ '--card-accent': accent } as CSSProperties}
-    >
+    <Panel className="flex min-w-0 flex-col gap-4 p-5 md:p-6">
       <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-3">
         <div className="flex min-w-0 flex-1 items-start gap-3">
           <Flag code={uni.countryCode} className="mt-1" />

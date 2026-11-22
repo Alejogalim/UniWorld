@@ -7,7 +7,6 @@ import {
   introDelayMs,
   isLooping,
   outcomeFlourish,
-  sparkVectors,
   stepCount,
   trackIndex,
   trackProgress,
@@ -56,15 +55,15 @@ describe('fillStartScale', () => {
 });
 
 describe('outcomeFlourish', () => {
-  it('bursts only on a real change to admitted', () => {
-    expect(outcomeFlourish('waiting', 'admitted', 'overview')).toBe('burst');
-    expect(outcomeFlourish('rejected', 'admitted', 'overview')).toBe('burst');
+  it('rings once only on a real change to admitted or waitlisted', () => {
+    expect(outcomeFlourish('waiting', 'admitted', 'overview')).toBe('ring');
+    expect(outcomeFlourish('rejected', 'admitted', 'overview')).toBe('ring');
+    expect(outcomeFlourish('waiting', 'waitlisted', 'overview')).toBe('ring');
     expect(outcomeFlourish(null, 'admitted', 'overview')).toBeNull();
     expect(outcomeFlourish('admitted', 'admitted', 'overview')).toBeNull();
   });
 
-  it('settles waitlisted once and gives rejected nothing', () => {
-    expect(outcomeFlourish('waiting', 'waitlisted', 'overview')).toBe('settle-waitlisted');
+  it('gives rejected nothing', () => {
     expect(outcomeFlourish('waiting', 'rejected', 'overview')).toBeNull();
   });
 
@@ -83,11 +82,11 @@ describe('isLooping', () => {
 describe('trackTiming', () => {
   it('stays inside the agreed ranges', () => {
     const low = trackTiming(() => 0);
-    expect(low).toEqual({ pulsePeriodMs: 5000, pulseDelayMs: 800, ringPeriodMs: 2800, ringDelayMs: 0 });
+    expect(low).toEqual({ pulsePeriodMs: 5000, pulseDelayMs: 800, ringPeriodMs: 3600, ringDelayMs: 0 });
     const high = trackTiming(() => 0.999);
     expect(high.pulsePeriodMs).toBeLessThanOrEqual(7000);
     expect(high.pulseDelayMs).toBeLessThanOrEqual(3800);
-    expect(high.ringPeriodMs).toBeLessThanOrEqual(3400);
+    expect(high.ringPeriodMs).toBeLessThanOrEqual(4400);
     expect(high.ringDelayMs).toBeGreaterThanOrEqual(-3000);
     expect(high.ringDelayMs).toBeLessThanOrEqual(0);
   });
@@ -100,16 +99,6 @@ describe('introDelayMs', () => {
     expect(introDelayMs(INTRO_MAX_INDEX)).toBe(420);
     expect(introDelayMs(20)).toBe(420);
     expect(introDelayMs(-1)).toBe(0);
-  });
-});
-
-describe('sparkVectors', () => {
-  it('spreads the sparks evenly on a circle, the first straight up', () => {
-    const sparks = sparkVectors(6, 14);
-    expect(sparks).toHaveLength(6);
-    for (const { dx, dy } of sparks) expect(Math.hypot(dx, dy)).toBeCloseTo(14, 1);
-    expect(sparks[0].dx).toBeCloseTo(0);
-    expect(sparks[0].dy).toBeCloseTo(-14);
   });
 });
 

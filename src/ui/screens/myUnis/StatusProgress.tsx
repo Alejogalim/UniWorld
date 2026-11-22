@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
+import { Check, Pause, X, type LucideIcon } from 'lucide-react';
 import type { TrackedStatus } from '@/core/contracts';
 import { cn } from '@/lib/utils';
 import { Chip } from '@/ui/components/Chip';
-import { OUTCOMES, OVERVIEW_STEPS, PIPELINE, finalOutcomeOf } from './status';
+import { OUTCOMES, OVERVIEW_STEPS, PIPELINE, finalOutcomeOf, type FinalOutcomeStatus } from './status';
 import {
   fillStartScale,
   introDelayMs,
   isLooping,
   outcomeFlourish,
-  sparkVectors,
   statusMemory,
   trackIndex,
   trackProgress,
@@ -47,18 +47,25 @@ interface Change {
 }
 
 const EASE = [0.2, 0, 0, 1] as const;
-/** Completed line and dots: ink at 60%, opaque so a dot over the line does not darken. */
-const INK = 'color-mix(in oklch, var(--foreground) 60%, var(--background))';
-const SPARKS = sparkVectors(6, 14);
-const SPARK_COLORS = ['var(--evidence)', 'var(--ember-2)'];
+/** Node diameters in px, on the 4px grid. The line is 2px and centred on the node slot. */
+const NODE = { done: 8, current: 12, upcoming: 8, outcome: 16 } as const;
+/** A ring in the ground colour around a filled node, so it sits on the line like a bead on a wire. */
+const KNOCKOUT = '0 0 0 2px var(--track-ground)';
+/** The final node once an outcome is reached: a solid disc with one glyph knocked out of it. */
+const OUTCOME_NODE: Record<FinalOutcomeStatus, { Icon: LucideIcon; fill: string }> = {
+  admitted: { Icon: Check, fill: 'var(--evidence)' },
+  waitlisted: { Icon: Pause, fill: 'var(--foreground)' },
+  rejected: { Icon: X, fill: 'var(--chart-grey)' },
+};
 /** How long the node fade-in trails the line as it draws from the first node to the last. */
 const NODE_TRAIL_MS = 480;
 
 /**
  * The application track. The overview shows considering → preparing → applied → waiting → one
- * shared final-outcome dot. The editor shows the three-stage pipeline plus the outcome controls.
- * A straight line runs behind the nodes; a small ember light travels from the first node to the
- * current one, and the current node breathes. Loops run only on screen and never under reduced motion.
+ * shared final-outcome node. The editor shows the three-stage pipeline plus the outcome controls.
+ * A straight 2px line runs behind the nodes: the completed part in ink, the rest a hairline. One
+ * accent, ember: a small ember light travels from the first node to the current one, and the current
+ * node breathes. Loops run only on screen and never under reduced motion.
  */
 export function StatusProgress({
   status,
@@ -106,7 +113,7 @@ export function StatusProgress({
   const flourish = change && !reduceMotion ? outcomeFlourish(change.from, status, variant) : null;
   const changeId = change?.id ?? 0;
   const introDelay = introDelayMs(drawIn ?? 0);
-  const lineColor = rejected ? 'var(--chart-grey)' : INK;
+  const lineColor = rejected ? 'var(--chart-grey)' : 'var(--foreground)';
 
   const steps: Step[] = interactive
     ? PIPELINE.map((stage) => ({ key: stage, label: t(`status.${stage}`) }))
@@ -127,6 +134,8 @@ export function StatusProgress({
     '--ring-delay': `${timing.ringDelayMs}ms`,
     '--ring-color': accent,
     '--intro-delay': `${introDelay}ms`,
+    // The surface under the track: the card on the overview, the page ground in the editor.
+    '--track-ground': interactive ? 'var(--background)' : 'var(--panel)',
   } as CSSProperties;
 
   return (
@@ -154,8 +163,8 @@ export function StatusProgress({
             style={{
               left: `${50 / count}%`,
               right: `${50 / count}%`,
-              top: `${slot / 2 - 0.75}px`,
-              height: '1.5px',
+              top: `${slot / 2 - 1}px`,
+              height: '2px',
             }}
           >
             <div className={cn('absolute inset-0', intro && 'status-draw')}>
@@ -187,39 +196,39 @@ export function StatusProgress({
           {steps.map((step, i) => {
             const done = i < current;
             const isCurrent = i === current;
-            const outcomeTone = !interactive && step.key === 'outcome' && isCurrent ? finalOutcome : null;
+            const upcoming = !done && !isCurrent;
+            const outcome = !interactive && step.key === 'outcome' && isCurrent ? finalOutcome : null;
+            const outcomeNode = outcome ? OUTCOME_NODE[outcome] : null;
+            const OutcomeIcon = outcomeNode?.Icon;
             const pop = isCurrent && change !== null && !reduceMotion;
             const nodeDelay = intro ? introDelay + (count > 1 ? (i / (count - 1)) * NODE_TRAIL_MS : 0) : 0;
 
-            const dotSize = isCurrent
-              ? interactive ? 12 : 10
-              : done
-                ? interactive ? 8 : 6
-                : interactive ? 10 : 8;
+            const dotSize = outcomeNode
+              ? NODE.outcome
+              : isCurrent
+                ? NODE.current
+                : done
+                  ? NODE.done
+                  : NODE.upcoming;
 
-            let dotStyle: CSSProperties | undefined;
-            if (done) {
-              dotStyle = { backgroundColor: lineColor };
+            let dotStyle: CSSProperties;
+            if (outcomeNode) {
+              dotStyle = { backgroundColor: outcomeNode.fill, boxShadow: KNOCKOUT };
             } else if (isCurrent) {
-              if (outcomeTone === 'admitted') {
-                dotStyle = {
-                  backgroundColor: 'var(--evidence)',
-                  boxShadow: '0 0 0 3px color-mix(in oklch, var(--evidence) 22%, transparent)',
-                };
-              } else if (outcomeTone === 'rejected') {
-                dotStyle = { backgroundColor: 'var(--chart-grey)' };
-              } else if (outcomeTone !== 'waitlisted') {
-                dotStyle = {
-                  backgroundColor: accent,
-                  boxShadow: `0 0 0 3px color-mix(in oklch, ${accent} 22%, transparent)`,
-                };
-              }
+              dotStyle = { backgroundColor: accent, boxShadow: KNOCKOUT };
+            } else if (done) {
+              dotStyle = { backgroundColor: lineColor, boxShadow: KNOCKOUT };
+            } else {
+              dotStyle = { backgroundColor: 'var(--track-ground)' };
             }
 
             const labelClass = cn(
-              'text-center leading-tight break-words transition-colors duration-300',
-              interactive ? 'text-xs' : 'text-[11px]',
-              isCurrent ? 'font-medium text-foreground' : 'text-chart-grey',
+              'text-center text-xs leading-4 break-words transition-colors duration-300 ease-[cubic-bezier(0.2,0,0,1)]',
+              isCurrent
+                ? 'font-semibold text-foreground'
+                : done && !rejected
+                  ? 'text-foreground/75'
+                  : 'text-chart-grey',
               interactive && !isCurrent && 'group-hover:text-foreground',
             );
 
@@ -233,37 +242,25 @@ export function StatusProgress({
                   <motion.span
                     key={pop ? `pop-${changeId}` : 'dot'}
                     className={cn(
-                      'relative block rounded-full',
-                      !done && !isCurrent && 'border-[1.5px] border-hairline bg-panel',
-                      outcomeTone === 'waitlisted' && 'status-node--waitlisted',
+                      'relative grid place-items-center rounded-full',
+                      upcoming && 'border-[1.5px] border-chart-grey',
                     )}
                     style={{ width: dotSize, height: dotSize, ...dotStyle }}
-                    initial={pop ? { scale: 0.4 } : false}
+                    initial={pop ? { scale: 0.6 } : false}
                     animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 520, damping: 24 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                   >
-                    {isCurrent && looping && <span className="status-ring" />}
-                    {outcomeTone === 'waitlisted' && flourish === 'settle-waitlisted' && (
-                      <span
-                        className="status-ring status-ring--once"
-                        style={{ '--ring-color': 'var(--ember-2)' } as CSSProperties}
+                    {OutcomeIcon && (
+                      <OutcomeIcon
+                        aria-hidden="true"
+                        size={10}
+                        strokeWidth={3}
+                        fill={outcome === 'waitlisted' ? 'currentColor' : 'none'}
+                        style={{ color: 'var(--track-ground)' }}
                       />
                     )}
-                    {outcomeTone === 'admitted' &&
-                      flourish === 'burst' &&
-                      SPARKS.map((spark, s) => (
-                        <span
-                          key={s}
-                          className="status-spark"
-                          style={
-                            {
-                              '--dx': `${spark.dx}px`,
-                              '--dy': `${spark.dy}px`,
-                              '--spark-color': SPARK_COLORS[s % SPARK_COLORS.length],
-                            } as CSSProperties
-                          }
-                        />
-                      ))}
+                    {isCurrent && looping && <span className="status-ring" />}
+                    {outcomeNode && flourish === 'ring' && <span className="status-ring status-ring--once" />}
                   </motion.span>
                 </span>
                 <span className={labelClass}>{step.label}</span>
@@ -282,7 +279,7 @@ export function StatusProgress({
                 {content}
               </button>
             ) : (
-              <div key={step.key} className="relative z-10 flex flex-1 flex-col items-center gap-1.5">
+              <div key={step.key} className="relative z-10 flex flex-1 flex-col items-center gap-2">
                 {content}
               </div>
             );

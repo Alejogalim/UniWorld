@@ -9,7 +9,6 @@ import {
   outcomeOf,
   overviewIndex,
   stageIndex,
-  statusAccent,
 } from './status';
 
 describe('stageIndex', () => {
@@ -61,9 +60,5 @@ describe('status sets', () => {
     const all: TrackedStatus[] = [...PIPELINE, ...OUTCOMES];
     expect(all).toHaveLength(7);
     expect(new Set(all).size).toBe(7);
-  });
-
-  it('gives every status an accent colour', () => {
-    for (const status of [...PIPELINE, ...OUTCOMES]) expect(statusAccent(status)).toBeTruthy();
   });
 });

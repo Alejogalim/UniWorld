@@ -35,11 +35,12 @@ export function fillStartScale(
   return start / end;
 }
 
-export type Flourish = 'burst' | 'settle-waitlisted' | null;
+export type Flourish = 'ring' | null;
 
 /**
- * The one-time outcome flourish for a change on the overview track. Only a real change into an
- * outcome plays one; a first mount (`from` null) never does. Rejected has no flourish.
+ * The one-time outcome flourish for a change on the overview track: a single soft ember ring around
+ * the final node. Only a real change into admitted or waitlisted plays it; a first mount (`from` null)
+ * never does. Rejected has no flourish.
  */
 export function outcomeFlourish(
   from: TrackedStatus | null,
@@ -47,8 +48,7 @@ export function outcomeFlourish(
   variant: TrackVariant,
 ): Flourish {
   if (variant !== 'overview' || from === null || from === to) return null;
-  if (to === 'admitted') return 'burst';
-  if (to === 'waitlisted') return 'settle-waitlisted';
+  if (to === 'admitted' || to === 'waitlisted') return 'ring';
   return null;
 }
 
@@ -69,7 +69,7 @@ export function trackTiming(random: () => number = Math.random): TrackTiming {
   return {
     pulsePeriodMs: Math.round(5000 + random() * 2000),
     pulseDelayMs: Math.round(800 + random() * 3000),
-    ringPeriodMs: Math.round(2800 + random() * 600),
+    ringPeriodMs: Math.round(3600 + random() * 800),
     // Negative: the ring starts part-way through its cycle.
     ringDelayMs: 0 - Math.round(random() * 3000),
   };
@@ -81,20 +81,6 @@ export const INTRO_MAX_INDEX = 7;
 /** Draw-in delay for the card at `index` on first paint: 60 ms apart, capped at the eighth card. */
 export function introDelayMs(index: number): number {
   return Math.min(Math.max(index, 0), INTRO_MAX_INDEX) * INTRO_STAGGER_MS;
-}
-
-export interface Spark {
-  dx: number;
-  dy: number;
-}
-
-/** End offsets (px) for the admitted burst: `count` sparks evenly around a circle, the first straight up. */
-export function sparkVectors(count = 6, radius = 14): Spark[] {
-  const round = (value: number) => Math.round(value * 100) / 100;
-  return Array.from({ length: count }, (_, i) => {
-    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / count;
-    return { dx: round(Math.cos(angle) * radius), dy: round(Math.sin(angle) * radius) };
-  });
 }
 
 export interface StatusMemory {
