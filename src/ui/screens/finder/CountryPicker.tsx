@@ -115,9 +115,9 @@ export function CountryPicker({
         aria-multiselectable="true"
         aria-label={t('sections.countries')}
         className={cn(
-          'grid min-h-0 grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[520px]:grid-cols-2',
+          'grid min-h-0 grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[560px]:grid-cols-2',
           fill
-            ? 'flex-1 @max-[679px]:max-h-[38vh] @max-[679px]:flex-none'
+            ? 'flex-1 @max-[679px]:max-h-[clamp(160px,24vh,260px)] @max-[679px]:flex-none'
             : 'max-h-[min(38vh,360px)]',
         )}
       >

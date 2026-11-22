@@ -594,3 +594,28 @@
 .dark .ember-fill {
   background-image: var(--ember-gradient);
 }
+
+/* Finder dock glass (plan 33): a translucent panel over the globe. Static (no animated blur), so it is
+   cheap under WebKitGTK software rendering. The edge is a hairline-based stroke plus a 1px top highlight;
+   the shadow is the existing float shadow. No gradient. */
+@layer components {
+  .finder-glass {
+    background-color: color-mix(in srgb, var(--panel) 60%, transparent);
+    border: 1px solid color-mix(in srgb, var(--hairline) 70%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--panel) 85%, transparent),
+      var(--shadow-float);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+  }
+  .dark .finder-glass {
+    background-color: color-mix(in srgb, var(--panel) 58%, transparent);
+    border-color: color-mix(in srgb, var(--hairline) 80%, transparent);
+    box-shadow:
+      inset 0 1px 0 var(--rim-top),
+      var(--shadow-float);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .finder-glass { background-color: color-mix(in srgb, var(--panel) 94%, transparent); }
+  }
+}

@@ -38,13 +38,13 @@ type FinderTab = 'careers' | 'countries' | 'search';
 const AUTO_COLLAPSE_MS = 900;
 const EASE = [0.2, 0, 0, 1] as const;
 
-/** The dock keeps a fixed bottom-right footprint; the panel scales inside it. */
+/** The dock keeps a compact bottom-right footprint (plan 33); the panel scales inside it. */
 const DOCK_FRAME =
-  '@container relative h-[clamp(300px,54vh,540px)] w-[min(92vw,920px)] max-w-full';
+  '@container relative h-[clamp(300px,44vh,480px)] w-[clamp(min(100%,320px),32vw,600px)] max-w-full max-sm:h-[50vh] max-sm:w-full';
 
 /** Expanded dock surface. It scales from the bottom-right corner so it grows out of the pill. */
 const DOCK_PANEL =
-  'pointer-events-auto absolute inset-0 flex origin-bottom-right flex-col overflow-hidden rounded-lg border border-hairline bg-panel/85 shadow-float backdrop-blur-md';
+  'finder-glass pointer-events-auto absolute inset-0 flex origin-bottom-right flex-col overflow-hidden rounded-lg';
 
 /** A focusable form control inside the dock keeps it open while the student is typing. */
 function isTypingInside(panel: HTMLElement | null): boolean {
@@ -233,7 +233,7 @@ export function FinderScreen() {
   ];
 
   const searchControls = (
-    <div className="flex h-full flex-col gap-4 overflow-y-auto p-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto p-3 @min-[480px]:p-4">
       {keyError && <ErrorNote message={keyError} />}
       <div className="grid gap-4 @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(260px,340px)] @min-[680px]:items-start">
         <section className="flex flex-col gap-3">
@@ -267,7 +267,7 @@ export function FinderScreen() {
   );
 
   const resultsPanel = (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-3 @min-[480px]:p-4">
       <div className="flex flex-wrap items-start justify-between gap-2 border-b border-hairline pb-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">
@@ -415,7 +415,7 @@ export function FinderScreen() {
                   className="flex min-h-0 flex-1 flex-col overflow-hidden"
                 >
                   {tab === 'careers' && (
-                    <div className="min-h-0 flex-1 overflow-hidden p-4">
+                    <div className="min-h-0 flex-1 overflow-y-auto p-3 @min-[480px]:p-4">
                       <section className="flex flex-col gap-3">
                         <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">
                           {t('sections.careers')}
@@ -426,7 +426,7 @@ export function FinderScreen() {
                   )}
 
                   {tab === 'countries' && (
-                    <div className="min-h-0 flex-1 overflow-hidden p-4">
+                    <div className="min-h-0 flex-1 overflow-hidden p-3 @min-[480px]:p-4">
                       <ScopePicker
                         onFlyTo={(view) => setFlyTo({ ...view })}
                         onHoverCountry={setHoverIso}
@@ -453,7 +453,7 @@ export function FinderScreen() {
                 <div
                   role="tablist"
                   aria-label={t('tabs.label')}
-                  className="grid shrink-0 grid-cols-3 gap-1 border-t border-hairline bg-panel/70 p-2"
+                  className="grid shrink-0 grid-cols-3 gap-1 border-t border-hairline p-2"
                 >
                   {tabs.map(({ id, icon: Icon, label }) => {
                     const active = tab === id;
@@ -479,7 +479,7 @@ export function FinderScreen() {
                             className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-signal"
                           />
                         )}
-                        <Icon className="size-4" strokeWidth={1.75} aria-hidden="true" />
+                        <Icon className="size-4 @max-[419px]:hidden" strokeWidth={1.75} aria-hidden="true" />
                         <span>{label}</span>
                       </button>
                     );

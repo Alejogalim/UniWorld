@@ -29,7 +29,7 @@ export function ScopePicker({ onFlyTo, onHoverCountry }: ScopePickerProps) {
   };
 
   return (
-    <div className="grid h-full min-h-0 overflow-hidden @max-[679px]:overflow-y-auto @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(220px,0.65fr)] @min-[680px]:gap-4">
+    <div className="grid h-full min-h-0 gap-4 overflow-hidden @max-[679px]:overflow-y-auto @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(220px,0.65fr)]">
       <div className="flex min-h-0 flex-col overflow-hidden">
         <CountryPicker fill showSelected={false} onHoverCountry={onHoverCountry} />
       </div>

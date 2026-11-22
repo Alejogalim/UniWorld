@@ -89,7 +89,7 @@ export function ResultRow({ uni, rank, index, onOpen }: ResultRowProps) {
         tabIndex={0}
         onClick={open}
         onKeyDown={onKeyDown}
-        className="grid cursor-pointer grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 gap-y-2 rounded-popover py-3 pr-3 pl-2 outline-none transition-colors duration-[120ms] hover:bg-shoal focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-signal min-[720px]:grid-cols-[2.25rem_minmax(0,1fr)_11rem]"
+        className="grid cursor-pointer grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 gap-y-2 rounded-popover py-3 pr-3 pl-2 outline-none transition-colors duration-[120ms] hover:bg-shoal focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-signal @min-[560px]:grid-cols-[2.25rem_minmax(0,1fr)_11rem]"
       >
         <span className="numeral-ember pt-0.5 text-[1.75rem] leading-none font-semibold tabular-nums">
           {t('row.rank', { rank })}
@@ -132,8 +132,8 @@ export function ResultRow({ uni, rank, index, onOpen }: ResultRowProps) {
           )}
         </div>
 
-        <div className="col-span-2 flex flex-wrap items-center gap-1.5 min-[720px]:col-span-1 min-[720px]:col-start-3 min-[720px]:row-start-1 min-[720px]:flex-col min-[720px]:items-end">
-          <div className="flex flex-wrap gap-1.5 min-[720px]:justify-end">
+        <div className="col-span-2 flex flex-wrap items-center gap-1.5 @min-[560px]:col-span-1 @min-[560px]:col-start-3 @min-[560px]:row-start-1 @min-[560px]:flex-col @min-[560px]:items-end">
+          <div className="flex flex-wrap gap-1.5 @min-[560px]:justify-end">
             <Badge className="font-mono text-[11px] tabular-nums">
               {t('fit.car')} {Math.round(fit.career * 100)}
             </Badge>
