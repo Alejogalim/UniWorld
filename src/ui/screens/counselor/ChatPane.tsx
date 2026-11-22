@@ -84,8 +84,9 @@ export function ChatPane() {
   return (
     <section
       className={cn(
-        "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
-        fresh ? "min-h-[calc(100vh-4rem)] justify-center gap-8" : "gap-6",
+        // Short conversations sit centered in the pane; once the log fills, it scrolls inside itself.
+        "mx-auto flex min-h-[calc(100vh-10rem)] w-full min-w-0 max-w-[40rem] flex-col justify-center",
+        fresh ? "gap-8" : "gap-6",
       )}
     >
       {fresh ? (
