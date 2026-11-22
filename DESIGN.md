@@ -87,7 +87,7 @@ spacing:
 
 **Creative North Star: "The Ember Chart, under stars"**
 
-UniWorld is still a working chart: real universities, real facts, a source on every value, and a visible gap where the soundings are unknown. The Ember Glow pass (plan 16) keeps that discipline and adds two things the owner asked for: soft, squircle-like surfaces with a light rim, and a slow, faint starfield behind every screen. The chart now sits on a night sky in dark mode and on paper in light mode.
+UniWorld is still a working chart: real universities, real facts, a source on every value, and a visible gap where the soundings are unknown. The Ember Glow pass (plan 16) keeps that discipline and adds two things the owner asked for: soft, squircle-like surfaces with a light rim, and a faint, still starfield behind every screen. The chart now sits on a night sky in dark mode and on paper in light mode.
 
 The surface is still an instrument used at a desk, often by a sixteen-year-old comparing three countries at once. So this is still an **Operate** system: scanning and density come first, and expression is spent in a few marked places: the globe, the one ember element per screen, the large numerals, and the stars. Everything else is ink, grey, a hairline and a soft surface.
 
@@ -101,7 +101,7 @@ Three rejections still stand: a warm cream and serif editorial template, a neon 
 - Headlines are two-tone: grey body text with the key phrase in ink, used on the welcome headline and empty-state titles only.
 - Results are still a ranked column of rows, never a grid of equal cards.
 - Every fact carries its source or says it is missing. The missing state is designed, not hidden.
-- Motion answers an action. The stars and the arrival of search results are the only things that move without a cause.
+- Motion answers an action. The twinkling stars, the rare shooting star and the arrival of search results are the only things that move without a cause.
 
 ## Colors
 
@@ -248,20 +248,26 @@ Everything else is flat. Light mode has no glow.
 
 ## Starfield
 
-Implemented in `src/ui/layout/Starfield.tsx` (one canvas) and `src/index.css` (`.star-field`). Mounted once in `AppShell` as the first child of the shell.
+Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM elements) and `src/index.css` (`.star-field`, `.star-twinkles`, `.star-twinkle`, `.star-shoot`). Mounted once in `AppShell`.
 
-- **Why this design:** the earlier CSS-tile starfield (animated, oversized layers) measured 9 fps in the real app on software WebKitGTK, against 62 fps with the stars hidden. Every full-window animated layer cost about 20 ms per frame in that compositor. So the stars no longer animate on the compositor at all.
-- **Method:** a single `<canvas>` fixed behind everything (`pointer-events: none`, `aria-hidden`, `contain: strict`). Its backing store is the viewport at device pixel ratio 1, so the CSS size equals the backing size. Stars are drawn with `arc` and one 12 px glow sprite, which is drawn once.
-- **Idle-only motion:** the stars move only while the user is idle. Any pointer move, press, wheel, key, scroll or route change stops all star work at once, and motion resumes 600 ms after the last input. While idle the field redraws at 4 fps from a timer (not per frame). The canvas keeps its last frame during activity. Positions come from a motion clock that only advances while the stars move, so resuming never jumps.
-- **Self-protection:** the rate steps down 4 to 2 to 1 fps when the median of the last 8 redraws exceeds 25 ms, or when the timer runs more than 400 ms late three times in a row. If the lowest rate is still slow, the field freezes on its last frame until the next activation.
-- **Pauses:** `document.hidden`, window blur, `prefers-reduced-motion` (one static frame, never moves), the stars setting off, and the light theme. In each case the component renders nothing and every timer and listener is removed.
+- **Why this design:** the earlier CSS-tile starfield (animated, oversized layers) measured 9 fps in the real app on software WebKitGTK, against 62 fps with the stars hidden. Every full-window animated layer cost about 20 ms per frame in that compositor. A drifting canvas repaints the whole window on every frame, so the sky no longer drifts at all.
+- **Method:** a single `<canvas>` fixed behind everything (`pointer-events: none`, `aria-hidden`, `contain: strict`). Its backing store is the viewport at device pixel ratio 1, so the CSS size equals the backing size. The stars are drawn once on mount and again after a 200 ms debounced resize. Nothing redraws on a timer or a frame loop.
+- **Twinkles:** ten small absolutely positioned dots (`.star-twinkle`, 12 px: a sharp core of radius 1.3 px at alpha 0.6, over a soft glow of alpha 0.27 out to 6 px) in a fixed wrapper. Each animates only `opacity`, pulsing gently between 0.6 and 1, over 5 to 9 s with a random negative delay so they are staggered.
+- **Shooting star:** one thin streak (`.star-shoot`, 80 by 1.5 px, rotated 25 degrees). Every 30 to 60 s, at random, it starts from a random point in the upper 60% of the window and moves 320 px along its angle over 900 ms, animating only `transform` and `opacity` through the Web Animations API. No timer runs while paused.
+- **Pauses:** `document.hidden` or window blur freezes the twinkles (`is-paused` on the wrapper) and stops the shooting-star timer; focus or visibility resumes both. `prefers-reduced-motion` renders the static canvas only, with no twinkles and no shooting star. The light theme renders nothing, and every timer and listener is removed.
 - **Density:** one star per 7 000 px² (about 300 on 1920 x 1080), split 55%, 30% and 15% across three depth layers. Radii 0.5, 0.9 and 1.3 px.
-- **Motion:** drift toward the upper-left at 1.5, 3 and 5 px per second. Stars fade within 40 px of the window edges, so the wrap has no pop.
-- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. Six bright stars on the near layer have a core alpha of 0.6 and a 12 px glow at 0.27. Each star twinkles on a slow sine (6 to 12 s period) computed inside the same redraw. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15).
+- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15).
 - **Contrast note:** the stars are decorative. A star under a text glyph may locally dip below 4.5:1 by design (see the contrast table); the owner chose visibility over a per-pixel text target.
 - **Colour:** `--foreground` (white in dark) and `--star-warm` (`#fff4ea`) on about 15% of stars, read once per activation from the tokens.
-- **Control:** the round star button in the rail footer. It is persisted as the `stars` setting (`on` or `off`, default on) and reports `aria-pressed`.
+- **Always on:** the stars are always drawn in dark mode. There is no toggle and no setting; in light mode nothing is drawn.
 - **Layer:** `z-index: -2` inside the isolated shell, under the ambient haze (`-1`), the rail, the header and the content.
+
+## Logo
+
+- **Mark:** a thin ring with a thick arc along its lower half, round-capped, on a square ground (1024 px PNG and SVG). The arc fades from white or near-black at the top to ember at the bottom.
+- **Two versions by theme:** the dark-ground mark (black ground, white arc, ember bottom) in dark theme, and the light-ground mark (#eeeeee ground, near-black arc, deep ember bottom) in light theme. `src/ui/layout/Logo.tsx` picks one from the resolved theme.
+- **Files:** `src/assets/logo/uniworld-logo-{light,dark}.{svg,png}`. The dark PNG is the source for the app icons in `src-tauri/icons/`.
+- **Use:** the rail shows it at 32px, in the collapsed dock and before the wordmark. It is decorative (`alt=""`, `aria-hidden`); the wordmark carries the name.
 
 ## Layout
 
@@ -295,7 +301,7 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 
 ### Navigation
 - Rail items: 40px rows, 14px corners, Inter 14px. Active: `rim` on shoal, with a 3px ember dot on the left edge. Hover: shoal.
-- Footer: three round 40px buttons with a rim: language, theme and stars.
+- Footer: two round 40px buttons with a rim: language and theme.
 
 ### Result rows and lists
 - A ranked row with a 28px-radius hover surface (20px in the list), the rank as a `.numeral-ember`, the university name in Title, a source count in Data type, and the fit values as pill badges. Selected rows take a rim and an ember dot.

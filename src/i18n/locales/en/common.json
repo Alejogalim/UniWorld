@@ -48,10 +48,5 @@
   },
   "errors": {
     "saveFailed": "Could not save: {{error}}"
-  },
-  "stars": {
-    "label": "Background stars",
-    "on": "Stars: on",
-    "off": "Stars: off"
   }
 }

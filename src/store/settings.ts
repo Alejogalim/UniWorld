@@ -1,7 +1,7 @@
 import { getDb } from '@/db/client';
 
 /** Non-secret settings keys. `model` and `default_provider` are read by B's core: keep the names. */
-export type SettingKey = 'theme' | 'model' | 'default_provider' | 'stars';
+export type SettingKey = 'theme' | 'model' | 'default_provider';
 
 export async function getSetting(key: SettingKey): Promise<string | null> {
   const db = await getDb();

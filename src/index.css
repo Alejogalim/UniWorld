@@ -356,7 +356,7 @@
   background: var(--foreground);
 }
 
-/* Round 40px footer icon buttons (language, theme; stars in plan step 6), with a rim.
+/* Round 40px footer icon buttons (language, theme), with a rim.
    The language select sits invisibly over its button. */
 .lang-button {
   position: relative;
@@ -386,8 +386,8 @@
   appearance: none;
 }
 
-/* Starfield (plan 19): one canvas behind everything. Its backing store is the viewport at DPR 1, drawn from
-   src/ui/layout/Starfield.tsx. It has no animation of its own, so it costs nothing while the user is active. */
+/* Still sky (plan 21): one static canvas behind everything, drawn from src/ui/layout/Starfield.tsx. Its backing
+   store is the viewport at DPR 1. It is redrawn only on resize, so it never repaints on a timer. */
 .star-field {
   position: fixed;
   inset: 0;
@@ -396,6 +396,49 @@
   z-index: -2;
   contain: strict;
   pointer-events: none;
+}
+
+/* Twinkles and the shooting star sit in the same layer as the canvas. Only opacity and transform animate, on
+   tiny elements. The wrapper gets is-paused while the window is hidden or blurred. */
+.star-twinkles {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  contain: strict;
+  pointer-events: none;
+}
+
+.star-twinkle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgb(255 255 255 / 0.6) 0, rgb(255 255 255 / 0.6) 1.3px, transparent 1.9px),
+    radial-gradient(circle, rgb(255 255 255 / 0.27) 0, transparent 6px);
+  opacity: 0.6;
+  will-change: opacity;
+  animation: star-twinkle 7s ease-in-out infinite;
+}
+
+.star-shoot {
+  position: absolute;
+  width: 80px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: linear-gradient(to right, transparent, var(--foreground));
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.star-twinkles.is-paused .star-twinkle {
+  animation-play-state: paused;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* Rail: transparent over the ground. A 1px hairline separates it in light mode only. */

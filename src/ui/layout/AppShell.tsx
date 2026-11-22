@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation, useOutlet } from 'react-router';
@@ -15,11 +15,10 @@ import {
 import { cn } from '@/lib/utils';
 import { ErrorBoundary } from '@/app/ErrorBoundary';
 import { useProfile } from '@/store/profile';
-import { initStars, useStars } from '@/app/stars';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
-import { StarsSwitcher } from './StarsSwitcher';
 import { Starfield } from './Starfield';
+import { Logo } from './Logo';
 
 const NAV: { to: string; key: string; titleKey: string; icon: LucideIcon }[] = [
   { to: '/onboarding', key: 'nav.onboarding', titleKey: 'screens.onboarding', icon: Sparkles },
@@ -42,13 +41,8 @@ export function AppShell() {
   const active = NAV.find((item) => location.pathname.startsWith(item.to));
   // Onboarding is the first-run step; once a profile exists it is no longer a destination.
   const visibleNav = NAV.filter((item) => !(hasProfile && item.to === '/onboarding'));
-  const starsOn = useStars((s) => s.on);
   // Collapsed, the rail keeps the icons only, like a dock.
   const [railCollapsed, setRailCollapsed] = useState(false);
-
-  useEffect(() => {
-    initStars();
-  }, []);
 
   // The counselor screen owns a right sidebar; the title is centered in what is left of it.
   const rightRail = location.pathname.startsWith('/counselor');
@@ -60,16 +54,14 @@ export function AppShell() {
         railCollapsed ? 'grid-cols-[72px_1fr]' : 'grid-cols-[220px_1fr]',
       )}
     >
-      <Starfield enabled={starsOn} />
+      <Starfield />
       <div className="ambient-haze" aria-hidden="true" />
       <div className={cn('app-rail flex items-center self-stretch py-4', railCollapsed ? 'justify-between px-1' : 'gap-2 px-4')}>
         {railCollapsed ? (
-          // No logo yet: a placeholder mark until the brand exists.
-          <span aria-hidden="true" className="rim grid size-8 place-items-center rounded-control bg-shoal">
-            <span className="size-1.5 rounded-full bg-signal" />
-          </span>
+          <Logo className="size-8" />
         ) : (
           <>
+            <Logo className="size-8" />
             <span className="wordmark">{t('appName')}</span>
             <span className="rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
               {t('beta')}
@@ -141,7 +133,6 @@ export function AppShell() {
         <div className={cn('mt-auto flex gap-2', railCollapsed && 'flex-col items-center')}>
           <LanguageSwitcher />
           <ThemeSwitcher />
-          <StarsSwitcher />
         </div>
       </aside>
 
