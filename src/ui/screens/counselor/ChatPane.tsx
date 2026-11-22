@@ -84,9 +84,9 @@ export function ChatPane() {
   return (
     <section
       className={cn(
-        // Short conversations sit centered in the pane; once the log fills, it scrolls inside itself.
-        "mx-auto flex min-h-[calc(100vh-10rem)] w-full min-w-0 max-w-[40rem] flex-col justify-center",
-        fresh ? "gap-8" : "gap-6",
+        // The start screen is centered; a running conversation starts at the top with the composer at the bottom.
+        "mx-auto flex min-h-[calc(100vh-10rem)] w-full min-w-0 max-w-[40rem] flex-col",
+        fresh ? "justify-center gap-8" : "gap-6",
       )}
     >
       {fresh ? (
@@ -125,7 +125,7 @@ export function ChatPane() {
         <CounselorErrorNote error={error} title="errors.chatTitle" canRetry={pending !== null} />
       )}
 
-      <div className="flex flex-col gap-3">
+      <div className={cn("flex flex-col gap-3", !fresh && "mt-auto")}>
         {!fresh && intake && <IntakeProgress step={intakeStep} />}
         {hint && !fresh && <p className="text-sm text-chart-grey">{hint}</p>}
         {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
