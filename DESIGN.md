@@ -97,7 +97,7 @@ The surface is still an instrument used at a desk, often by a sixteen-year-old c
 Three rejections still stand: a warm cream and serif editorial template, a neon accent used everywhere, and a grid of identical rounded cards with the same shadow on each. The owner's brief changed one thing: surfaces may now be soft and gradient-rimmed, but only in the places listed under Gradients and Glow.
 
 **Key Characteristics:**
-- Ground: black with white stars in dark mode; soft off-white paper (`#f7f6f4`) with faint warm specks and ember sparks in light mode. Both carry one static ember glow.
+- Ground: black with white stars in dark mode; soft off-white paper (`#f7f6f4`) with near-black stars (a few warm-brown) in light mode. Both carry the same static ember glow from the bottom centre.
 - One warm colour, the ember. It marks what the student must act on now, and it glows in a few fixed places.
 - Surfaces are soft: 28px cards with a 1px rim. Dark cards are a vertical gradient; light cards are white sheets with a 5% to 8% rim and a soft warm shadow.
 - One face, Inter Variable, in weights 400 to 600. Numerals are always tabular.
@@ -127,7 +127,7 @@ Monochrome first. Ember is the only colour, and it is spent in named places.
 - **Chart Grey** (`#636366` light, `#8e8e93` dark): secondary text and metadata.
 - **Land** (`#d9d9d9` light, `#26262a` dark): globe land.
 - **Globe ocean** (`#fbfaf8` light, `#060607` dark): the globe sphere; the atmosphere is an ember rim in dark mode (ember mixed 85% into the ocean, shell altitude 0.2), and a soft peach ember rim in light mode (ember mixed 35%, altitude 0.12).
-- **Star** (dark: `#ffffff`, and `#fff4ea` on about 15% of stars; light: warm taupe `#b8a596`, and ember `#ff7a3d` on about 15%): the starfield. No other colour.
+- **Star** (dark: `#ffffff`, and `#fff4ea` on about 15% of stars; light: near-black `#0a0a0a`, and warm-brown `#4a2c1e` on about 15%): the starfield. No other colour.
 
 ### Token table
 
@@ -148,10 +148,10 @@ Monochrome first. Ember is the only colour, and it is spent in named places.
 | `--rim-top` / `--rim-bottom` | 5% black to 8% black | 16% white to 4% white |
 | `--globe-ocean` | `#fbfaf8` | `#060607` |
 | --surface-shadow | 0 1px 2px warm 5%, 0 6px 20px -8px warm 12% (rgb 64 32 12) | none |
-| --star-base / --star-warm | #b8a596 / #ff7a3d | #ffffff / #fff4ea |
-| --star-alpha / --star-density | 0.8 / 0.6 | 1 / 1 |
-| --star-twinkle-core / -glow | ember-1 at 50% / ember-2 at 32% | white at 60% / white at 27% |
-| --star-shoot | #ff5a1f | #ffffff |
+| --star-base / --star-warm | #0a0a0a / #4a2c1e | #ffffff / #fff4ea |
+| --star-alpha / --star-density | 0.9 / 1 | 1 / 1 |
+| --star-twinkle-core / -glow | black at 60% / black at 14% | white at 60% / white at 27% |
+| --star-shoot | #0a0a0a | #ffffff |
 | `--land` | `#d9d9d9` | `#26262a` |
 
 ### Contrast
@@ -159,10 +159,10 @@ Measured with WCAG 2.x relative luminance. The full pair list is in `.plans/16-u
 
 | pair | ratio | target |
 |---|---|---|
-| ink on background / panel / shoal / glow peak (light) | 18.3 / 19.8 / 17.3 / 15.5 | 4.5:1 |
-| chart grey on background / panel / shoal / glow peak (light) | 5.5 / 6.0 / 5.2 / 4.7 | 4.5:1 |
-| signal text on background / panel / shoal / glow peak (light) | 5.7 / 6.1 / 5.4 / 4.8 | 4.5:1 |
-| evidence on background / panel / shoal / glow peak (light) | 5.5 / 6.0 / 5.2 / 4.7 | 4.5:1 |
+| ink on background / panel / shoal / glow peak (light) | 18.3 / 19.8 / 17.3 / 13.1 | 4.5:1 |
+| chart grey on background / panel / shoal / glow peak (light) | 5.5 / 6.0 / 5.2 / 3.95 | 4.5:1 (peak residual) |
+| signal text on background / panel / shoal / glow peak (light) | 5.7 / 6.1 / 5.4 / 4.05 | 4.5:1 (peak residual) |
+| evidence on background / panel / shoal / glow peak (light) | 5.5 / 6.0 / 5.2 / 3.95 | 4.5:1 (peak residual) |
 | white on primary button (light, both ends) / on signal | 5.1 to 6.0 / 6.1 | 4.5:1 |
 | black on primary button (dark, both ends) | 6.7 to 9.0 | 4.5:1 |
 | ink on dark card (top / bottom) | 18.2 / 19.7 | 4.5:1 |
@@ -173,7 +173,7 @@ Measured with WCAG 2.x relative luminance. The full pair list is in `.plans/16-u
 | hairline on background / panel / shoal (light) | 1.71 / 1.85 / 1.61 | 1.5:1 |
 | hairline on card bottom (dark) | 1.71 | 1.5:1 |
 
-The light glow peak is `#f7e0ca` (ember-2 at 24% over ember-1 at 5% over `#f7f6f4`); every text colour clears 4.5:1 on it, which is why the light signal, signal-deep and evidence were deepened in plan 26.
+The light glow peak is `#f9c7b4` (ember-1 at 30% over `#f7f6f4`, the bottom-centre point of the haze). Ink clears 4.5:1 on it. Chart grey (3.95:1), evidence (3.95:1) and signal text (4.05:1) fall short at that single point only: the glow fades to nothing 70% of the way out, so only text in the bottom-centre band is affected. This residual follows from the light haze opacity of 0.3 and is open for owner review.
 
 Stars and text. A single star pixel under text is the worst case, and the result is not a clean pass:
 
@@ -186,9 +186,9 @@ Stars and text. A single star pixel under text is the worst case, and the result
 | chart grey text over a base star at alpha .30 (not used: rejected) | 2.63 | 4.5:1 |
 | chart grey text over two stacked stars at .15 (worst pixel, overlapping layers) | 2.85 | 4.5:1 (residual) |
 | chart grey text over a light-mode speck at its strongest (alpha .32 x .8) | 4.62 | 4.5:1 |
-| chart grey text over a light-mode ember spark at its strongest | 4.41 | 4.5:1 (residual) |
-| chart grey text over a light speck on the glow peak | 4.06 | 4.5:1 (residual) |
-| chart grey text over a light ember twinkle core | 3.16 | 4.5:1 (residual, ten dots) |
+| chart grey text over a black star at alpha .288 on paper (strongest light star) | 2.83 | 4.5:1 (residual) |
+| chart grey text over a warm-brown star (`#4a2c1e`) at alpha .288 on paper | 3.21 | 4.5:1 (residual) |
+| chart grey text over a black twinkle core (alpha .6) on paper | 1.08 | 4.5:1 (residual, ten dots) |
 
 The table above is the strict per-pixel view from plan 18, when every baked star was capped at alpha 0.15. The owner has since raised star alphas to 0.14 to 0.32 (bright cores 0.6) so the stars read as stars. Under those values chart-grey text can drop below 4.5:1 on a single star pixel, and two stacked stars are worse. This is accepted by design: the stars are decorative, sit behind the content, and cover a small share of the window. The measured figures are per pixel, not an average over a text run.
 
@@ -256,7 +256,7 @@ Gradients and glows are allowed in these places and nowhere else:
 2. **Ember panel (`.panel-ember`).** The glow is outside the box only, and static: dark has a soft halo around the whole card (a 1px rim ring, ember-1 at 45% over 44px, ember-0 at 55% over 60px, offset 14px down). There is no inner wash and no fade-in. Light has a softer halo: a 1px ember-1 ring at 22%, ember-1 at 30% over 40px, ember-0 at 35% over 48px, offset 14px down. One per screen.
 3. **Primary button (`.ember-button`).** A vertical gradient in both themes, and in dark a soft ember glow on hover and focus.
 4. **Large numerals (`.numeral-ember`).** Ink to ember-2 (dark) or to signal (light) over the lower half of the glyph.
-5. **Ambient haze (`.ambient-haze`).** One static glow behind the content and above the stars, never animated. Dark: a faint radial ember glow (opacity 0.14) at the bottom centre. Light: a large soft peach glow centred at 55% across, 48% down (38% x 42% ellipse, ember-2 at 24% fading through 10% to nothing) over a wide ember-1 wash at 5% (70% x 80%). Peak about `#f7e0ca`.
+5. **Ambient haze (`.ambient-haze`).** One static glow behind the content and above the stars, never animated. Both themes glow from the bottom centre: `radial-gradient(60% 45% at 50% 100%, ember-1, transparent 70%)`. Dark: opacity 0.14. Light: opacity 0.3, a bit stronger so it reads on paper. Light peak about `#f9c7b4`.
 6. **Toggle on, and the progress dot (`.ember-fill`).** Dark: the ember gradient. Light: flat signal.
 7. **Globe atmosphere.** Dark: an ember rim on the sphere's edge (`mix(ocean, ember, 0.85)`, altitude 0.2). Light: a peach rim (`mix(ocean, ember, 0.35)`, altitude 0.12).
 
@@ -271,10 +271,10 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 - **Twinkles:** ten small absolutely positioned dots (`.star-twinkle`, 12 px: a sharp core of radius 1.3 px over a soft glow out to 6 px, colours from the tokens) in a fixed wrapper. Each animates only `opacity`, pulsing gently between 0.6 and 1, over 5 to 9 s with a random negative delay so they are staggered.
 - **Shooting star:** one thin streak (`.star-shoot`, 80 by 1.5 px, rotated 25 degrees). Every 30 to 60 s, at random, it starts from a random point in the upper 60% of the window and moves 320 px along its angle over 900 ms, animating only `transform` and `opacity` through the Web Animations API. No timer runs while paused.
 - **Pauses:** `document.hidden` or window blur freezes the twinkles (`is-paused` on the wrapper) and stops the shooting-star timer; focus or visibility resumes both. `prefers-reduced-motion` renders the static canvas only, with no twinkles and no shooting star. A theme change tears the sky down and draws it again with the new tokens.
-- **Density:** one star per 7 000 px² (about 300 on 1920 x 1080), split 55%, 30% and 15% across three depth layers. Radii 0.5, 0.9 and 1.3 px. Light multiplies the count by `--star-density` (0.6, about 180 stars).
-- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15). Light multiplies every alpha by `--star-alpha` (0.8).
+- **Density:** one star per 7 000 px² (about 300 on 1920 x 1080), split 55%, 30% and 15% across three depth layers. Radii 0.5, 0.9 and 1.3 px. Light multiplies the count by `--star-density` (1, the same count as dark).
+- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15). Light multiplies every alpha by `--star-alpha` (0.9).
 - **Contrast note:** the stars are decorative. A star under a text glyph may locally dip below 4.5:1 by design (see the contrast table); the owner chose visibility over a per-pixel text target.
-- **Colour:** `--star-base` and `--star-warm` (about 15% of stars), read once per activation. Dark: white and `#fff4ea`. Light: warm taupe `#b8a596` specks and ember `#ff7a3d` sparks. The twinkles use `--star-twinkle-core` / `--star-twinkle-glow` (white in dark, ember-1 and ember-2 in light) and the shooting star fades to `--star-shoot` (white in dark, ember-1 in light).
+- **Colour:** `--star-base` and `--star-warm` (about 15% of stars), read once per activation. Dark: white and `#fff4ea`. Light: near-black `#0a0a0a` specks, with warm-brown `#4a2c1e` on about 15%. The twinkles use `--star-twinkle-core` / `--star-twinkle-glow` (white in dark, black in light) and the shooting star fades to `--star-shoot` (white in dark, near-black in light).
 - **Always on:** the stars are always drawn, in both themes. There is no toggle and no setting.
 - **Layer:** `z-index: -2` inside the isolated shell, under the ambient haze (`-1`), the rail, the header and the content.
 

@@ -106,15 +106,15 @@
     --rim: linear-gradient(to bottom, var(--rim-top), var(--rim-bottom));
     --surface-shadow: 0 1px 2px rgb(64 32 12 / 0.05), 0 6px 20px -8px rgb(64 32 12 / 0.12);
 
-    /* Starfield on paper (plan 26): warm-taupe specks, 15% ember sparks, fewer and fainter than the night sky.
+    /* Starfield on paper: near-black specks, about 15% warm-brown, black twinkles and a black shooting star.
        Starfield.tsx reads --star-base, --star-warm, --star-alpha and --star-density once per theme. */
-    --star-base: #b8a596;
-    --star-warm: #ff7a3d;
-    --star-alpha: 0.8;
-    --star-density: 0.6;
-    --star-twinkle-core: rgb(255 90 31 / 0.5);
-    --star-twinkle-glow: rgb(247 178 103 / 0.32);
-    --star-shoot: #ff5a1f;
+    --star-base: #0a0a0a;
+    --star-warm: #4a2c1e;
+    --star-alpha: 0.9;
+    --star-density: 1;
+    --star-twinkle-core: rgb(10 10 10 / 0.6);
+    --star-twinkle-glow: rgb(10 10 10 / 0.14);
+    --star-shoot: #0a0a0a;
 
     --card: var(--panel);
     --card-foreground: var(--foreground);
@@ -274,26 +274,16 @@
 
   /* Ambient haze: one static ember glow behind the content, above the stars. Never animated (plan 20: a changing
      full-window layer costs ~20 ms a frame on software WebKitGTK; a static one is painted once).
-     Light: a large soft peach glow centred on the working column (55% across: the rail sits on the left), peak about
-     #f7e0ca, a wide faint ember wash under it. Dark: a faint ember glow at the bottom centre. */
+     Both themes glow from the bottom centre. Light sits a bit stronger (opacity 0.3) so it reads on paper;
+     dark keeps its fainter .dark rule below (opacity 0.14). */
   .ambient-haze {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     contain: strict;
-    background:
-      radial-gradient(
-        38% 42% at 55% 48%,
-        color-mix(in srgb, var(--ember-2) 24%, transparent) 0%,
-        color-mix(in srgb, var(--ember-2) 10%, transparent) 50%,
-        transparent 100%
-      ),
-      radial-gradient(
-        70% 80% at 55% 52%,
-        color-mix(in srgb, var(--ember-1) 5%, transparent) 0%,
-        transparent 100%
-      );
+    opacity: 0.3;
+    background: radial-gradient(60% 45% at 50% 100%, var(--ember-1), transparent 70%);
   }
   .dark .ambient-haze {
     opacity: 0.14;
