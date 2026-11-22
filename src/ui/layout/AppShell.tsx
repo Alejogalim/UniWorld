@@ -82,9 +82,6 @@ export function AppShell() {
               <Logo className="size-7" />
             </span>
             <span className="wordmark shrink-0">{t('appName')}</span>
-            <span className="shrink-0 rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
-              {t('beta')}
-            </span>
             <button
               type="button"
               onClick={() => setRailCollapsed(true)}
