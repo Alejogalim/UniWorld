@@ -6,6 +6,7 @@ import type { UiLang } from "@/core/contracts";
 import { useProfile } from "@/store/profile";
 import { getSecret } from "@/store/secrets";
 import { ErrorNote } from "@/ui/components/ErrorNote";
+import { Panel } from "@/ui/components/Panel";
 import { Button } from "@/ui/components/ui/button";
 import { Spinner } from "@/ui/components/Spinner";
 import { AiKeyStep, saveProviderKeys } from "./onboarding/AiKeyStep";
@@ -150,36 +151,31 @@ export function OnboardingScreen() {
 
   return (
     <div className="isolate relative min-h-full w-full">
-      {step === 0 && (
-        // The welcome ember (DESIGN.md "Where the ember is allowed" #5): dark mode only, spans the whole
-        // main field (not just the 640px column), behind the content.
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 hidden h-2/5 dark:block"
-          style={{ background: "var(--ember-gradient)", filter: "blur(60px)", opacity: 0.35 }}
-        />
-      )}
       <div className="relative mx-auto flex min-h-full w-full max-w-[640px] flex-col px-12 py-8">
-        <div className="flex flex-col gap-2">
-          <p className="font-mono text-xs font-medium tracking-[0.01em] text-chart-grey">
-            {t("steps.progress", { current: step + 1, total: STEP_COUNT })}
-          </p>
-          <div className="h-px w-full bg-hairline" aria-hidden="true">
-            <div
-              className="h-px bg-foreground transition-[width] duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
-              style={{ width: `${((step + 1) / STEP_COUNT) * 100}%` }}
-            />
-          </div>
-        </div>
-
         <form
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
             next();
           }}
-          className="flex flex-col pt-10"
+          className="flex flex-col"
         >
+          <Panel variant="ember" className="flex flex-col gap-8 p-8">
+          <div className="flex flex-col gap-3">
+            <p className="sr-only">{t("steps.progress", { current: step + 1, total: STEP_COUNT })}</p>
+            {/* The step number is the one large numeral on the sheet: "2/7", with the rest of the line in grey. */}
+            <p aria-hidden="true" className="flex items-baseline gap-2">
+              <span className="numeral-ember type-display">{step + 1}</span>
+              <span className="type-title text-chart-grey">/{STEP_COUNT}</span>
+            </p>
+            <div className="h-px w-full bg-hairline" aria-hidden="true">
+              <div
+                className="h-px bg-foreground transition-[width] duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
+                style={{ width: `${((step + 1) / STEP_COUNT) * 100}%` }}
+              />
+            </div>
+          </div>
+
           <div>
             <AnimatePresence mode="wait" custom={dir} initial={false}>
               <motion.div
@@ -196,13 +192,9 @@ export function OnboardingScreen() {
             </AnimatePresence>
           </div>
 
-          {finishError && (
-            <div className="pt-6">
-              <ErrorNote message={t("errors.saveFailed", { error: finishError })} />
-            </div>
-          )}
+          {finishError && <ErrorNote message={t("errors.saveFailed", { error: finishError })} />}
 
-          <div className="mt-6 flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {step > 0 && (
               <Button type="button" variant="secondary" disabled={saving} onClick={() => goTo(step - 1, -1)}>
                 {t("actions.back")}
@@ -228,6 +220,7 @@ export function OnboardingScreen() {
               )}
             </Button>
           </div>
+          </Panel>
         </form>
       </div>
     </div>

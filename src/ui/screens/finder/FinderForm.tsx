@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { Button } from '@/ui/components/ui/button';
 import { ErrorNote } from '@/ui/components/ErrorNote';
+import { Panel } from '@/ui/components/Panel';
 import type { GeoView } from '@/ui/globe/geo';
 import { Filters } from './Filters';
 import { CareerPicker } from './CareerPicker';
@@ -78,22 +79,23 @@ export function FinderForm({ hasKey, onSearch, onFlyTo, globe, beside = false }:
   if (beside) {
     return (
       <div className="grid gap-8 min-[1100px]:grid-cols-[420px_minmax(0,1fr)]">
-        <div className="flex min-w-0 flex-col gap-8">
+        {/* The search block on the left is the screen's one ember panel. */}
+        <Panel variant="ember" className="flex min-w-0 flex-col gap-8 self-start">
           {careersSection}
           {filtersSection}
           {actions}
-        </div>
+        </Panel>
         <div className="flex min-w-0 flex-col gap-4">{globeSection}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <Panel variant="ember" className="flex flex-col gap-8">
       {careersSection}
       {globeSection}
       {filtersSection}
       {actions}
-    </div>
+    </Panel>
   );
 }

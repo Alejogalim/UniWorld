@@ -8,7 +8,7 @@ UniWorld is a desktop app that helps high-school students in IB, AP or US progra
 
 Onboarding, the welcome step in dark theme.
 
-![Onboarding, name step, light theme](docs/screenshots/onboarding-name-light.png)
+![Onboarding, light theme](docs/screenshots/onboarding-light.png)
 
 Onboarding, the name step in light theme.
 
@@ -75,7 +75,7 @@ English, Español, Tiếng Việt.
 - Natural Earth: public domain.
 - `countries-list`: MIT.
 - `country-flag-icons`: MIT.
-- Fonts: Agrave Pro and Inter (SIL OFL), IBM Plex Mono (SIL OFL).
+- Fonts: Inter (SIL OFL).
 
 ## AI tools disclosure
 

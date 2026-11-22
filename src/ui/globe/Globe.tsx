@@ -21,10 +21,14 @@ interface Palette {
   ocean: string;
   land: string;
   landSide: string;
+  /** Graticule lines: the hairline on paper, faint on black. */
+  graticule: string;
   hairline: string;
   ink: string;
   signal: string;
   atmosphere: string;
+  /** Atmosphere shell thickness, set with the colour so the two change together with the theme. */
+  atmosphereAltitude: number;
 }
 
 /** The globe tokens are 6-digit hex in src/index.css (shade and mix depend on it), so the value passes through. */
@@ -55,17 +59,20 @@ function readPalette(theme: 'light' | 'dark'): Palette {
   const styles = getComputedStyle(document.documentElement);
   const token = (name: string) => cssToHex(styles.getPropertyValue(name).trim());
   const land = token('--land');
-  const ocean = token('--background');
+  const ocean = token('--globe-ocean');
   const ember = token('--ember-1');
+  const hairline = token('--hairline');
   return {
     ocean,
     land,
     landSide: shade(land, 0.82),
-    hairline: token('--hairline'),
+    graticule: theme === 'dark' ? mix(ocean, hairline, 0.6) : hairline,
+    hairline,
     ink: token('--foreground'),
     signal: token('--signal'),
     // Dark: a faint ember tint (about 25%) on black. Light: a neutral grey haze on paper.
-    atmosphere: theme === 'dark' ? mix(ocean, ember, 0.25) : mix(ocean, token('--chart-grey'), 0.5),
+    atmosphere: theme === 'dark' ? mix(ocean, ember, 0.85) : mix(ocean, token('--chart-grey'), 0.5),
+    atmosphereAltitude: theme === 'dark' ? 0.2 : 0.12,
   };
 }
 
@@ -153,7 +160,7 @@ export default function GlobeView({
       .polygonLabel((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
         const style =
-          'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:2px;padding:4px 8px;font:500 12px/1.3 var(--font-sans);box-shadow:var(--shadow-float);white-space:nowrap';
+          'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:20px;padding:6px 12px;font:500 12px/1.3 "Inter Variable", system-ui, sans-serif;box-shadow:var(--shadow-float);white-space:nowrap';
         return `<div style="${style}">${escapeHtml(countryName(iso, state.current.uiLang))}</div>`;
       })
       .onPolygonHover((polygon: object | null) => {
@@ -238,13 +245,14 @@ export default function GlobeView({
     material.specular.setScalar(0);
     material.shininess = 0;
     globe.atmosphereColor(p.atmosphere);
+    globe.atmosphereAltitude(p.atmosphereAltitude);
     // Graticules are plain line segments in the scene; colour them with the hairline token.
     const graticule = globe
       .scene()
       .children.find((child: { type?: string }) => child.type === 'LineSegments') as
       | { material: { color: { set: (hex: string) => void } } }
       | undefined;
-    graticule?.material.color.set(p.hairline);
+    graticule?.material.color.set(p.graticule);
     globe.polygonsData(countries);
     applyStyles();
     // eslint-disable-next-line react-hooks/exhaustive-deps

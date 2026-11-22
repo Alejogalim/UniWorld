@@ -20,11 +20,15 @@ Source of truth: `Design.md` (product), `DESIGN.md` (visual system: "The Ember C
 - Profile: `useProfile` from `@/store/profile`.
 
 ## Visual system (DESIGN.md is binding)
-- Use the CSS tokens defined in `src/index.css` (slice 03 creates them) via Tailwind classes (`bg-background`, `text-foreground`, `border-hairline`, `text-chart-grey`, `bg-shoal`, `bg-signal`, `text-evidence`, `font-mono`…). **Never hard-code an oklch/hex color in a component**; dark mode depends on tokens.
-- Use the shared primitives in `src/ui/components/` (Button, Input, Chip, Panel, FactLine, Flag, …). Don't restyle them per screen.
-- Radii 2/4/6px only. No gradients, no drop shadows except the one "floating layer" shadow, no pill buttons, no emoji, no ALL-CAPS labels, no eyebrow labels, no `→` in button text, no middle-dot joined meta strings.
-- One magenta (signal) action per screen region. Green (evidence) only for verified/official facts.
-- Motion: keep the existing screen transition (AnimatePresence in `AppShell`). State changes 180ms `cubic-bezier(0.2,0,0,1)`. Nothing animates without a user cause except globe idle rotation and arriving search results. Respect `prefers-reduced-motion` (use Framer's `useReducedMotion`).
+- Use the CSS tokens defined in `src/index.css` via Tailwind classes (`bg-background`, `text-foreground`, `border-hairline`, `text-chart-grey`, `bg-shoal`, `bg-signal`, `text-evidence`, `rounded-pill`, `rounded-card`, `rounded-control`, `rounded-popover`). **Never hard-code an oklch/hex color in a component**; dark mode depends on tokens.
+- Font: Inter Variable only. Numerals use `.font-mono` (tabular, no tracking) or `tabular-nums`. Type classes: `.type-display`, `.type-headline`, `.type-title`, `.type-body`, `.type-label`.
+- Shape lock: four radii and nothing else. `rounded-pill` (999px) for action buttons, chips, badges, toggles and round icon buttons; `rounded-card` (28px) for panels and cards; `rounded-control` (14px) for inputs, selects, textareas, comboboxes and nav rows; `rounded-popover` (20px) for popovers, chat bubbles and row hover surfaces. Circles only for the globe, flag discs and dots. No other radius values.
+- Gradients and glow only in these places: the dark `Panel` surface and rim (`.surface`, `.rim`), one `.panel-ember` per screen, the `.ember-button` primary fill, `.numeral-ember` (dark), the `.ambient-haze` (dark), the toggle-on and progress dot (`.ember-fill`), and the globe atmosphere (dark). No other gradients, and no glow in light mode.
+- Use the shared primitives in `src/ui/components/` (Button, Input, Chip, Panel, FactLine, Flag, …). Don't restyle them per screen; style a screen through the primitives and tokens.
+- One magenta (signal) action per screen region; at most one `.panel-ember` per screen. Green (evidence) only for verified/official facts.
+- Two-tone headlines (grey body, ink phrase in a `<strong>`) only on the onboarding welcome and empty-state titles.
+- Starfield: dark theme only, behind everything, `prefers-reduced-motion` gets a static frame. Do not draw stars in light mode.
+- Motion: keep the existing screen transition (AnimatePresence in `AppShell`). State changes 180ms `cubic-bezier(0.2,0,0,1)`; press feedback scales to 0.97 in 120ms. Nothing animates without a user cause except globe idle rotation, arriving search results and the stars. Respect `prefers-reduced-motion` (use Framer's `useReducedMotion`).
 - Sizes to content so es/vi strings wrap, never truncate.
 
 ## i18n

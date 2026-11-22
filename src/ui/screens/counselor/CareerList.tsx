@@ -163,8 +163,8 @@ function CareerCard({
                   <span>{t(`priorities.${dimension}`)}</span>
                   <span className="font-mono font-medium tabular-nums">{value}/10</span>
                 </dt>
-                <dd className="m-0 h-1.5 w-full bg-shoal">
-                  <div className="h-full bg-foreground" style={{ width: `${Math.min(Math.max(value, 0), 10) * 10}%` }} />
+                <dd className="m-0 h-1.5 w-full overflow-hidden rounded-pill bg-shoal">
+                  <div className="h-full rounded-pill bg-foreground" style={{ width: `${Math.min(Math.max(value, 0), 10) * 10}%` }} />
                 </dd>
               </div>
             );

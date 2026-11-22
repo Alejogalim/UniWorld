@@ -9,6 +9,7 @@ import { Badge } from '@/ui/components/Chip';
 import { EmptyState } from '@/ui/components/EmptyState';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Flag } from '@/ui/components/Flag';
+import { Panel } from '@/ui/components/Panel';
 import { Input, Select, Textarea } from '@/ui/components/Input';
 import { Button } from '@/ui/components/ui/button';
 import { daysUntil } from './myUnis/deadline';
@@ -24,6 +25,9 @@ const STATUSES: TrackedStatus[] = [
 ];
 
 const messageOf = (err: unknown) => (err instanceof Error ? err.message : String(err));
+
+/** A deadline is urgent when it is still ahead and within 30 days. */
+const isUrgent = (days: number) => days >= 0 && days < 30;
 
 /** Nearest upcoming deadline first, then rows without a deadline, then deadlines already passed. */
 export function sortByDeadline(items: TrackedUni[], today: Date): TrackedUni[] {
@@ -107,35 +111,48 @@ export function MyUnisScreen() {
       />
     );
   } else {
+    const urgentCount = sorted.filter((u) => u.deadline && isUrgent(daysUntil(u.deadline, today))).length;
     body = (
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-hairline text-xs font-medium text-chart-grey">
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.university')}</th>
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.program')}</th>
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.language')}</th>
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.deadline')}</th>
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.exams')}</th>
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.status')}</th>
-              <th scope="col" className="py-2 pr-4 font-medium">{t('columns.notes')}</th>
-              <th scope="col" className="py-2 font-medium">{t('columns.actions')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((uni) => (
-              <TrackedRow
-                key={uni.id}
-                uni={uni}
-                today={today}
-                onSave={(patch) => save(uni.id, patch)}
-                onRemove={() => remove(uni.id)}
-                onOpen={() => openDetail(uni)}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <>
+        <Panel variant="ember" className="flex flex-wrap items-end gap-x-10 gap-y-4 p-6">
+          <p className="flex items-baseline gap-3">
+            <span className="numeral-ember type-display">{items.length}</span>
+            <span className="type-title text-foreground">{t('summary.total', { count: items.length })}</span>
+          </p>
+          <p className="flex items-baseline gap-3">
+            <span className="numeral-ember type-display">{urgentCount}</span>
+            <span className="type-title text-chart-grey">{t('summary.urgent')}</span>
+          </p>
+        </Panel>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-hairline text-xs font-medium text-chart-grey">
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.university')}</th>
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.program')}</th>
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.language')}</th>
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.deadline')}</th>
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.exams')}</th>
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.status')}</th>
+                <th scope="col" className="py-2 pr-4 font-medium">{t('columns.notes')}</th>
+                <th scope="col" className="py-2 font-medium">{t('columns.actions')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((uni) => (
+                <TrackedRow
+                  key={uni.id}
+                  uni={uni}
+                  today={today}
+                  onSave={(patch) => save(uni.id, patch)}
+                  onRemove={() => remove(uni.id)}
+                  onOpen={() => openDetail(uni)}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
     );
   }
 
@@ -163,7 +180,7 @@ function TrackedRow({ uni, today, onSave, onRemove, onOpen }: TrackedRowProps) {
   const place = [uni.city, countryName(uni.countryCode, uiLang)].filter(Boolean).join(', ');
 
   return (
-    <tr className="border-b border-hairline align-top">
+    <tr className="border-b border-hairline align-top transition-colors hover:bg-shoal">
       <td className="py-3 pr-4">
         <div className="flex max-w-56 items-start gap-2">
           <Flag code={uni.countryCode} className="mt-0.5" />
@@ -308,7 +325,7 @@ function InlineText({
 function DeadlineCell({ uni, today, onSave }: { uni: TrackedUni; today: Date; onSave: (d: string | null) => void }) {
   const { t } = useTranslation('myUnis');
   const days = uni.deadline ? daysUntil(uni.deadline, today) : null;
-  const urgent = days !== null && days >= 0 && days < 30;
+  const urgent = days !== null && isUrgent(days);
 
   let note: ReactNode;
   if (days === null) {
@@ -317,7 +334,7 @@ function DeadlineCell({ uni, today, onSave }: { uni: TrackedUni; today: Date; on
     note = <span className="font-mono text-xs tabular-nums text-chart-grey">{t('deadline.passed')}</span>;
   } else if (urgent) {
     note = (
-      <span className="w-fit rounded-sm bg-signal px-2 py-0.5 font-mono text-xs font-medium tabular-nums text-primary-foreground">
+      <span className="ember-button w-fit rounded-pill bg-signal px-2.5 py-0.5 font-mono text-xs font-medium tabular-nums text-primary-foreground">
         {t('deadline.daysLeft', { count: days })}
       </span>
     );

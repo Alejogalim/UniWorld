@@ -69,7 +69,7 @@ export function ChatPane() {
         aria-live="polite"
         aria-label={t("chat.log")}
         onScroll={onLogScroll}
-        className="flex max-h-[min(60vh,560px)] min-h-32 flex-col gap-4 overflow-y-auto pr-2"
+        className="flex max-h-[min(60vh,560px)] min-h-32 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)]"
       >
         {messages.map((m, i) => (
           <MessageView
@@ -91,7 +91,8 @@ export function ChatPane() {
             {t("intake.progress", { n: intakeStep, total: INTAKE_TOTAL })}
           </p>
         )}
-        <div className="flex items-end gap-3">
+        {/* The composer is one pill: the field has no border of its own; the pill carries the rim and focus ring. */}
+        <div className="rim flex items-end gap-2 rounded-[28px] bg-panel py-1.5 pr-1.5 pl-2 focus-within:outline-2 focus-within:outline-signal">
           <Textarea
             ref={textareaRef}
             aria-label={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
@@ -104,7 +105,7 @@ export function ChatPane() {
               resize(e.target);
             }}
             onKeyDown={onKeyDown}
-            className="min-h-10 flex-1 resize-none py-2"
+            className="min-h-10 flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 shadow-none focus-visible:outline-0"
           />
           <Button onClick={submit} disabled={!canSend} className="min-w-24">
             {busy ? t("chat.sending") : t("chat.send")}
@@ -129,7 +130,7 @@ function MessageView({
 
   if (message.role === "student") {
     return (
-      <div className={`ml-auto max-w-[85%] rounded-lg bg-shoal px-4 py-2.5 text-sm leading-[1.55] break-words whitespace-pre-wrap text-foreground ${animation ?? ""}`}>
+      <div className={`ml-auto max-w-[85%] rounded-popover bg-shoal px-4 py-2.5 text-sm leading-[1.55] break-words whitespace-pre-wrap text-foreground ${animation ?? ""}`}>
         {message.text}
       </div>
     );

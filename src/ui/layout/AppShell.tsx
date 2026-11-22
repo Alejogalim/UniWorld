@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation, useOutlet } from 'react-router';
@@ -5,8 +6,11 @@ import { ListChecks, MessageCircle, Globe, Settings, Sparkles, type LucideIcon }
 import { cn } from '@/lib/utils';
 import { ErrorBoundary } from '@/app/ErrorBoundary';
 import { useProfile } from '@/store/profile';
+import { initStars, useStars } from '@/app/stars';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
+import { StarsSwitcher } from './StarsSwitcher';
+import { Starfield } from './Starfield';
 
 const NAV: { to: string; key: string; titleKey: string; icon: LucideIcon }[] = [
   { to: '/onboarding', key: 'nav.onboarding', titleKey: 'screens.onboarding', icon: Sparkles },
@@ -29,17 +33,24 @@ export function AppShell() {
   const active = NAV.find((item) => location.pathname.startsWith(item.to));
   // Onboarding is the first-run step; once a profile exists it is no longer a destination.
   const visibleNav = NAV.filter((item) => !(hasProfile && item.to === '/onboarding'));
+  const starsOn = useStars((s) => s.on);
+
+  useEffect(() => {
+    initStars();
+  }, []);
 
   return (
-    <div className="grid h-screen grid-cols-[220px_1fr] grid-rows-[auto_1fr] overflow-hidden bg-background text-foreground">
-      <div className="app-rail flex items-baseline gap-2 self-baseline px-4 py-4">
+    <div className="isolate grid h-screen grid-cols-[220px_1fr] grid-rows-[auto_1fr] overflow-hidden bg-background text-foreground">
+      <Starfield enabled={starsOn} />
+      <div className="ambient-haze" aria-hidden="true" />
+      <div className="app-rail flex items-baseline gap-2 self-stretch px-4 py-4">
         <span className="wordmark">{t('appName')}</span>
-        <span className="rounded-sm border border-hairline px-1.5 py-px font-mono text-[10px] leading-[1.3] font-medium tracking-[0.01em] text-foreground">
+        <span className="rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
           {t('beta')}
         </span>
       </div>
 
-      <header className="flex items-baseline justify-between self-baseline bg-background px-8 py-4">
+      <header className="flex items-baseline justify-between self-stretch bg-transparent px-8 py-4">
         <h1 key={location.pathname} className="screen-title">
           <span className="screen-title__type">{t(active?.titleKey ?? 'appName')}</span>
         </h1>
@@ -53,8 +64,10 @@ export function AppShell() {
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'nav-item relative flex items-center gap-2 rounded-md px-3 py-2 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
-                  isActive ? 'font-bold text-foreground' : 'text-chart-grey hover:text-foreground',
+                  'nav-item relative flex h-10 items-center gap-2 rounded-control px-3 font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
+                  isActive
+                    ? 'rim bg-shoal font-semibold text-foreground'
+                    : 'text-chart-grey hover:bg-shoal hover:text-foreground',
                 )
               }
             >
@@ -76,6 +89,7 @@ export function AppShell() {
         <div className="mt-auto flex gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <StarsSwitcher />
         </div>
       </aside>
 

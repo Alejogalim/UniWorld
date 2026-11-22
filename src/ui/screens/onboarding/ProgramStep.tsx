@@ -19,17 +19,20 @@ export function ProgramStep({ errors }: { errors: Errors }) {
     <StepSection>
       <StepHeading id="onboarding-program-title" title={t("program.title")} />
       <div>
-        <div role="radiogroup" aria-labelledby="onboarding-program-title" className="flex flex-col border-t border-hairline">
+        <div role="radiogroup" aria-labelledby="onboarding-program-title" className="flex flex-col gap-2">
           {PROGRAMS.map((p, index) => {
             const checked = program === p;
             return (
               <label
                 key={p}
                 className={cn(
-                  "relative flex min-h-12 cursor-pointer items-center gap-3 border-b border-hairline px-4 py-3 text-[1.0625rem] font-semibold text-foreground transition-colors duration-[120ms] hover:bg-shoal focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-signal",
-                  checked && "bg-shoal before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-signal",
+                  "relative flex min-h-12 cursor-pointer items-center gap-3 rounded-control px-4 py-3 text-[1.0625rem] font-semibold text-foreground transition-colors duration-[120ms] hover:bg-shoal focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-signal",
+                  checked && "rim bg-shoal",
                 )}
               >
+                {checked && (
+                  <span aria-hidden="true" className="absolute top-1/2 left-1.5 size-1.5 -translate-y-1/2 rounded-full bg-signal" />
+                )}
                 <input
                   type="radio"
                   name="program"

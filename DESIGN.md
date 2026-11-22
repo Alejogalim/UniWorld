@@ -1,6 +1,6 @@
 ---
 name: UniWorld
-description: A working chart of where a student could study — real universities, real facts, sourced.
+description: A working chart of where a student could study, with real universities, real facts and sources, drawn over a night sky.
 colors:
   ink: "#0a0a0a"
   chart-grey: "#636366"
@@ -15,66 +15,62 @@ colors:
   ember-0: "#b3210a"
   ember-1: "#ff5a1f"
   ember-2: "#f7b267"
+  button-top: "#c4400b"
+  button-bottom: "#b83304"
   ink-dark: "#ffffff"
   chart-grey-dark: "#8e8e93"
   background-dark: "#000000"
   panel-dark: "#0c0c0d"
+  panel-dark-top: "#151517"
   shoal-dark: "#161617"
   hairline-dark: "#39393c"
-  land-dark: "#262628"
+  land-dark: "#26262a"
   signal-dark: "#ff6a2b"
   signal-deep-dark: "#ff8a4d"
   evidence-dark: "#5fbf8f"
+  globe-ocean-dark: "#060607"
+  button-top-dark: "#ff8a3d"
+  button-bottom-dark: "#ff5a1f"
+  star: "#ffffff"
+  star-warm: "#fff4ea"
   primary-text: "#ffffff"
   primary-text-dark: "#000000"
 typography:
   display:
-    fontFamily: "Agrave Pro, Inter Variable, sans-serif"
-    fontSize: "2.75rem"
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "3.5rem"
     fontWeight: 600
-    lineHeight: 1.04
-    letterSpacing: "-0.025em"
+    lineHeight: 1
+    letterSpacing: "-0.035em"
   headline:
-    fontFamily: "Agrave Pro, Inter Variable, sans-serif"
-    fontSize: "1.5rem"
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "1.75rem"
     fontWeight: 600
-    lineHeight: 1.2
-    letterSpacing: "-0.015em"
+    lineHeight: 1.15
+    letterSpacing: "-0.02em"
   title:
-    fontFamily: "Agrave Pro, Inter Variable, sans-serif"
+    fontFamily: "Inter Variable, system-ui, sans-serif"
     fontSize: "1.0625rem"
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "-0.005em"
   body:
-    fontFamily: "Agrave Pro, Inter Variable, sans-serif"
-    fontSize: "0.875rem"
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "0em"
-  prose:
-    fontFamily: "Agrave Pro, Inter Variable, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: "0em"
   label:
-    fontFamily: "Agrave Pro, Inter Variable, sans-serif"
-    fontSize: "0.75rem"
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.2
-    letterSpacing: "0.01em"
-  data:
-    fontFamily: "IBM Plex Mono, ui-monospace, monospace"
-    fontSize: "0.75rem"
-    fontWeight: 500
-    lineHeight: 1.3
-    letterSpacing: "0.01em"
-    fontFeature: "tnum"
+    letterSpacing: "0em"
 rounded:
-  sm: "2px"
-  md: "4px"
-  lg: "6px"
+  pill: "999px"
+  card: "28px"
+  control: "14px"
+  popover: "20px"
 spacing:
   hair: "4px"
   tight: "8px"
@@ -83,263 +79,249 @@ spacing:
   block: "24px"
   section: "32px"
   page: "48px"
-components:
-  button-primary:
-    backgroundColor: "{colors.signal}"
-    textColor: "{colors.primary-text}"
-    rounded: "{rounded.md}"
-    padding: "0 16px"
-    height: "36px"
-    typography: "{typography.label}"
-  button-primary-hover:
-    backgroundColor: "{colors.signal-deep}"
-    textColor: "{colors.primary-text}"
-    rounded: "{rounded.md}"
-  button-secondary:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    padding: "0 16px"
-    height: "36px"
-    typography: "{typography.label}"
-  button-quiet:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.chart-grey}"
-    padding: "0 8px"
-    height: "28px"
-    typography: "{typography.label}"
-  input:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    padding: "0 12px"
-    height: "36px"
-    typography: "{typography.body}"
-  chip:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sm}"
-    padding: "2px 8px"
-    height: "24px"
-    typography: "{typography.label}"
-  chip-selected:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.panel}"
-    rounded: "{rounded.sm}"
-    padding: "2px 8px"
-    height: "24px"
-  panel:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-    padding: "24px"
-    typography: "{typography.body}"
-  nav-item:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.chart-grey}"
-    rounded: "{rounded.sm}"
-    padding: "0 12px"
-    height: "32px"
-    typography: "{typography.label}"
-  nav-item-active:
-    backgroundColor: "{colors.shoal}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sm}"
-    padding: "0 12px"
-    height: "32px"
 ---
 
 # Design System: UniWorld
 
 ## Overview
 
-**Creative North Star: "The Ember Chart"**
+**Creative North Star: "The Ember Chart, under stars"**
 
-UniWorld is a working chart, not a poster of one. A chart earns trust by showing its sources, its survey dates, and the places where the soundings are unknown — the same discipline UniWorld promises when it refuses to invent a tuition figure. The chart is now a black-and-white instrument: paper and ink, or black and white on the lamp-off screen, with one ember. (This system was called "The Corrected Chart" before; the name changed with the palette.)
+UniWorld is still a working chart: real universities, real facts, a source on every value, and a visible gap where the soundings are unknown. The Ember Glow pass (plan 16) keeps that discipline and adds two things the owner asked for: soft, squircle-like surfaces with a light rim, and a slow, faint starfield behind every screen. The chart now sits on a night sky in dark mode and on paper in light mode.
 
-The surface is an instrument used at a desk, at night, on a laptop, often by a sixteen-year-old comparing three countries at once. So this is an **Operate** system: density and scanability first, expression spent in a few places — the globe, which is the one object allowed to be beautiful, and the ember, the one colour allowed to raise its voice. Everything else is greys, ink, and a hairline. Depth is tonal, not shadowed; structure is drawn with rules, not boxes; nothing is a rounded card floating on a gradient.
+The surface is still an instrument used at a desk, often by a sixteen-year-old comparing three countries at once. So this is still an **Operate** system: scanning and density come first, and expression is spent in a few marked places: the globe, the one ember element per screen, the large numerals, and the stars. Everything else is ink, grey, a hairline and a soft surface.
 
-The existing scaffold is stock shadcn neutral: pure grey, Inter, `0.625rem` radii, equal-weight cards. It is the thing this document replaces, not the thing it documents. Three deliberate rejections: warm cream plus serif plus terracotta (the editorial template); a neon accent on near-black used everywhere (the landing-page template); and a grid of identical rounded cards with the same soft shadow on each (the SaaS template). UniWorld is a chart, and charts look like charts.
+Three rejections still stand: a warm cream and serif editorial template, a neon accent used everywhere, and a grid of identical rounded cards with the same shadow on each. The owner's brief changed one thing: surfaces may now be soft and gradient-rimmed, but only in the places listed under Gradients and Glow.
 
 **Key Characteristics:**
-- Monochrome ground: pure black in the dark theme, soft light grey on paper in the light theme, pure white panels, ink text.
-- Exactly one warm colour, the ember, used for what needs the student now and in a few fixed places — never as decoration.
-- Flat by default: 1px hairlines and tonal steps instead of shadows; one shadow exists, for layers that float.
-- One face (Agrave Pro) at two weights, plus a mono for measured values; no display serif, no third family.
-- Results are a ranked column of rows, never a grid of equal cards.
+- Ground: black with stars in dark mode, light grey paper in light mode. The stars are dark theme only.
+- One warm colour, the ember. It marks what the student must act on now, and it glows in a few fixed places.
+- Surfaces are soft: 28px cards with a 1px rim. Dark cards are a vertical gradient; light cards are flat white with a 6% ring.
+- One face, Inter Variable, in weights 400 to 600. Numerals are always tabular.
+- Headlines are two-tone: grey body text with the key phrase in ink, used on the welcome headline and empty-state titles only.
+- Results are still a ranked column of rows, never a grid of equal cards.
 - Every fact carries its source or says it is missing. The missing state is designed, not hidden.
-- Motion answers an action; nothing animates in on scroll.
+- Motion answers an action. The stars and the arrival of search results are the only things that move without a cause.
 
 ## Colors
 
-Monochrome first: black or light grey ground, white or pure-white panels, black or white ink, and greys for everything secondary. One colour is spent sparingly, the ember, which is a deep red-orange at its core and warms to peach at its edge.
+Monochrome first. Ember is the only colour, and it is spent in named places.
 
 ### Primary
-- **Ember Signal** (`#c53805` light, `#ff6a2b` dark): the only saturated colour on most screens. Filled primary buttons, the selected country on the globe, the active nav mark, the chip and radio tick, the focus ring, deadlines under 30 days, and the live "searching" dot. Roughly 5% of pixels, never more.
-- **Ember Signal, Deep** (`#a82f03` light, `#ff8a4d` dark): pressed and hover state of the same control. It is a state, not a second accent.
-
-### Ember Gradient (the reference's signature, used in two places only)
-- **Ember** (`#b3210a` → `#ff5a1f` → `#f7b267`, from the bottom up): a gradient that runs deep red, orange, then warm peach. It appears as the search progress dot and the welcome glow in dark mode. Nowhere else.
+- **Ember Signal** (`#c53805` light, `#ff6a2b` dark): the focus ring, the selected country, the search-in-progress dot, deadlines inside 30 days, the ember dot on a selected row or chip, and the ember text where the ember is itself the message. Roughly 5% of pixels.
+- **Ember Signal, Deep** (`#a82f03` light, `#ff8a4d` dark): the pressed and hover state of signal text.
+- **Primary button fill**: a vertical gradient, `#c4400b` to `#b83304` in light (white text) and `#ff8a3d` to `#ff5a1f` in dark (black text). It is a fill, not a second accent.
 
 ### Secondary
-- **Evidence Green** (`#2f7a56` light, `#5fbf8f` dark): a muted surveyor's green used only for evidence — the verified tick next to a sourced fact, the "official" source tag, the count of facts that passed the quote check. It never appears on a button, a badge of celebration, or a success toast.
+- **Evidence Green** (`#2f7a56` light, `#5fbf8f` dark): verified evidence only: the official tag, the verified tick next to a sourced fact, and the verified count. Never a button, a celebration or a success toast.
 
 ### Neutral
-- **Ink** (`#0a0a0a` light, `#ffffff` dark): all primary text, icons, and the 1px rules that do the structural work.
-- **Background** (`#efefef` light, `#000000` dark): the app ground behind everything. Dark mode is pure black.
-- **Panel** (`#ffffff` light, `#0c0c0d` dark): panels, inputs, and any surface that must read as a sheet laid on the ground.
-- **Shoal** (`#f4f4f4` light, `#161617` dark): the second tonal step — table headers, hovered rows, the active nav field, inset sections.
-- **Hairline** (`#c2c2c2` light, `#39393c` dark): every 1px rule and input stroke. Rules carry structure here; if a border is decorative, delete it.
-- **Chart Grey** (`#636366` light, `#8e8e93` dark): secondary text, metadata, and the "Not found" state. Passes AA on paper, shoal, and ground in both themes.
-- **Land** (`#d9d9d9` light, `#262628` dark): globe land, a neutral grey. Not a warm fill.
+- **Ink** (`#0a0a0a` light, `#ffffff` dark): primary text, icons, and the hairlines that do structural work.
+- **Background** (`#efefef` light, `#000000` dark): the ground behind everything.
+- **Panel** (`#ffffff` light, `#0c0c0d` dark, with a `#151517` to `#0b0b0c` gradient in dark): sheets laid on the ground.
+- **Shoal** (`#f4f4f4` light, `#161617` dark): the second tonal step: hover, the active nav item, inset regions, bubbles.
+- **Hairline** (`#c2c2c2` light, `#39393c` dark): every 1px rule and input stroke.
+- **Chart Grey** (`#636366` light, `#8e8e93` dark): secondary text and metadata.
+- **Land** (`#d9d9d9` light, `#26262a` dark): globe land.
+- **Globe ocean** (`#efefef` light, `#060607` dark): the globe sphere; the atmosphere is an ember rim in dark mode (ember mixed 85% into the ocean, shell altitude 0.2).
+- **Star** (`#ffffff`, and `#fff4ea` on about 15% of stars): the starfield. Pure white with a barely warm tint. No other colour.
 
-### Dark theme
-The same instrument with the lamp off: black ground, near-black panels with a thin lighter rim along their top edge, white ink. The ember is the only colour. Dark mode carries the soft ember glow on primary buttons on hover and focus, and the welcome glow; nothing else glows.
+### Token table
 
-### Measured contrast
-Measured with WCAG 2.x relative luminance:
+| token | light | dark |
+|---|---|---|
+| `--background` | `#efefef` | `#000000` |
+| `--panel` / `--surface-fill` | `#ffffff` flat | `#0c0c0d`, gradient `#151517` to `#0b0b0c` |
+| `--shoal` | `#f4f4f4` | `#161617` |
+| `--foreground` | `#0a0a0a` | `#ffffff` |
+| `--chart-grey` | `#636366` | `#8e8e93` |
+| `--hairline` | `#c2c2c2` | `#39393c` |
+| `--signal` / `--signal-deep` | `#c53805` / `#a82f03` | `#ff6a2b` / `#ff8a4d` |
+| `--evidence` | `#2f7a56` | `#5fbf8f` |
+| `--ember-0` / `-1` / `-2` | `#b3210a` / `#ff5a1f` / `#f7b267` | same |
+| `--ember-button-top` / `-bottom` | `#c4400b` / `#b83304` | `#ff8a3d` / `#ff5a1f` |
+| `--ember-wash` | ember-2 at 10% (bottom of a light ember panel) | not used |
+| `--ember-glow` / `--ember-glow-wide` | none | ember-1 at 55% and 45% |
+| `--rim-top` / `--rim-bottom` | 6% black | 16% white to 4% white |
+| `--globe-ocean` | `#efefef` | `#060607` |
+| `--land` | `#d9d9d9` | `#26262a` |
+
+### Contrast
+Measured with WCAG 2.x relative luminance. The full pair list is in `.plans/16-ui-glow-stars.md`, Builder notes. Summary:
 
 | pair | ratio | target |
 |---|---|---|
 | ink on background / panel / shoal (light) | 17.2 / 19.8 / 18.0 | 4.5:1 |
 | chart grey on background / panel / shoal (light) | 5.2 / 6.0 / 5.4 | 4.5:1 |
-| white on signal (light primary button) | 5.3 | 4.5:1 |
-| ink on signal (dark primary button) | 7.4 | 4.5:1 |
-| signal on panel (light, as text or outline) | 5.3 | 3:1 |
-| signal on background (light, as text) | 4.6 | 4.5:1 |
-| signal on panel (dark, as text or outline) | 6.8 | 3:1 |
-| evidence on panel (light / dark) | 5.2 / 8.7 | 4.5:1 |
+| white on primary button (light, both ends) | 5.1 to 6.0 | 4.5:1 |
+| black on primary button (dark, both ends) | 6.7 to 9.0 | 4.5:1 |
+| ink on dark card (top / bottom) | 18.2 / 19.7 | 4.5:1 |
+| chart grey on dark card (top / bottom) | 5.6 / 6.0 | 4.5:1 |
+| chart grey on the rendered dark ember glow (worst point, ember-0 at .35) | 4.75 | 4.5:1 |
+| ember-2 numeral low stop on the glow | 6.4 to 8.5 | 3:1 |
+| white on urgent pill (light) / black on urgent pill (dark) | 5.1 to 6.0 / 6.7 to 9.0 | 4.5:1 |
 | hairline on background / panel (light) | 1.55 / 1.78 | 1.5:1 |
-| hairline on panel / shoal (dark) | 1.70 / 1.57 | 1.5:1 |
+| hairline on card bottom (dark) | 1.71 | 1.5:1 |
+
+Stars and text (dark only). A single star pixel under text is the worst case, and the result is not a clean pass:
+
+| pair | ratio | target |
+|---|---|---|
+| ink text over a base star at alpha .45 (worst pixel) | 4.76 | 4.5:1 |
+| chart grey text over a star at the text cap, alpha .15 (worst pixel) | 4.63 | 4.5:1 |
+| ink text over a star at the text cap, alpha .15 (worst pixel) | 15.08 | 4.5:1 |
+| chart grey text over a bright star's glow at .15 x .45 | 5.78 | 4.5:1 |
+| chart grey nav label over a rail star at alpha .15 | 4.63 | 4.5:1 |
+
+Stars are capped where text can sit: alpha 0.15 over the rail and the content column, easing to 0.45 only in the right gutter beyond the 1120px column, which has no text. The cap eases over a smooth ramp, so nothing pops. A star is a dot of 1 to 3 px, and the measured figures are per pixel, not an average over a text run.
 
 ### Named Rules
-**The Ember Rule.** Ember marks what the student must act on now — the primary action on this screen, the country they selected, a deadline inside 30 days, the search in progress. Never a heading, never an icon colour, never a link. If two ember things compete on one screen, one of them is wrong. The ember gradient is limited to the two places listed above. The other two ember effects are the globe's atmosphere tint (dark) and the primary-button glow on hover and focus (dark); nothing else glows.
+**The Ember Rule.** Ember marks what the student must act on now: the primary action on the screen, the country they selected, a deadline inside 30 days, the search in progress, the one ember panel of the screen. Never a heading, never a link. If two ember things compete on one screen, one of them is wrong.
 
-**The Evidence Rule.** Green means evidence, and only evidence: a fact that carries a source and a matching quote. It may not be used for "done", "success", or celebration — in this product the only thing worth celebrating is that something was verified.
+**The One Panel Rule.** Each screen has at most one `.panel-ember` surface. It is the screen's memorable element. Other panels are plain.
 
-**The Land Rule.** Land is a neutral grey fill on the globe, never a warm or "premium" surface. The palette stays monochrome apart from the ember.
+**The Evidence Rule.** Green means evidence only: a fact with a source and a matching quote. Never "done", "success" or celebration.
+
+**The Land Rule.** Land is a neutral grey fill on the globe, never warm.
 
 ## Typography
 
-**Display Font:** Agrave Pro (with Inter Variable, sans-serif)
-**Body Font:** Agrave Pro — one family across the whole app; only size and weight shift
-**Label/Mono Font:** IBM Plex Mono (with ui-monospace, monospace)
+**Face:** Inter Variable, the only family. `--font-sans`, `--font-heading` and `--font-mono` all resolve to the Inter stack. Inter Variable carries Vietnamese diacritics, so no fallback face is needed.
 
-**Character:** Agrave Pro carries every word in the app. It is a narrow humanist sans with a high x-height and slightly clipped terminals — closer to chart lettering than to a UI grotesque, and it stays readable down to 12px labels, which is why it replaced the neutral scaffolding face rather than merely decorating headings. Only two cuts are installed (400 and 700), so hierarchy comes from size, case, and colour, not from a 500/600 middle range: `font-medium` resolves to 400 and `font-semibold` to 700, and no design may depend on an intermediate weight. IBM Plex Mono remains the instrument's readout — coordinates, counts, dates, currencies — and never speaks in sentences.
+**Numerals:** `.font-mono` is the measured-value style. It is Inter with `font-variant-numeric: tabular-nums` and no tracking. Counts, days, scores and deadlines use it. Mono is no longer a different face.
 
-**Vietnamese:** Agrave Pro has no `ạ`/`ệ`/`ỏ` glyphs; `Inter Variable` sits second in the stack and supplies them, so Vietnamese text mixes faces at its diacritics. This is a known trade, not a bug to "fix" by swapping the face back.
-
-### Hierarchy
-- **Display** (600, `2.75rem`/1.04, tracking `-0.025em`, width 92%): one per screen at most — the onboarding welcome, the Finder's career question. Never inside a panel.
-- **Headline** (600, `1.5rem`/1.2, tracking `-0.015em`): screen titles and career-card names.
-- **Title** (600, `1.0625rem`/1.35): university names in rows, section titles inside panels, dialog titles.
-- **Body** (400, `0.875rem`/1.55): the app default. Prose in onboarding, counselor, and detail pages uses `1rem`/1.6 at 68ch max.
-- **Label** (500, `0.75rem`/1.2, tracking `0.01em`): buttons, nav, chips, form labels, table headers. Sentence case, always.
-- **Data** (500, `0.75rem`/1.3, Plex Mono, `tnum`): deadlines, tuition figures, coordinates, result counts, the fit code, the "Last checked" date.
-
-Line length: 68ch for prose, 90ch for table rows. Long-form (detail page, counselor replies) never exceeds 68ch regardless of window width.
+### Scale
+- **Display** (600, 56px / 1.0, tracking -0.035em): screen titles, and the large numerals on the onboarding step, the rank and the summary strip (`.type-display`).
+- **Headline** (600, 28px / 1.15, tracking -0.02em): card and section headlines (`.type-headline`).
+- **Title** (600, 17px / 1.35): university names, panel titles (`.type-title`).
+- **Body** (400, 15px / 1.55): the app default, and prose at 68ch maximum (`.type-body`).
+- **Label** (500, 13px / 1.2): buttons, nav, chips, form labels, table headers (`.type-label`). Sentence case.
 
 ### Named Rules
-**The Measured Value Rule.** Mono is for values that were measured, counted, dated, or priced. The moment a sentence, a button, or a heading appears in mono, it reads as a terminal and the chart illusion dies.
+**The Two-Tone Rule.** A headline may be two-tone only on the onboarding welcome and on empty-state titles: body text in Chart Grey, the key phrase in ink at weight 600 (a `<strong>` in the translation). The phrase is a phrase, never one word.
 
-**The No-Eyebrow Rule.** No tracked-out uppercase kicker above any heading, and no label that only announces the heading beneath it. Sections are separated by a hairline and space, the way a chart is, not by a small grey word.
+**The Numeral Rule.** Large numerals may take the ember gradient (`.numeral-ember`) and only where a number is the point of the line: the onboarding step, a result's rank, the summary strip, the days-left number. Numerals are always tabular.
 
-**The Caps Rule.** Uppercase exists in exactly one form: inside a mono coordinate or ISO country code string (`58.35°N`, `EE`). Everywhere else, sentence case.
+**The Measured Value Rule.** Numbers that were measured, counted, dated or priced use tabular figures. A sentence or a button never uses them.
 
-## Layout
+**The No-Eyebrow Rule.** No tracked-out uppercase kicker above any heading. Sections are separated by a hairline and space.
 
-A fixed 220px navigation rail on the left, a working field to its right that scrolls independently. The rail never moves, never collapses to icons, and never overlays content: the app is a desktop instrument and the window is its table (min 960×640, default 1200×800). At 960px the rail stays and the field reflows to one column.
-
-Inside the field, content is capped at 1120px and aligned left with a 48px page margin — centred layouts are reserved for onboarding steps, which are a single question on an otherwise empty sheet, 640px wide, with the step's controls anchored at the bottom-left of that measure.
-
-Density is high by default, because scanning twenty universities is the job: 36px controls, 14px body, 44px result rows, 24px panel padding. Space is a rhythm in fours — 4/8/12/16/24/32/48 — and the section step is the largest one; screens never stack more than three vertical sections.
-
-The Finder is the one screen with a two-region layout: the globe occupies the field at rest and shrinks to a 380px column at the left when a search runs, so results read as a long ranked column to its right. Results are rows in a single column sorted by fit, each with a hairline separator — not a card grid. A grid implies equal weight; these universities are ranked.
-
-Longer strings: Spanish and Vietnamese run up to 30% longer than English, so no control has a fixed width and every label wraps rather than truncates. Nav items and chips size to content; buttons have a 160px minimum, never a maximum.
-
-## Elevation & Depth
-
-Flat. Depth comes from tonal steps — background behind, panel on top, shoal inset — separated by 1px hairlines. Nothing has a drop shadow at rest. Dark panels add a 1px inner top highlight (`inset 0 1px 0 rgb(255 255 255 / 0.06)`) so the panel edge reads against black without a shadow. One shadow exists in the system, for the only things that may cover content: menus, dialogs, toasts, and the globe tooltip. It is ink-tinted and downward, never a grey blur halo. The dark panel rim (`--panel-rim`) applies only to `Panel`, the FactLine popover and the Combobox list, via `inset-shadow-(--panel-rim)`.
-
-### Shadow Vocabulary
-- **Floating layer** (`box-shadow: 0 12px 32px -16px rgb(0 0 0 / 0.35)`, dark `0.5`): popovers, dialogs, the combobox list, toasts.
-- **Lifted globe** (`box-shadow: 0 24px 64px -32px rgb(0 0 0 / 0.45)`): behind the globe's canvas only, to separate the sphere from the ground.
-
-### Named Rules
-**The Flat Chart Rule.** A panel is flat unless it floats above another panel. If a shadow is doing work a hairline could do, the hairline wins.
+**The Caps Rule.** Uppercase only inside a coordinate or an ISO country code. Everywhere else, sentence case.
 
 ## Shapes
 
-Printed, not printed-out: 1px rules, 2px chip corners, 4px controls, 6px panels, and one circle — the globe — plus 20px circular country discs. No 16px-plus radii, no soft rounded rectangles standing in for hierarchy, no glass, no blur on panels (the welcome glow is a background layer, not a panel). Gradients are limited to the ember places named above.
+### Shape lock
+Four radii and nothing else, defined as tokens in `src/index.css`:
 
-Selected states are drawn, not filled wherever possible: a 3px ember dot on the left edge of a nav item, a 2px ember rule on the left edge of a row, an ember outline on a country, a 2px ember tick on a chip's leading edge. Sharp geometry is the chart's grammar; a selection should read as a mark made with a pen.
+| token | value | used for |
+|---|---|---|
+| `--radius-pill` | 999px | action buttons, chips, badges, toggles, sliders, the ember dot, the rail's round footer buttons |
+| `--radius-card` | 28px | cards and panels (`Panel`, `.surface`, `.panel-ember`) |
+| `--radius-control` | 14px | inputs, selects, textareas, comboboxes, rail nav rows, the chat composer's inner field |
+| `--radius-popover` | 20px | popovers, menus, the fact popover, chat bubbles, result rows on hover |
 
-Country identity is a circular flag disc from the bundled SVG set — never an emoji flag, which renders as two letters on Linux and breaks the illusion on the first screenshot.
+Circles are allowed for the globe, flag discs and dots. Nothing else: no 2px, 4px, 6px or 16px radius, and no other value. The legacy `rounded-sm/md/lg/xl` utilities map onto the four values.
+
+## Surfaces & Depth
+
+- **Panel (dark):** a vertical gradient `#151517` to `#0b0b0c`, with a 1px gradient rim (top 16% white, bottom 4% white). The rim is drawn with a mask (`.rim`), so it keeps the radius. An inner top highlight is added to `.panel-ember`.
+- **Panel (light):** flat white, 28px, a 6% black ring. No shadow.
+- **Rim:** `.rim` is a 1px gradient border on any element. It is used on panels, the active nav item, chips when selected, popovers, inputs' surrounds, and the composer.
+- **Shadow:** none at rest. The one floating shadow (`--shadow-float`) is for popovers and dialogs. The dark ember glow is a named exception (below).
+- **Flat by default:** structure is drawn with hairlines and tonal steps, not shadows.
+
+## Gradients & Glow
+
+Gradients and glows are allowed in these places and nowhere else:
+
+1. **Dark panel surface and rim.** Vertical gradients on `Panel` in dark mode only.
+2. **Ember panel (`.panel-ember`).** Dark: a radial ember glow (`--ember-0` at the bottom edge fading out at 70% of the radius) in the bottom 45% of the card at 35% opacity, clipped to the card with no blur filter, with a soft outer glow (`--ember-glow-wide`). Light: a peach wash (`--ember-wash`) in the bottom 35%, no glow. It fades in over 300ms on first paint (opacity only). One per screen.
+3. **Primary button (`.ember-button`).** A vertical gradient in both themes, and in dark a soft ember glow on hover and focus.
+4. **Large numerals (`.numeral-ember`).** Dark only: ink to ember-2 over the lower half of the glyph.
+5. **Ambient haze (`.ambient-haze`).** Dark only: one faint radial ember glow (opacity 0.14) at the bottom centre of the window, behind the content and above the stars.
+6. **Toggle on, and the progress dot (`.ember-fill`).** Dark: the ember gradient. Light: flat signal.
+7. **Globe atmosphere.** Dark: an ember rim on the sphere's edge (`mix(ocean, ember, 0.85)`, altitude 0.2).
+
+Everything else is flat. Light mode has no glow.
+
+## Starfield
+
+Implemented in `src/ui/layout/Starfield.tsx`, mounted once in `AppShell` as the first child of the shell.
+
+- **Dark theme only.** Nothing renders in light mode. The canvas is removed when the theme changes to light.
+- **Density:** one star per 26 000 px, clamped 40 to 110. On resize (150 ms debounce) the existing stars are rescaled and only the count changes, so the field does not re-roll.
+- **Layers:** radius 0.5, 0.9 and 1.4 px, with drift speeds of 1.5, 3 and 5 px per second toward the upper-left (55%, 30% and 15% of stars).
+- **Alpha:** 0.08 to 0.38 base, with a slow sine twinkle of plus or minus 20% over 4 to 9 seconds, each star with its own phase. At most four bright stars: radius 1.6, alpha 0.6, with a 6px glow (a pre-rendered sprite). Capped at 0.15 over the rail and content, 0.45 in the right gutter (see the contrast table).
+- **Colour:** pure white, and `#fff4ea` on about 15% of stars.
+- **Edges:** stars wrap, and fade within 40px of each edge so none pops.
+- **Performance:** one canvas, a requestAnimationFrame loop capped at 30 fps, device pixel ratio capped at 2, paused when `document.hidden`, no React state in the loop, and listeners removed on unmount.
+- **Reduced motion:** one static frame, no animation.
+- **Control:** the round star button in the rail footer. It is persisted as the `stars` setting (`on` or `off`, default on) and reports `aria-pressed`.
+- **Layer:** `-z-1` inside the isolated shell, under the rail, header, content and the ambient haze.
+
+## Layout
+
+A fixed 220px rail on the left, with transparent ground over the stars. A working field to its right, with content capped at 1120px and a 48px page margin. Onboarding is a single 640px sheet.
+
+Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
+
+The Finder is the one two-region screen: the globe fills the field at rest and shrinks to a 380px column at the left when a search runs. Results are a ranked column of rows, not a grid.
+
+Spanish and Vietnamese run up to 30% longer than English, so no control has a fixed width and labels wrap rather than truncate.
 
 ## Components
 
 ### Buttons
-- **Shape:** 4px corners, 36px tall, 16px horizontal padding, 12px/500 label in sentence case.
-- **Primary:** filled ember with the contrasting text (white on light, black on dark); one per screen region, naming its action ("Start onboarding", "Search 12 regions"). Never "Submit". In dark mode, hover and focus add the faint ember glow.
-- **Hover / Press:** fill shifts to Ember Deep; 120ms colour transition. The dark-mode glow is the only extra.
-- **Secondary:** Panel fill with a 1px Hairline stroke and ink text — the default for "Test connection", "Refresh", "Cancel".
-- **Quiet:** text-only in Chart Grey, underline on hover, for tertiary actions inside rows ("Remove", "Save").
-- **Focus:** a 1px ember rule offset 2px outside the control, always visible on keyboard focus; never removed for aesthetics.
+- **Primary:** pill, 40px (36px `sm`), `.ember-button` gradient, 1px inner top highlight. Black text in dark, white in light. One per screen region, naming its action. Press scales to 0.97 in 120ms.
+- **Secondary:** pill, `rim` on a panel fill, ink text.
+- **Quiet:** text only, Chart Grey, underline on hover.
+- **Focus:** a 2px signal outline offset 2px, always visible.
 
-### Chips
-- **Style:** rectangular tickets, not pills — 2px corners, 1px Hairline stroke, Panel fill, 12px/500 label, 24px tall. Scope chips carry a mono country code when the chip is a country.
-- **State:** selected chips invert to ink fill with panel text and gain a 2px ember tick on the leading edge. Filter chips show an ember tick only, keeping the label legible at 12px. In dark, the tick on the white selected chip measures 2.9:1, under the 3:1 graphical target; it is decorative, and the panel-coloured label (19.6:1) carries the state.
-- **Carries:** career chips, continent chips, country scope chips, language badges, tuition badges. Language and tuition badges are read-only and use the shoal fill with a 1px hairline.
+### Chips and badges
+- **Chip:** pill, 28px tall. Selected inverts to ink fill with a small ember dot on the leading edge.
+- **Badge:** pill, shoal fill, hairline stroke, read-only.
 
-### Panels & Rows
-- **Corner Style:** 6px.
-- **Background:** Panel on Background; nested regions use Shoal.
-- **Shadow Strategy:** none (see Elevation & Depth); dark panels take the 1px top rim only.
-- **Border:** 1px Hairline on all four sides; a panel that sits flush to the field edge drops the border on that side instead of insetting.
-- **Internal Padding:** 24px; 16px for dense table cells.
-- **Result row:** 44px, rank in mono at the left, university name in Title, one line of body, fit code, source count, and a 1px separator below. Hover fills with Shoal and reveals the row's quiet actions; selected adds the 2px ember left rule.
+### Inputs
+- **Style:** 14px corners, 40px tall, panel fill, `rim`-less hairline stroke. Focus: a 2px signal ring, with a faint ember glow in dark mode.
+- **Error:** signal stroke and a message that says what to do.
 
-### Inputs & Fields
-- **Style:** Panel fill, 1px Hairline, 4px corners, 36px tall, ink text, Chart Grey placeholder.
-- **Focus:** the Hairline turns ink and a 2px ember rule appears flush outside the field — the same focus mark as buttons, so focus always looks the same across the app.
-- **Error:** 1px ember stroke plus a 12px message below in ember; the message states what to do, not that something is wrong.
-- **Disabled:** Shoal fill, Chart Grey text, no stroke change.
+### Toggles and sliders
+- **Toggle:** pill. On is the ember gradient track, with an ink thumb in light and a black thumb in dark (white measured 2.27:1 on the track).
+- **Slider:** 4px track, thumb in ink, with an ember ring in dark mode.
 
 ### Navigation
-- 220px rail on Background. In light mode a 1px right hairline separates it from the field; in dark mode there is no line, because black on black reads clean. Wordmark in Title weight with a mono "BETA" tag beside it — the tag is 10px Plex Mono, 1px hairline border, no fill.
-- Items are 32px rows, 13px label, Chart Grey with a 16px Lucide icon at 0.85 opacity. Active item: ink text, Shoal fill, and a 3px ember dot on the left edge. Hover: Shoal fill, ink text, 120ms. No pills, no icon-only state.
-- The language switcher sits at the bottom of the rail, as a quiet control with the current language shown in prose, not a flag.
+- Rail items: 40px rows, 14px corners, Inter 14px. Active: `rim` on shoal, with a 3px ember dot on the left edge. Hover: shoal.
+- Footer: three round 40px buttons with a rim: language, theme and stars.
 
-### Fact Line (signature)
-The product's central component, used everywhere a sourced fact appears: tuition, deadlines, language requirements, exam policy.
-- A 14px label in Chart Grey, the value in ink body at `1rem` weight 500, and a mono source count superscript (`¹ ² ³`) after the value.
-- Hover or focus on the superscript opens a small floating layer with the source tag ("official" in Evidence Green, "third-party" in Chart Grey), the quoted excerpt at 13px in a left-ruled block, and the URL as a quiet link.
-- Missing facts are not hidden and not greyed into silence: the value slot reads "Not found — check official site" in Chart Grey with a 1px dashed underline, and the row keeps its height so a gap is legible as a gap. A screen with five missing facts should look honest, not broken.
-- Never render a value without its superscript, and never render a superscript without a working URL.
+### Result rows and lists
+- A ranked row with a 28px-radius hover surface (20px in the list), the rank as a `.numeral-ember`, the university name in Title, a source count in Data type, and the fit values as pill badges. Selected rows take a rim and an ember dot.
+- Table rows (My Unis) keep the ruled structure and take a shoal hover.
+- Urgent deadlines: an ember pill (`.ember-button`) holding the days-left number.
+
+### Fact line (signature)
+Unchanged in behaviour. A 14px label in Chart Grey, the value in body text, and a Data-style source superscript. The popover is a rimmed 20px surface. The missing fact reads "Not found, check official site" in Chart Grey, with a dashed underline, and keeps its row height.
 
 ### The Globe
-Black ground in dark mode and light grey ground in light mode (the ocean is the app background), Land grey land, Hairline graticule every 30°, no labels at rest. The atmosphere is a faint ember tint in dark mode and a neutral grey haze in light mode. Idle auto-rotation at 0.35°/s. Hover lifts the country 2px and outlines it in ink with a tooltip naming country and known universities. Selected countries are filled and outlined in ember. A continent chip flies the camera in 900ms with an ease-in-out, then holds. On search, the globe contracts to its 380px column in 400ms and stays interactive — the student may still change scope mid-run while the ranked column fills. No texture, no warm or buff fill.
+Ocean `#efefef` in light and `#060607` in dark, so the sphere glows against the stars. Land `#d9d9d9` in light and `#26262a` in dark. Graticule faint. Selected countries are filled with ember. Idle rotation at 0.35 degrees per second. The globe is a circle.
 
 ### Motion
-180ms, `cubic-bezier(0.2, 0, 0, 1)` for state changes; 400–900ms only for the globe's fly-to and its contraction. Screen transitions keep the existing 8px horizontal slide and fade at 180ms. Result rows arrive in rank order with a 24ms stagger capped at eight rows, and are never re-animated when they re-sort. No scroll-triggered reveals, no looping decorative motion beyond the search dot's pulse, no confetti. `prefers-reduced-motion` removes all transforms and keeps opacity only.
+State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. Stars drift and twinkle. The globe fly-to and contraction keep their durations. `prefers-reduced-motion` removes transforms and keeps opacity.
 
 ## Do's and Don'ts
 
-### Do:
-- **Do** draw structure with 1px Hairline rules and the shoal tonal step; a new panel starts with a rule, not a shadow.
-- **Do** keep every screen to one ember action and at most one ember mark per row.
-- **Do** put a mono value next to any number a student might compare: tuition, deadline, distance-in-days, source count.
-- **Do** design the missing-fact state as carefully as the present one: "Not found — check official site" in Chart Grey, dashed underline, row height preserved.
-- **Do** let the globe be the only expressive object on the screen; around it, restraint.
-- **Do** verify contrast on both themes before shipping a new token (body text ≥ 4.5:1, hairlines ≥ 1.5:1 against the surface they sit on).
-- **Do** size controls to content so Spanish and Vietnamese strings wrap instead of truncate.
+### Do
+- **Do** use the four radii and no others.
+- **Do** keep one `.panel-ember` per screen and one ember action per screen region.
+- **Do** draw structure with hairlines and tonal steps first.
+- **Do** design the missing-fact state as carefully as the present one.
+- **Do** check contrast on both themes before adding a token, and include stars in the check where text sits over the ground.
+- **Do** size controls to content so Spanish and Vietnamese wrap.
 
-### Don't:
-- **Don't** use gradients outside the two ember places (search dot, dark welcome glow). No gradient on the globe, on cards, or as a "subtle wash".
-- **Don't** put the same soft shadow on many cards; that single habit is what makes an app read as generated.
-- **Don't** use rounded-pill nav or buttons, glass/blur panels, or a 16px radius on a 44px row.
-- **Don't** use emoji as icons, flags, or fit labels — the product spec's 🎯📊🗣💰 become the mono codes `CAR / ADM / LNG / CST` in a chip.
-- **Don't** use Evidence Green for success, completion, or celebration; it means verified evidence and nothing else.
-- **Don't** add decorative illustrations, mascots, or "friendly" blob shapes to empty states — an empty screen is a question with a next action, set in the same chart language.
-- **Don't** animate anything the student did not cause, except the globe's idle rotation and the arrival of search results.
+### Don't
+- **Don't** add gradients outside the list in Gradients & Glow.
+- **Don't** put a glow on light mode.
+- **Don't** use a radius outside the shape lock, or a pill on a card.
+- **Don't** use emoji as icons, flags or labels.
+- **Don't** use Evidence Green for success.
+- **Don't** animate anything the student did not cause, except the globe's idle rotation, the arrival of results and the stars.
+- **Don't** draw the starfield in light mode, or over the content as a separate layer.

@@ -82,9 +82,9 @@ export function ResultRow({ uni, rank, index }: ResultRowProps) {
         tabIndex={0}
         onClick={open}
         onKeyDown={onKeyDown}
-        className="grid cursor-pointer grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 gap-y-2 py-3 pr-3 pl-2 outline-none transition-colors duration-[120ms] hover:bg-shoal focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-signal min-[720px]:grid-cols-[2.25rem_minmax(0,1fr)_11rem]"
+        className="grid cursor-pointer grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 gap-y-2 rounded-popover py-3 pr-3 pl-2 outline-none transition-colors duration-[120ms] hover:bg-shoal focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-signal min-[720px]:grid-cols-[2.25rem_minmax(0,1fr)_11rem]"
       >
-        <span className="pt-0.5 font-mono text-xs font-medium text-chart-grey tabular-nums">
+        <span className="numeral-ember pt-0.5 text-[1.75rem] leading-none font-semibold tabular-nums">
           {t('row.rank', { rank })}
         </span>
 

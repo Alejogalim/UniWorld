@@ -3,20 +3,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
-/** DESIGN.md "Buttons": 4px corners, 12px label, sentence case, one primary per region. */
+/**
+ * Pill actions (plan 16): primary is an ember gradient with an inner top highlight (dark hover adds the
+ * ember glow); secondary is a panel with the rim; quiet is text only. Press scales to 0.97.
+ */
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-transparent text-xs font-medium select-none transition-colors duration-[120ms] outline-none focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-pill border border-transparent text-[0.8125rem] font-medium leading-tight text-center select-none transition-[background-color,filter,transform,box-shadow] duration-[120ms] outline-none active:scale-[0.97] motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        primary: "bg-signal text-primary-foreground hover:bg-signal-deep hover:shadow-(--ember-glow) focus-visible:shadow-(--ember-glow)",
-        secondary: "border-hairline bg-panel text-foreground hover:bg-shoal",
+        primary:
+          "ember-button text-primary-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.28)] hover:brightness-95 hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.28),var(--ember-glow)] focus-visible:shadow-[inset_0_1px_0_rgb(255_255_255/0.28),var(--ember-glow)] dark:hover:brightness-110 disabled:opacity-100 disabled:bg-none disabled:bg-shoal disabled:text-chart-grey disabled:shadow-none disabled:hover:brightness-100",
+        secondary: "rim bg-panel text-foreground hover:bg-shoal",
         quiet: "text-chart-grey hover:text-foreground hover:underline underline-offset-4",
       },
       size: {
-        md: "h-9 min-w-40 px-4",
-        sm: "h-7 px-2",
-        icon: "size-8",
+        md: "h-10 min-w-40 px-5",
+        sm: "h-9 px-4",
+        icon: "size-10",
       },
     },
     defaultVariants: {

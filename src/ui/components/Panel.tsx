@@ -2,17 +2,20 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface PanelProps extends React.ComponentProps<"div"> {
-  /** Nested region: shoal instead of chalk paper. */
+  /** Nested region: shoal instead of the card surface. */
   inset?: boolean;
+  /** `ember`: the one memorable element on a screen, with an ember glow rising from its bottom edge. */
+  variant?: "default" | "ember";
 }
 
-/** DESIGN.md "Panels & Rows": 6px corners, 1px hairline, flat, 24px padding. */
-export function Panel({ inset = false, className, ...props }: PanelProps) {
+/** Plan 16 card: 28px corners, a soft surface, a 1px rim (dark) or a 6% ring (light). No shadow at rest. */
+export function Panel({ inset = false, variant = "default", className, ...props }: PanelProps) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-hairline p-6 text-foreground inset-shadow-(--panel-rim)",
-        inset ? "bg-shoal" : "bg-panel",
+        "rim surface p-6 text-foreground",
+        inset && "bg-shoal bg-none",
+        variant === "ember" && "panel-ember",
         className,
       )}
       {...props}

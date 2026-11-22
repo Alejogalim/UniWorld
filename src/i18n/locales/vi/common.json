@@ -46,5 +46,10 @@
   },
   "errors": {
     "saveFailed": "Không lưu được: {{error}}"
+  },
+  "stars": {
+    "label": "Sao nền",
+    "on": "Sao nền: bật",
+    "off": "Sao nền: tắt"
   }
 }

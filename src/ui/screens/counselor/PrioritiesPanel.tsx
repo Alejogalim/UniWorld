@@ -23,7 +23,7 @@ export function PrioritiesPanel() {
   const idle = status === "idle";
 
   return (
-    <Panel className="flex flex-col gap-6">
+    <Panel variant="ember" className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h2 className="text-[1.0625rem] leading-[1.35] font-semibold tracking-[-0.005em]">{t("priorities.title")}</h2>
         <p className="text-sm leading-[1.55] text-chart-grey">{t("priorities.hint")}</p>

@@ -46,5 +46,10 @@
   },
   "errors": {
     "saveFailed": "No se pudo guardar: {{error}}"
+  },
+  "stars": {
+    "label": "Estrellas de fondo",
+    "on": "Estrellas: activadas",
+    "off": "Estrellas: desactivadas"
   }
 }

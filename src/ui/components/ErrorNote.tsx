@@ -11,7 +11,7 @@ interface ErrorNoteProps {
 export function ErrorNote({ title, message, action }: ErrorNoteProps) {
   return (
     <div role="alert" className="flex flex-col gap-2 border-l-2 border-signal pl-4 text-foreground">
-      {title && <p className="text-[1.0625rem] leading-[1.35] font-semibold">{title}</p>}
+      {title && <p className="type-title text-foreground">{title}</p>}
       <p className="text-sm leading-[1.55] break-words text-foreground">{message}</p>
       {action && <div className="pt-1">{action}</div>}
     </div>

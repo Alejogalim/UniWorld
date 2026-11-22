@@ -60,5 +60,10 @@
     "save": "Không thể lưu thay đổi này nên đã được hoàn tác. Hãy thử lại.",
     "remove": "Không thể xóa trường này. Hãy thử lại.",
     "load": "Không thể tải danh sách. Hãy thử lại."
+  },
+  "summary": {
+    "total_one": "trường đại học",
+    "total_other": "trường đại học",
+    "urgent": "có hạn nộp trong 30 ngày tới"
   }
 }
