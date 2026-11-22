@@ -9,6 +9,12 @@
     "filters": "Bộ lọc",
     "results": "Kết quả"
   },
+  "tabs": {
+    "label": "Các mục tìm kiếm",
+    "careers": "Nghề nghiệp",
+    "countries": "Quốc gia",
+    "search": "Tìm kiếm"
+  },
   "careers": {
     "none": "Chưa có nghề nghiệp nào được lưu. Hãy lưu một nghề trong Tư vấn viên hoặc nhập bên dưới.",
     "placeholder": "Nhập tên nghề rồi nhấn Enter"

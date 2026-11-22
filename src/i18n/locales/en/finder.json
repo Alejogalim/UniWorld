@@ -9,6 +9,12 @@
     "filters": "Filters",
     "results": "Results"
   },
+  "tabs": {
+    "label": "Finder sections",
+    "careers": "Careers",
+    "countries": "Countries",
+    "search": "Search"
+  },
   "careers": {
     "none": "No saved careers yet. Save a career in the Counselor, or type one below.",
     "placeholder": "Type a career and press Enter"
