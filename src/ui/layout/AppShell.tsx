@@ -6,8 +6,7 @@ import {
   ListChecks,
   MessageCircle,
   Globe,
-  PanelLeftClose,
-  PanelLeftOpen,
+  Menu,
   Settings,
   Sparkles,
   type LucideIcon,
@@ -51,39 +50,31 @@ export function AppShell() {
     <div
       className={cn(
         'isolate grid h-screen grid-rows-[auto_1fr] overflow-hidden bg-background text-foreground',
-        railCollapsed ? 'grid-cols-[72px_1fr]' : 'grid-cols-[220px_1fr]',
+        railCollapsed ? 'grid-cols-[72px_1fr]' : 'grid-cols-[268px_1fr]',
+        !reduceMotion && 'transition-[grid-template-columns] duration-200 ease-out',
       )}
     >
       <Starfield />
       <div className="ambient-haze" aria-hidden="true" />
-      <div className={cn('app-rail flex items-center self-stretch py-4', railCollapsed ? 'justify-between px-1' : 'gap-2 px-4')}>
-        {railCollapsed ? (
-          <Logo className="size-8" />
-        ) : (
+      <div className={cn('app-rail flex items-center self-stretch py-4', railCollapsed ? 'justify-center' : 'gap-2 px-3')}>
+        <button
+          type="button"
+          onClick={() => setRailCollapsed((v) => !v)}
+          aria-label={t(railCollapsed ? 'nav.expand' : 'nav.collapse')}
+          title={t(railCollapsed ? 'nav.expand' : 'nav.collapse')}
+          className="grid size-10 shrink-0 place-items-center rounded-control text-chart-grey outline-none transition-colors hover:bg-shoal hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+        >
+          <Menu className="size-4" strokeWidth={1.75} aria-hidden="true" />
+        </button>
+        {!railCollapsed && (
           <>
-            <Logo className="size-8" />
+            <Logo className="size-7" />
             <span className="wordmark">{t('appName')}</span>
             <span className="rounded-pill border border-hairline px-2 py-px font-mono text-[10px] leading-[1.3] font-medium text-foreground">
               {t('beta')}
             </span>
           </>
         )}
-        <button
-          type="button"
-          onClick={() => setRailCollapsed((v) => !v)}
-          aria-label={t(railCollapsed ? 'nav.expand' : 'nav.collapse')}
-          title={t(railCollapsed ? 'nav.expand' : 'nav.collapse')}
-          className={cn(
-            'grid size-7 shrink-0 place-items-center rounded-control text-chart-grey outline-none transition-colors hover:bg-shoal hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
-            !railCollapsed && 'ml-auto',
-          )}
-        >
-          {railCollapsed ? (
-            <PanelLeftOpen className="size-4" aria-hidden="true" />
-          ) : (
-            <PanelLeftClose className="size-4" aria-hidden="true" />
-          )}
-        </button>
       </div>
 
       <header
@@ -97,7 +88,8 @@ export function AppShell() {
         </h1>
       </header>
 
-      <aside className={cn('app-rail flex flex-col pb-4', railCollapsed ? 'items-center px-2' : 'px-4')}>
+      <aside className={cn('app-rail flex flex-col pb-4', railCollapsed ? 'items-center px-2' : 'px-3')}>
+        {railCollapsed && <Logo className="mb-3 size-7" />}
         <nav className="flex flex-col gap-1">
           {visibleNav.map(({ to, key, icon: Icon }) => (
             <NavLink

@@ -266,12 +266,12 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 
 - **Mark:** a thin ring with a thick arc along its lower half, round-capped, on a square ground (1024 px PNG and SVG). The arc fades from white or near-black at the top to ember at the bottom.
 - **Two versions by theme:** the dark-ground mark (black ground, white arc, ember bottom) in dark theme, and the light-ground mark (#eeeeee ground, near-black arc, deep ember bottom) in light theme. `src/ui/layout/Logo.tsx` picks one from the resolved theme.
-- **Files:** `src/assets/logo/uniworld-logo-{light,dark}.{svg,png}`. The dark PNG is the source for the app icons in `src-tauri/icons/`.
-- **Use:** the rail shows it at 32px, in the collapsed dock and before the wordmark. It is decorative (`alt=""`, `aria-hidden`); the wordmark carries the name.
+- **Files:** `src/assets/logo/uniworld-logo-{light,dark}.{svg,png}` are the square app-icon sources. The dark PNG is the source for the app icons in `src-tauri/icons/`. The in-app marks are `src/assets/logo/uniworld-mark-{light,dark}.svg`: transparent ground, cropped to the ring and arc, with no square.
+- **Use:** the rail shows the mark at 28px, before the wordmark when expanded and centered above the nav when collapsed. In the UI, use only the cropped marks; the square files are for app icons. It is decorative (`alt=""`, `aria-hidden`); the wordmark carries the name.
 
 ## Layout
 
-A fixed 220px rail on the left, with transparent ground over the stars. A working field to its right, with content capped at 1120px and a 48px page margin. Onboarding is a single 640px sheet.
+A fixed 268px rail on the left (72px collapsed to an icon dock), with transparent ground over the stars. A working field to its right, with content capped at 1120px and a 48px page margin. Onboarding is a single 640px sheet.
 
 Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
 
