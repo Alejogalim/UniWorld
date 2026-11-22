@@ -83,7 +83,7 @@ export function ChatPane() {
     <section
       className={cn(
         // The start screen is centered; a running conversation fills the pane, latest message at the bottom.
-        "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
+        "mx-auto flex w-full min-w-0 max-w-[44rem] flex-col",
         fresh ? "min-h-[calc(100vh-8.5rem)] justify-center gap-8" : "h-[calc(100vh-8.5rem)] gap-12",
       )}
     >
@@ -100,7 +100,7 @@ export function ChatPane() {
           aria-live="polite"
           aria-label={t("chat.log")}
           onScroll={onLogScroll}
-          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)] [&>*:first-child]:mt-auto"
+          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)]"
         >
           {messages.map((m, i) => (
             <MessageView
