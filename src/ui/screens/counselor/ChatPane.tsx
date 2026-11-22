@@ -124,6 +124,13 @@ export function ChatPane() {
       )}
 
       <div className={cn("flex flex-col gap-3", !fresh && "border-t border-hairline pt-5")}>
+        {intake && !fresh && (
+          <div className="flex justify-center">
+            <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
+              {t("chat.notSureButton")}
+            </Button>
+          </div>
+        )}
         {!fresh && intake && <IntakeProgress step={intakeStep} />}
         {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
         <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
@@ -146,7 +153,7 @@ export function ChatPane() {
           </Button>
         </div>
         {!touch && <p className="text-center text-xs text-chart-grey">{t("chat.enterHint")}</p>}
-        {intake && (
+        {intake && fresh && (
           <div className="flex justify-center">
             <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
               {t("chat.notSureButton")}
