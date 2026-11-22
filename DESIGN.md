@@ -4,14 +4,14 @@ description: A working chart of where a student could study, with real universit
 colors:
   ink: "#0a0a0a"
   chart-grey: "#636366"
-  background: "#efefef"
+  background: "#f7f6f4"
   panel: "#ffffff"
-  shoal: "#f4f4f4"
-  hairline: "#c2c2c2"
+  shoal: "#f1efec"
+  hairline: "#c2beb8"
   land: "#d9d9d9"
-  signal: "#c53805"
-  signal-deep: "#a82f03"
-  evidence: "#2f7a56"
+  signal: "#b53204"
+  signal-deep: "#952903"
+  evidence: "#2a7050"
   ember-0: "#b3210a"
   ember-1: "#ff5a1f"
   ember-2: "#f7b267"
@@ -33,6 +33,9 @@ colors:
   button-bottom-dark: "#ff5a1f"
   star: "#ffffff"
   star-warm: "#fff4ea"
+  star-light: "#b8a596"
+  star-warm-light: "#ff7a3d"
+  globe-ocean: "#fbfaf8"
   primary-text: "#ffffff"
   primary-text-dark: "#000000"
 typography:
@@ -87,16 +90,16 @@ spacing:
 
 **Creative North Star: "The Ember Chart, under stars"**
 
-UniWorld is still a working chart: real universities, real facts, a source on every value, and a visible gap where the soundings are unknown. The Ember Glow pass (plan 16) keeps that discipline and adds two things the owner asked for: soft, squircle-like surfaces with a light rim, and a faint, still starfield behind every screen. The chart now sits on a night sky in dark mode and on paper in light mode.
+UniWorld is still a working chart: real universities, real facts, a source on every value, and a visible gap where the soundings are unknown. The Ember Glow pass (plan 16) keeps that discipline and adds two things the owner asked for: soft, squircle-like surfaces with a light rim, and a faint, still starfield behind every screen. The chart sits on a night sky in dark mode and on warm paper under the same ember light in light mode: one atmosphere, two grounds (plan 26).
 
 The surface is still an instrument used at a desk, often by a sixteen-year-old comparing three countries at once. So this is still an **Operate** system: scanning and density come first, and expression is spent in a few marked places: the globe, the one ember element per screen, the large numerals, and the stars. Everything else is ink, grey, a hairline and a soft surface.
 
 Three rejections still stand: a warm cream and serif editorial template, a neon accent used everywhere, and a grid of identical rounded cards with the same shadow on each. The owner's brief changed one thing: surfaces may now be soft and gradient-rimmed, but only in the places listed under Gradients and Glow.
 
 **Key Characteristics:**
-- Ground: black with stars in dark mode, light grey paper in light mode. The stars are dark theme only.
+- Ground: black with white stars in dark mode; soft off-white paper (`#f7f6f4`) with faint warm specks and ember sparks in light mode. Both carry one static ember glow.
 - One warm colour, the ember. It marks what the student must act on now, and it glows in a few fixed places.
-- Surfaces are soft: 28px cards with a 1px rim. Dark cards are a vertical gradient; light cards are flat white with a 6% ring.
+- Surfaces are soft: 28px cards with a 1px rim. Dark cards are a vertical gradient; light cards are white sheets with a 5% to 8% rim and a soft warm shadow.
 - One face, Inter Variable, in weights 400 to 600. Numerals are always tabular.
 - Headlines are two-tone: grey body text with the key phrase in ink, used on the welcome headline and empty-state titles only.
 - Results are still a ranked column of rows, never a grid of equal cards.
@@ -108,42 +111,47 @@ Three rejections still stand: a warm cream and serif editorial template, a neon 
 Monochrome first. Ember is the only colour, and it is spent in named places.
 
 ### Primary
-- **Ember Signal** (`#c53805` light, `#ff6a2b` dark): the focus ring, the selected country, the search-in-progress dot, deadlines inside 30 days, the ember dot on a selected row or chip, and the ember text where the ember is itself the message. Roughly 5% of pixels.
-- **Ember Signal, Deep** (`#a82f03` light, `#ff8a4d` dark): the pressed and hover state of signal text.
+- **Ember Signal** (`#b53204` light, `#ff6a2b` dark): the focus ring, the selected country, the search-in-progress dot, deadlines inside 30 days, the ember dot on a selected row or chip, and the ember text where the ember is itself the message. Roughly 5% of pixels.
+- **Ember Signal, Deep** (`#952903` light, `#ff8a4d` dark): the pressed and hover state of signal text.
 - **Primary button fill**: a vertical gradient, `#c4400b` to `#b83304` in light (white text) and `#ff8a3d` to `#ff5a1f` in dark (black text). It is a fill, not a second accent.
 
 ### Secondary
-- **Evidence Green** (`#2f7a56` light, `#5fbf8f` dark): verified evidence only: the official tag, the verified tick next to a sourced fact, and the verified count. Never a button, a celebration or a success toast.
+- **Evidence Green** (`#2a7050` light, `#5fbf8f` dark): verified evidence only: the official tag, the verified tick next to a sourced fact, and the verified count. Never a button, a celebration or a success toast.
 
 ### Neutral
 - **Ink** (`#0a0a0a` light, `#ffffff` dark): primary text, icons, and the hairlines that do structural work.
-- **Background** (`#efefef` light, `#000000` dark): the ground behind everything.
+- **Background** (`#f7f6f4` light, `#000000` dark): the ground behind everything.
 - **Panel** (`#ffffff` light, `#0c0c0d` dark, with a `#151517` to `#0b0b0c` gradient in dark): sheets laid on the ground.
-- **Shoal** (`#f4f4f4` light, `#161617` dark): the second tonal step: hover, the active nav item, inset regions, bubbles.
-- **Hairline** (`#c2c2c2` light, `#39393c` dark): every 1px rule and input stroke.
+- **Shoal** (`#f1efec` light, `#161617` dark): the second tonal step: hover, the active nav item, inset regions, bubbles.
+- **Hairline** (`#c2beb8` light, `#39393c` dark): every 1px rule and input stroke.
 - **Chart Grey** (`#636366` light, `#8e8e93` dark): secondary text and metadata.
 - **Land** (`#d9d9d9` light, `#26262a` dark): globe land.
-- **Globe ocean** (`#efefef` light, `#060607` dark): the globe sphere; the atmosphere is an ember rim in dark mode (ember mixed 85% into the ocean, shell altitude 0.2).
-- **Star** (`#ffffff`, and `#fff4ea` on about 15% of stars): the starfield. Pure white with a barely warm tint. No other colour.
+- **Globe ocean** (`#fbfaf8` light, `#060607` dark): the globe sphere; the atmosphere is an ember rim in dark mode (ember mixed 85% into the ocean, shell altitude 0.2), and a soft peach ember rim in light mode (ember mixed 35%, altitude 0.12).
+- **Star** (dark: `#ffffff`, and `#fff4ea` on about 15% of stars; light: warm taupe `#b8a596`, and ember `#ff7a3d` on about 15%): the starfield. No other colour.
 
 ### Token table
 
 | token | light | dark |
 |---|---|---|
-| `--background` | `#efefef` | `#000000` |
-| `--panel` / `--surface-fill` | `#ffffff` flat (as a one-colour gradient, so the rim can layer under it) | `#0c0c0d`, gradient `#151517` to `#0b0b0c` |
-| `--shoal` | `#f4f4f4` | `#161617` |
+| `--background` | `#f7f6f4` | `#000000` |
+| `--panel` / `--surface-fill` | `#ffffff` flat (as a one-colour gradient, so the rim can layer under it), with `--surface-shadow` | `#0c0c0d`, gradient `#151517` to `#0b0b0c` |
+| `--shoal` | `#f1efec` | `#161617` |
 | `--foreground` | `#0a0a0a` | `#ffffff` |
 | `--chart-grey` | `#636366` | `#8e8e93` |
-| `--hairline` | `#c2c2c2` | `#39393c` |
-| `--signal` / `--signal-deep` | `#c53805` / `#a82f03` | `#ff6a2b` / `#ff8a4d` |
-| `--evidence` | `#2f7a56` | `#5fbf8f` |
+| `--hairline` | `#c2beb8` | `#39393c` |
+| `--signal` / `--signal-deep` | `#b53204` / `#952903` | `#ff6a2b` / `#ff8a4d` |
+| `--evidence` | `#2a7050` | `#5fbf8f` |
 | `--ember-0` / `-1` / `-2` | `#b3210a` / `#ff5a1f` / `#f7b267` | same |
 | `--ember-button-top` / `-bottom` | `#c4400b` / `#b83304` | `#ff8a3d` / `#ff5a1f` |
-| `--ember-glow` | none | ember-1 at 55% (focus ring and range thumb) |
-| `.panel-ember` outer glow | none (no glow on paper) | a 1px `--rim-top` ring, ember-1 at 45% (44px, spread -6px), ember-0 at 55% (60px, offset 14px down) |
-| `--rim-top` / `--rim-bottom` | 6% black | 16% white to 4% white |
-| `--globe-ocean` | `#efefef` | `#060607` |
+| `--ember-glow` | none (transparent) | ember-1 at 55% (focus ring and range thumb) |
+| `.panel-ember` outer glow | ember-1 22% ring (1px), ember-1 at 30% (40px, spread -8px), ember-0 at 35% (48px, offset 14px down) | a 1px `--rim-top` ring, ember-1 at 45% (44px, spread -6px), ember-0 at 55% (60px, offset 14px down) |
+| `--rim-top` / `--rim-bottom` | 5% black to 8% black | 16% white to 4% white |
+| `--globe-ocean` | `#fbfaf8` | `#060607` |
+| --surface-shadow | 0 1px 2px warm 5%, 0 6px 20px -8px warm 12% (rgb 64 32 12) | none |
+| --star-base / --star-warm | #b8a596 / #ff7a3d | #ffffff / #fff4ea |
+| --star-alpha / --star-density | 0.8 / 0.6 | 1 / 1 |
+| --star-twinkle-core / -glow | ember-1 at 50% / ember-2 at 32% | white at 60% / white at 27% |
+| --star-shoot | #ff5a1f | #ffffff |
 | `--land` | `#d9d9d9` | `#26262a` |
 
 ### Contrast
@@ -151,19 +159,23 @@ Measured with WCAG 2.x relative luminance. The full pair list is in `.plans/16-u
 
 | pair | ratio | target |
 |---|---|---|
-| ink on background / panel / shoal (light) | 17.2 / 19.8 / 18.0 | 4.5:1 |
-| chart grey on background / panel / shoal (light) | 5.2 / 6.0 / 5.4 | 4.5:1 |
-| white on primary button (light, both ends) | 5.1 to 6.0 | 4.5:1 |
+| ink on background / panel / shoal / glow peak (light) | 18.3 / 19.8 / 17.3 / 15.5 | 4.5:1 |
+| chart grey on background / panel / shoal / glow peak (light) | 5.5 / 6.0 / 5.2 / 4.7 | 4.5:1 |
+| signal text on background / panel / shoal / glow peak (light) | 5.7 / 6.1 / 5.4 / 4.8 | 4.5:1 |
+| evidence on background / panel / shoal / glow peak (light) | 5.5 / 6.0 / 5.2 / 4.7 | 4.5:1 |
+| white on primary button (light, both ends) / on signal | 5.1 to 6.0 / 6.1 | 4.5:1 |
 | black on primary button (dark, both ends) | 6.7 to 9.0 | 4.5:1 |
 | ink on dark card (top / bottom) | 18.2 / 19.7 | 4.5:1 |
 | chart grey on dark card (top / bottom) | 5.6 / 6.0 | 4.5:1 |
 | chart grey on the rendered dark ember glow (worst point, ember-0 at .35) | 4.75 | 4.5:1 |
 | ember-2 numeral low stop on the glow | 6.4 to 8.5 | 3:1 |
 | white on urgent pill (light) / black on urgent pill (dark) | 5.1 to 6.0 / 6.7 to 9.0 | 4.5:1 |
-| hairline on background / panel (light) | 1.55 / 1.78 | 1.5:1 |
+| hairline on background / panel / shoal (light) | 1.71 / 1.85 / 1.61 | 1.5:1 |
 | hairline on card bottom (dark) | 1.71 | 1.5:1 |
 
-Stars and text (dark only). A single star pixel under text is the worst case, and the result is not a clean pass:
+The light glow peak is `#f7e0ca` (ember-2 at 24% over ember-1 at 5% over `#f7f6f4`); every text colour clears 4.5:1 on it, which is why the light signal, signal-deep and evidence were deepened in plan 26.
+
+Stars and text. A single star pixel under text is the worst case, and the result is not a clean pass:
 
 | pair | ratio | target |
 |---|---|---|
@@ -173,6 +185,10 @@ Stars and text (dark only). A single star pixel under text is the worst case, an
 | chart grey text over a bright star's glow at .15 x .45 | 5.79 | 4.5:1 |
 | chart grey text over a base star at alpha .30 (not used: rejected) | 2.63 | 4.5:1 |
 | chart grey text over two stacked stars at .15 (worst pixel, overlapping layers) | 2.85 | 4.5:1 (residual) |
+| chart grey text over a light-mode speck at its strongest (alpha .32 x .8) | 4.62 | 4.5:1 |
+| chart grey text over a light-mode ember spark at its strongest | 4.41 | 4.5:1 (residual) |
+| chart grey text over a light speck on the glow peak | 4.06 | 4.5:1 (residual) |
+| chart grey text over a light ember twinkle core | 3.16 | 4.5:1 (residual, ten dots) |
 
 The table above is the strict per-pixel view from plan 18, when every baked star was capped at alpha 0.15. The owner has since raised star alphas to 0.14 to 0.32 (bright cores 0.6) so the stars read as stars. Under those values chart-grey text can drop below 4.5:1 on a single star pixel, and two stacked stars are worse. This is accepted by design: the stars are decorative, sit behind the content, and cover a small share of the window. The measured figures are per pixel, not an average over a text run.
 
@@ -226,9 +242,9 @@ Circles are allowed for the globe, flag discs and dots. Nothing else: no 2px, 4p
 ## Surfaces & Depth
 
 - **Panel (dark):** a vertical gradient `#151517` to `#0b0b0c`, with a 1px gradient rim (top 16% white, bottom 4% white). The rim is two background layers (`.rim`): the fill on the padding box and the rim gradient on the border box, so it keeps the radius. There is no mask and no pseudo-element. `.panel-ember` has no inner highlight.
-- **Panel (light):** flat white, 28px, a 6% black ring. No shadow.
+- **Panel (light):** white, 28px, a 1px rim from 5% to 8% black, and a soft warm shadow (`--surface-shadow`). Inset panels (`Panel inset`) sit flat on shoal with no shadow. The chat composer pill takes the same shadow (`.lift`).
 - **Rim:** `.rim` is a 1px gradient border on any element. It is used on panels, the active nav item, the selected program row, popovers and the composer. The rim gradient paints under the whole box, so a rim needs an opaque `--rim-fill` (`.surface`, or a `[--rim-fill:…]` class matching its background).
-- **Shadow:** none at rest. The one floating shadow (`--shadow-float`) is for popovers and dialogs. The dark ember glow is a named exception (below).
+- **Shadow:** in dark, none at rest; in light, the soft `--surface-shadow` on white surfaces only. The one floating shadow (`--shadow-float`, warm in light) is for popovers and dialogs. The ember glow on `.panel-ember` is a named exception (below).
 - **Flat by default:** structure is drawn with hairlines and tonal steps, not shadows.
 - **Flat controls** (secondary buttons, the round footer buttons, the Toggle when off): a plain 1px `border-hairline` (`--hairline`, solid). Measured for the boundary: 1.82 / 1.70 / 1.57 on black, panel and shoal in dark; 1.55 / 1.78 / 1.62 on background, panel and shoal in light. The gradient rim stays on panels, popovers, the active nav row, the program row and the composer.
 
@@ -237,14 +253,14 @@ Circles are allowed for the globe, flag discs and dots. Nothing else: no 2px, 4p
 Gradients and glows are allowed in these places and nowhere else:
 
 1. **Dark panel surface and rim.** Vertical gradients on `Panel` in dark mode only.
-2. **Ember panel (`.panel-ember`).** The glow is outside the box only, and static: dark has a soft halo around the whole card (a 1px rim ring, ember-1 at 45% over 44px, ember-0 at 55% over 60px, offset 14px down). There is no inner wash and no fade-in. Light has no glow. One per screen.
+2. **Ember panel (`.panel-ember`).** The glow is outside the box only, and static: dark has a soft halo around the whole card (a 1px rim ring, ember-1 at 45% over 44px, ember-0 at 55% over 60px, offset 14px down). There is no inner wash and no fade-in. Light has a softer halo: a 1px ember-1 ring at 22%, ember-1 at 30% over 40px, ember-0 at 35% over 48px, offset 14px down. One per screen.
 3. **Primary button (`.ember-button`).** A vertical gradient in both themes, and in dark a soft ember glow on hover and focus.
-4. **Large numerals (`.numeral-ember`).** Dark only: ink to ember-2 over the lower half of the glyph.
-5. **Ambient haze (`.ambient-haze`).** Dark only: one faint radial ember glow (opacity 0.14) at the bottom centre of the window, behind the content and above the stars.
+4. **Large numerals (`.numeral-ember`).** Ink to ember-2 (dark) or to signal (light) over the lower half of the glyph.
+5. **Ambient haze (`.ambient-haze`).** One static glow behind the content and above the stars, never animated. Dark: a faint radial ember glow (opacity 0.14) at the bottom centre. Light: a large soft peach glow centred at 55% across, 48% down (38% x 42% ellipse, ember-2 at 24% fading through 10% to nothing) over a wide ember-1 wash at 5% (70% x 80%). Peak about `#f7e0ca`.
 6. **Toggle on, and the progress dot (`.ember-fill`).** Dark: the ember gradient. Light: flat signal.
-7. **Globe atmosphere.** Dark: an ember rim on the sphere's edge (`mix(ocean, ember, 0.85)`, altitude 0.2).
+7. **Globe atmosphere.** Dark: an ember rim on the sphere's edge (`mix(ocean, ember, 0.85)`, altitude 0.2). Light: a peach rim (`mix(ocean, ember, 0.35)`, altitude 0.12).
 
-Everything else is flat. Light mode has no glow.
+Everything else is flat. Nothing that glows is animated.
 
 ## Starfield
 
@@ -252,14 +268,14 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 
 - **Why this design:** the earlier CSS-tile starfield (animated, oversized layers) measured 9 fps in the real app on software WebKitGTK, against 62 fps with the stars hidden. Every full-window animated layer cost about 20 ms per frame in that compositor. A drifting canvas repaints the whole window on every frame, so the sky no longer drifts at all.
 - **Method:** a single `<canvas>` fixed behind everything (`pointer-events: none`, `aria-hidden`, `contain: strict`). Its backing store is the viewport at device pixel ratio 1, so the CSS size equals the backing size. The stars are drawn once on mount and again after a 200 ms debounced resize. Nothing redraws on a timer or a frame loop.
-- **Twinkles:** ten small absolutely positioned dots (`.star-twinkle`, 12 px: a sharp core of radius 1.3 px at alpha 0.6, over a soft glow of alpha 0.27 out to 6 px) in a fixed wrapper. Each animates only `opacity`, pulsing gently between 0.6 and 1, over 5 to 9 s with a random negative delay so they are staggered.
+- **Twinkles:** ten small absolutely positioned dots (`.star-twinkle`, 12 px: a sharp core of radius 1.3 px over a soft glow out to 6 px, colours from the tokens) in a fixed wrapper. Each animates only `opacity`, pulsing gently between 0.6 and 1, over 5 to 9 s with a random negative delay so they are staggered.
 - **Shooting star:** one thin streak (`.star-shoot`, 80 by 1.5 px, rotated 25 degrees). Every 30 to 60 s, at random, it starts from a random point in the upper 60% of the window and moves 320 px along its angle over 900 ms, animating only `transform` and `opacity` through the Web Animations API. No timer runs while paused.
-- **Pauses:** `document.hidden` or window blur freezes the twinkles (`is-paused` on the wrapper) and stops the shooting-star timer; focus or visibility resumes both. `prefers-reduced-motion` renders the static canvas only, with no twinkles and no shooting star. The light theme renders nothing, and every timer and listener is removed.
-- **Density:** one star per 7 000 px² (about 300 on 1920 x 1080), split 55%, 30% and 15% across three depth layers. Radii 0.5, 0.9 and 1.3 px.
-- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15).
+- **Pauses:** `document.hidden` or window blur freezes the twinkles (`is-paused` on the wrapper) and stops the shooting-star timer; focus or visibility resumes both. `prefers-reduced-motion` renders the static canvas only, with no twinkles and no shooting star. A theme change tears the sky down and draws it again with the new tokens.
+- **Density:** one star per 7 000 px² (about 300 on 1920 x 1080), split 55%, 30% and 15% across three depth layers. Radii 0.5, 0.9 and 1.3 px. Light multiplies the count by `--star-density` (0.6, about 180 stars).
+- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15). Light multiplies every alpha by `--star-alpha` (0.8).
 - **Contrast note:** the stars are decorative. A star under a text glyph may locally dip below 4.5:1 by design (see the contrast table); the owner chose visibility over a per-pixel text target.
-- **Colour:** `--foreground` (white in dark) and `--star-warm` (`#fff4ea`) on about 15% of stars, read once per activation from the tokens.
-- **Always on:** the stars are always drawn in dark mode. There is no toggle and no setting; in light mode nothing is drawn.
+- **Colour:** `--star-base` and `--star-warm` (about 15% of stars), read once per activation. Dark: white and `#fff4ea`. Light: warm taupe `#b8a596` specks and ember `#ff7a3d` sparks. The twinkles use `--star-twinkle-core` / `--star-twinkle-glow` (white in dark, ember-1 and ember-2 in light) and the shooting star fades to `--star-shoot` (white in dark, ember-1 in light).
+- **Always on:** the stars are always drawn, in both themes. There is no toggle and no setting.
 - **Layer:** `z-index: -2` inside the isolated shell, under the ambient haze (`-1`), the rail, the header and the content.
 
 ## Logo
@@ -268,6 +284,7 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 - **Two versions by theme:** the dark-ground mark (black ground, white arc, ember bottom) in dark theme, and the light-ground mark (#eeeeee ground, near-black arc, deep ember bottom) in light theme. `src/ui/layout/Logo.tsx` picks one from the resolved theme.
 - **Files:** `src/assets/logo/uniworld-logo-{light,dark}.{svg,png}` are the square app-icon sources. The dark PNG is the source for the app icons in `src-tauri/icons/`. The in-app marks are `src/assets/logo/uniworld-mark-{light,dark}.svg`: transparent ground, cropped to the ring and arc, with no square.
 - **Use:** the rail shows the mark at 28px in a 36px box, at the same spot in both states (rail padding 12px). Collapsed, the mark is the button that expands the rail; expanded, it sits before the wordmark. In the UI, use only the cropped marks; the square files are for app icons. It is decorative (`alt=""`, `aria-hidden`); the wordmark carries the name.
+- **On the light ground:** the light mark reads on `#f7f6f4`: near-black arc 18.3:1, deep ember 10.1:1, ember tip 3.8:1, 45% ring 3.3:1.
 
 ## Layout
 
@@ -314,10 +331,10 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 Unchanged in behaviour. A 14px label in Chart Grey, the value in body text, and a Data-style source superscript. The popover is a rimmed 20px surface. The missing fact reads "Not found, check official site" in Chart Grey, with a dashed underline, and keeps its row height.
 
 ### The Globe
-Ocean `#efefef` in light and `#060607` in dark, so the sphere glows against the stars. Land `#d9d9d9` in light and `#26262a` in dark. Graticule faint. Selected countries are filled with ember. Idle rotation at 0.35 degrees per second. The globe is a circle.
+Ocean `#fbfaf8` in light and `#060607` in dark, so the sphere glows against the stars. Land `#d9d9d9` in light and `#26262a` in dark. Graticule faint. Selected countries are filled with ember. Idle rotation at 0.35 degrees per second. The globe is a circle.
 
 ### Motion
-State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. Stars drift and twinkle. The globe fly-to and contraction keep their durations. `prefers-reduced-motion` removes transforms and keeps opacity.
+State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. A few stars twinkle and a rare shooting star crosses; nothing drifts. The globe fly-to and contraction keep their durations. `prefers-reduced-motion` removes transforms and keeps opacity.
 
 ## Do's and Don'ts
 
@@ -331,9 +348,8 @@ State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The pane
 
 ### Don't
 - **Don't** add gradients outside the list in Gradients & Glow.
-- **Don't** put a glow on light mode.
 - **Don't** use a radius outside the shape lock, or a pill on a card.
 - **Don't** use emoji as icons, flags or labels.
 - **Don't** use Evidence Green for success.
 - **Don't** animate anything the student did not cause, except the globe's idle rotation, the arrival of results and the stars.
-- **Don't** draw the starfield in light mode, or over the content as a separate layer.
+- **Don't** draw the starfield over the content as a separate layer, and don't animate the glow.

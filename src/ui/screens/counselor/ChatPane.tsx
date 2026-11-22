@@ -147,7 +147,7 @@ export function ChatPane() {
         )}
         {hint && !fresh && <p className="text-sm text-chart-grey">{hint}</p>}
         {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
-        <div className="rim flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
+        <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
           <Textarea
             ref={textareaRef}
             aria-label={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}

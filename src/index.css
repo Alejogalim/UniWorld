@@ -75,18 +75,18 @@
 /* Light: "The Ember Chart" with soft surfaces (DESIGN.md, plan 16). Ember is the only colour. */
 :root {
     color-scheme: light;
-    --background: #efefef;
+    --background: #f7f6f4;
     --panel: #ffffff;
-    --shoal: #f4f4f4;
-    --hairline: #c2c2c2;
+    --shoal: #f1efec;
+    --hairline: #c2beb8;
     --foreground: #0a0a0a;
     --chart-grey: #636366;
-    --signal: #c53805;
-    --signal-deep: #a82f03;
-    --evidence: #2f7a56;
+    --signal: #b53204;
+    --signal-deep: #952903;
+    --evidence: #2a7050;
     --land: #d9d9d9;
-    --globe-ocean: #efefef;
-    --shadow-ink: rgb(0 0 0 / 0.35);
+    --globe-ocean: #fbfaf8;
+    --shadow-ink: rgb(64 32 12 / 0.28);
 
     /* Ember: deep red-orange at its core, warming to peach at its edge. */
     --ember-0: #b3210a;
@@ -96,14 +96,25 @@
     /* Primary button fill (light): darker so white text clears 4.5:1 at both ends. */
     --ember-button-top: #c4400b;
     --ember-button-bottom: #b83304;
-    /* No glow on light paper: transparent shadows, because `none` breaks Tailwind's box-shadow list. */
+    /* The focus glow stays off on paper: transparent shadow, because `none` breaks Tailwind's box-shadow list. */
     --ember-glow: 0 0 #0000;
 
-    /* Surfaces: a sheet laid on the ground. Light cards are flat white with a 6% ring. */
+    /* Surfaces: white sheets floating on the paper (Gemini-like), a 5% to 8% rim and a soft warm shadow. */
     --surface-fill: linear-gradient(var(--panel), var(--panel));
-    --rim-top: rgb(0 0 0 / 0.06);
-    --rim-bottom: rgb(0 0 0 / 0.06);
+    --rim-top: rgb(0 0 0 / 0.05);
+    --rim-bottom: rgb(0 0 0 / 0.08);
     --rim: linear-gradient(to bottom, var(--rim-top), var(--rim-bottom));
+    --surface-shadow: 0 1px 2px rgb(64 32 12 / 0.05), 0 6px 20px -8px rgb(64 32 12 / 0.12);
+
+    /* Starfield on paper (plan 26): warm-taupe specks, 15% ember sparks, fewer and fainter than the night sky.
+       Starfield.tsx reads --star-base, --star-warm, --star-alpha and --star-density once per theme. */
+    --star-base: #b8a596;
+    --star-warm: #ff7a3d;
+    --star-alpha: 0.8;
+    --star-density: 0.6;
+    --star-twinkle-core: rgb(255 90 31 / 0.5);
+    --star-twinkle-glow: rgb(247 178 103 / 0.32);
+    --star-shoot: #ff5a1f;
 
     --card: var(--panel);
     --card-foreground: var(--foreground);
@@ -153,8 +164,14 @@
     --land: #26262a;
     --globe-ocean: #060607;
     --shadow-ink: rgb(0 0 0 / 0.5);
-    /* The starfield's barely warm tint (about 15% of stars). Pure white is --foreground in dark. */
+    /* Night sky: pure white stars, a barely warm tint on about 15% of them, white twinkles and streak. */
+    --star-base: #ffffff;
     --star-warm: #fff4ea;
+    --star-alpha: 1;
+    --star-density: 1;
+    --star-twinkle-core: rgb(255 255 255 / 0.6);
+    --star-twinkle-glow: rgb(255 255 255 / 0.27);
+    --star-shoot: #ffffff;
     --primary-foreground: #000000;
 
     --ember-button-top: #ff8a3d;
@@ -165,6 +182,8 @@
     --rim-top: rgb(255 255 255 / 0.16);
     --rim-bottom: rgb(255 255 255 / 0.04);
     --rim: linear-gradient(to bottom, var(--rim-top), var(--rim-bottom));
+    /* Dark cards carry no drop shadow; the rim and the gradient do the work. */
+    --surface-shadow: 0 0 #0000;
 }
 
 @layer base {
@@ -191,9 +210,13 @@
   /* The measured-value face: Inter with tabular figures, no tracking. */
   .font-mono { font-variant-numeric: tabular-nums; letter-spacing: 0; }
 
-  /* Large display numerals: ink, then in dark mode the lower half warms to the ember peach. */
+  /* Large display numerals: ink, then the lower half warms. Light: to signal (5.7:1 on paper, 4.8:1 on the glow).
+     Dark: to the ember peach (rule below). */
   .numeral-ember {
-    color: var(--foreground);
+    color: transparent;
+    background-image: linear-gradient(to bottom, var(--foreground) 55%, var(--signal) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
     font-variant-numeric: tabular-nums;
   }
   .dark .numeral-ember {
@@ -217,14 +240,26 @@
   }
 
   /* Surface: a soft 28px sheet. Its fill is handed to .rim as the padding-box layer. Dark cards are a
-     gradient; light cards are flat white. Always used with .rim. */
+     gradient; light cards are flat white with a soft warm shadow. Always used with .rim. */
   .surface {
     border-radius: var(--radius-card);
     --rim-fill: var(--surface-fill);
+    box-shadow: var(--surface-shadow);
+  }
+
+  /* Lift: the same soft shadow for a floating white surface that is not a .surface (the chat composer pill). */
+  .lift {
+    box-shadow: var(--surface-shadow);
   }
 
   /* Ember panel: the one memorable element per screen. Its glow is outside the box only: no inner wash,
-     no inner highlight, no pseudo-element. Dark: a static halo around the whole card. Light: no glow. */
+     no inner highlight, no pseudo-element. Both themes: a static halo around the whole card. */
+  .panel-ember {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--ember-1) 22%, transparent),
+      0 0 40px -8px color-mix(in oklch, var(--ember-1) 30%, transparent),
+      0 14px 48px -20px color-mix(in oklch, var(--ember-0) 35%, transparent);
+  }
   .dark .panel-ember {
     box-shadow:
       0 0 0 1px var(--rim-top),
@@ -237,18 +272,33 @@
     background-image: linear-gradient(to bottom, var(--ember-button-top), var(--ember-button-bottom));
   }
 
-  /* Ambient haze: dark only, one faint ember glow at the bottom centre of the window. */
+  /* Ambient haze: one static ember glow behind the content, above the stars. Never animated (plan 20: a changing
+     full-window layer costs ~20 ms a frame on software WebKitGTK; a static one is painted once).
+     Light: a large soft peach glow centred on the working column (55% across: the rail sits on the left), peak about
+     #f7e0ca, a wide faint ember wash under it. Dark: a faint ember glow at the bottom centre. */
   .ambient-haze {
     position: fixed;
     inset: 0;
     z-index: -1;
-    display: none;
     pointer-events: none;
     contain: strict;
+    background:
+      radial-gradient(
+        38% 42% at 55% 48%,
+        color-mix(in srgb, var(--ember-2) 24%, transparent) 0%,
+        color-mix(in srgb, var(--ember-2) 10%, transparent) 50%,
+        transparent 100%
+      ),
+      radial-gradient(
+        70% 80% at 55% 52%,
+        color-mix(in srgb, var(--ember-1) 5%, transparent) 0%,
+        transparent 100%
+      );
+  }
+  .dark .ambient-haze {
     opacity: 0.14;
     background: radial-gradient(60% 45% at 50% 100%, var(--ember-1), transparent 70%);
   }
-  .dark .ambient-haze { display: block; }
 
   /* Range slider: 4px track, ink thumb; dark thumbs carry a faint ember ring. */
   .ui-range {
@@ -386,7 +436,7 @@
   appearance: none;
 }
 
-/* Still sky (plan 21): one static canvas behind everything, drawn from src/ui/layout/Starfield.tsx. Its backing
+/* Still sky (plans 21, 26): one static canvas behind everything in both themes, drawn from src/ui/layout/Starfield.tsx. Its backing
    store is the viewport at DPR 1. It is redrawn only on resize, so it never repaints on a timer. */
 .star-field {
   position: fixed;
@@ -415,8 +465,8 @@
   margin: -6px 0 0 -6px;
   border-radius: 50%;
   background:
-    radial-gradient(circle, rgb(255 255 255 / 0.6) 0, rgb(255 255 255 / 0.6) 1.3px, transparent 1.9px),
-    radial-gradient(circle, rgb(255 255 255 / 0.27) 0, transparent 6px);
+    radial-gradient(circle, var(--star-twinkle-core) 0, var(--star-twinkle-core) 1.3px, transparent 1.9px),
+    radial-gradient(circle, var(--star-twinkle-glow) 0, transparent 6px);
   opacity: 0.6;
   will-change: opacity;
   animation: star-twinkle 7s ease-in-out infinite;
@@ -427,7 +477,7 @@
   width: 80px;
   height: 1.5px;
   border-radius: 1px;
-  background: linear-gradient(to right, transparent, var(--foreground));
+  background: linear-gradient(to right, transparent, var(--star-shoot));
   opacity: 0;
   will-change: transform, opacity;
 }

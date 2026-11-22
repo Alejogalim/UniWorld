@@ -3,9 +3,10 @@ import { useReducedMotion } from 'framer-motion';
 import { useTheme } from '@/app/theme';
 
 /*
- * Still sky: one static canvas of stars behind everything, drawn once on mount and again after a resize. On top of
- * it sit about ten CSS opacity twinkles and a rare shooting star. Nothing drifts, so a full-window repaint never
- * happens on a timer. Dark theme only; reduced motion keeps the static canvas and nothing else.
+ * Still sky: one static canvas of stars behind everything, drawn once on mount and again after a resize or a theme
+ * change. On top of it sit about ten CSS opacity twinkles and a rare shooting star. Nothing drifts, so a full-window
+ * repaint never happens on a timer. Both themes: white stars on the night sky, warm specks and ember sparks on paper
+ * (colours, alpha scale and density come from the --star-* tokens). Reduced motion keeps the static canvas only.
  */
 
 interface LayerSpec {
@@ -42,16 +43,24 @@ function layerFor(roll: number): LayerSpec {
   return LAYERS[2];
 }
 
+/** A unitless number token (e.g. --star-alpha: 0.8). Missing or invalid falls back to 1, the dark-sky value. */
+function tokenNumber(styles: CSSStyleDeclaration, name: string): number {
+  const value = Number.parseFloat(styles.getPropertyValue(name));
+  return Number.isFinite(value) && value > 0 ? value : 1;
+}
+
 function paint(ctx: CanvasRenderingContext2D, width: number, height: number) {
   const styles = getComputedStyle(document.documentElement);
-  const base = styles.getPropertyValue('--foreground').trim() || '#ffffff';
+  const base = styles.getPropertyValue('--star-base').trim() || '#ffffff';
   const warm = styles.getPropertyValue('--star-warm').trim() || '#fff4ea';
+  const alphaScale = tokenNumber(styles, '--star-alpha');
+  const density = tokenNumber(styles, '--star-density');
   ctx.clearRect(0, 0, width, height);
-  const total = Math.round((width * height) / PX_PER_STAR);
+  const total = Math.round(((width * height) / PX_PER_STAR) * density);
   for (let i = 0; i < total; i += 1) {
     const layer = layerFor(Math.random());
     const [alphaMin, alphaMax] = layer.alpha;
-    ctx.globalAlpha = alphaMin + Math.random() * (alphaMax - alphaMin);
+    ctx.globalAlpha = (alphaMin + Math.random() * (alphaMax - alphaMin)) * alphaScale;
     ctx.fillStyle = Math.random() < WARM_SHARE ? warm : base;
     ctx.beginPath();
     ctx.arc(Math.random() * width, Math.random() * height, layer.radius, 0, Math.PI * 2);
@@ -181,8 +190,9 @@ function startSky(canvas: HTMLCanvasElement, motion: Motion | null): () => void 
 }
 
 export function Starfield() {
+  // Read so the effect re-runs (and the canvas repaints with the new --star-* colours) when the theme changes.
+  // theme.ts toggles the `.dark` class before it updates `resolved`, so the tokens are current when the effect runs.
   const resolved = useTheme((s) => s.resolved);
-  const active = resolved === 'dark';
   const reduceMotion = useReducedMotion() ?? false;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
@@ -191,14 +201,13 @@ export function Starfield() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!active || !canvas) return;
+    if (!canvas) return;
     const layer = layerRef.current;
     const shoot = shootRef.current;
     const motion = !reduceMotion && layer && shoot ? { layer, shoot } : null;
     return startSky(canvas, motion);
-  }, [active, reduceMotion]);
+  }, [resolved, reduceMotion]);
 
-  if (!active) return null;
   return (
     <>
       <canvas ref={canvasRef} aria-hidden="true" className="star-field" />

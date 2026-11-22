@@ -70,8 +70,8 @@ function readPalette(theme: 'light' | 'dark'): Palette {
     hairline,
     ink: token('--foreground'),
     signal: token('--signal'),
-    // Dark: a faint ember tint (about 25%) on black. Light: a neutral grey haze on paper.
-    atmosphere: theme === 'dark' ? mix(ocean, ember, 0.85) : mix(ocean, token('--chart-grey'), 0.5),
+    // Dark: a faint ember tint on black. Light: a soft peach ember rim on paper (plan 26).
+    atmosphere: theme === 'dark' ? mix(ocean, ember, 0.85) : mix(ocean, ember, 0.35),
     atmosphereAltitude: theme === 'dark' ? 0.2 : 0.12,
   };
 }

@@ -8,13 +8,13 @@ interface PanelProps extends React.ComponentProps<"div"> {
   variant?: "default" | "ember";
 }
 
-/** Plan 16 card: 28px corners, a soft surface, a 1px rim (dark) or a 6% ring (light). No shadow at rest. */
+/** Plan 16 card: 28px corners, a soft surface and a 1px rim. Light cards float with a soft warm shadow; inset regions sit flat. */
 export function Panel({ inset = false, variant = "default", className, ...props }: PanelProps) {
   return (
     <div
       className={cn(
         "rim surface p-6 text-foreground",
-        inset && "bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))]",
+        inset && "bg-shoal shadow-none [--rim-fill:linear-gradient(var(--shoal),var(--shoal))]",
         variant === "ember" && "panel-ember",
         className,
       )}
