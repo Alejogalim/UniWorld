@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -24,6 +26,7 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Agrave Pro', 'Inter Variable', sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -55,82 +58,91 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+    /* DESIGN.md roles. */
+    --color-panel: var(--panel);
+    --color-shoal: var(--shoal);
+    --color-hairline: var(--hairline);
+    --color-chart-grey: var(--chart-grey);
+    --color-signal: var(--signal);
+    --color-signal-deep: var(--signal-deep);
+    --color-evidence: var(--evidence);
+    --color-land: var(--land);
+    /* DESIGN.md radii: 2 / 4 / 6px only. */
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+    --radius-xl: 6px;
+    --radius-2xl: 6px;
+    --radius-3xl: 6px;
+    --radius-4xl: 6px;
+    --shadow-float: 0 12px 32px -16px var(--shadow-ink);
 }
 
+/* Light: "The Corrected Chart" (DESIGN.md). */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    color-scheme: light;
+    --background: oklch(0.962 0.01 205);
+    --panel: oklch(0.995 0.003 205);
+    --shoal: oklch(0.935 0.014 210);
+    --hairline: oklch(0.88 0.013 215);
+    --foreground: oklch(0.255 0.033 250);
+    --chart-grey: oklch(0.52 0.022 245);
+    --signal: oklch(0.5 0.195 355);
+    --signal-deep: oklch(0.43 0.17 355);
+    --evidence: oklch(0.505 0.085 168);
+    --land: oklch(0.905 0.03 85);
+    --shadow-ink: oklch(0.255 0.033 250 / 0.35);
+
+    --card: var(--panel);
+    --card-foreground: var(--foreground);
+    --popover: var(--panel);
+    --popover-foreground: var(--foreground);
+    --primary: var(--signal);
+    --primary-foreground: oklch(0.995 0.003 205);
+    --secondary: var(--panel);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--shoal);
+    --muted-foreground: var(--chart-grey);
+    --accent: var(--shoal);
+    --accent-foreground: var(--foreground);
+    --destructive: var(--signal);
+    --border: var(--hairline);
+    --input: var(--hairline);
+    --ring: var(--signal);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --radius: 4px;
+    --sidebar: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--signal);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--shoal);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--hairline);
+    --sidebar-ring: var(--signal);
 }
 
+/* Dark: "Night Watch" (DESIGN.md). Same chart with the lamp off.
+   Applied by the `.dark` class, which src/app/theme.ts sets from the
+   user's choice (system follows prefers-color-scheme in JS). */
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    color-scheme: dark;
+    --background: oklch(0.205 0.024 245);
+    --panel: oklch(0.245 0.026 245);
+    --shoal: oklch(0.225 0.025 245);
+    --hairline: oklch(0.6 0.025 240);
+    --foreground: oklch(0.94 0.01 220);
+    --chart-grey: oklch(0.78 0.02 230);
+    --signal: oklch(0.7 0.19 355);
+    /* Lighter than --signal: on Night Watch the hover needs to lift the label contrast. */
+    --signal-deep: oklch(0.75 0.16 355);
+    --evidence: oklch(0.76 0.11 168);
+    --land: oklch(0.42 0.03 85);
+    --shadow-ink: oklch(0 0 0 / 0.5);
+    --primary-foreground: oklch(0.205 0.024 245);
 }
 
 @layer base {
@@ -167,7 +179,7 @@
   font-size: 2.75rem;
   line-height: 1.04;
   letter-spacing: -0.025em;
-  color: oklch(0.255 0.033 250);
+  color: var(--foreground);
 }
 .screen-title__type {
   display: inline-block;
@@ -180,7 +192,7 @@
   bottom: 0;
   width: 100%;
   height: 1px;
-  background: oklch(0.255 0.033 250 / 0.6);
+  background: color-mix(in oklch, var(--foreground) 60%, transparent);
   transform: scaleX(0);
   transform-origin: left center;
   animation: plot-rule 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -201,7 +213,7 @@
   font-size: 26px;
   line-height: 1;
   letter-spacing: -0.025em;
-  color: oklch(0.255 0.033 250);
+  color: var(--foreground);
 }
 .wordmark::before {
   content: "";
@@ -210,7 +222,7 @@
   bottom: -8.5px;
   width: 100%;
   height: 1px;
-  background: oklch(0.255 0.033 250 / 0.65);
+  background: color-mix(in oklch, var(--foreground) 65%, transparent);
 }
 .wordmark::after {
   content: "";
@@ -220,26 +232,27 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: oklch(0.255 0.033 250);
+  background: var(--foreground);
 }
 
-/* Language switcher: a 32px icon button; the native select sits invisibly over it. */
+/* Rail footer controls (language, theme): 32px quiet icon buttons.
+   The language select sits invisibly over its button. */
 .lang-button {
   position: relative;
   display: grid;
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid oklch(0.88 0.013 215);
+  border: 1px solid var(--hairline);
   border-radius: 4px;
-  color: oklch(0.255 0.033 250);
+  color: var(--foreground);
   background: transparent;
 }
 .lang-button:hover {
-  background: oklch(1 0 0 / 0.6);
+  background: color-mix(in oklch, var(--panel) 60%, transparent);
 }
 .lang-button:focus-within {
-  outline: 2px solid oklch(0.5 0.195 355);
+  outline: 2px solid var(--signal);
   outline-offset: 2px;
 }
 .lang-button select {
@@ -257,16 +270,16 @@
   border-right: 0;
   background: linear-gradient(
     to right,
-    oklch(0.958 0.011 206) 0%,
-    oklch(0.958 0.011 206) 50%,
+    color-mix(in oklch, var(--background), var(--shoal) 30%) 0%,
+    color-mix(in oklch, var(--background), var(--shoal) 30%) 50%,
     var(--background) 100%
   );
 }
 .app-rail a:hover {
-  background: oklch(1 0 0 / 0.6);
+  background: color-mix(in oklch, var(--panel) 60%, transparent);
 }
 .app-rail a[aria-current="page"] {
-  background: oklch(1 0 0 / 0.92);
+  background: color-mix(in oklch, var(--panel) 92%, transparent);
 }
 
 /* Nav item: Agrave Pro labels; the icon leads the hover, the fix dot lands. */

@@ -23,5 +23,27 @@
     "finder": "Buscador de universidades",
     "myUnis": "Mis universidades",
     "settings": "Configuración"
+  },
+  "theme": {
+    "label": "Tema de color",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "current": "Tema de color: {{mode}}"
+  },
+  "chip": {
+    "remove": "Quitar {{label}}"
+  },
+  "fact": {
+    "official": "oficial",
+    "thirdParty": "de terceros",
+    "missing": "No encontrado — revisa el sitio oficial",
+    "sourceButton": "Ver fuente {{index}}"
+  },
+  "error": {
+    "screenTitle": "Algo falló en esta pantalla",
+    "reload": "Recargar",
+    "startupTitle": "UniWorld no pudo abrir tus datos guardados",
+    "tryAgain": "Intentar de nuevo"
   }
 }

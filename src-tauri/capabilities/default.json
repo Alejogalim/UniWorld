@@ -11,6 +11,8 @@
     "sql:allow-execute",
     "sql:allow-select",
     "sql:allow-load",
+    "opener:default",
+    "opener:allow-open-url",
     {
       "identifier": "http:default",
       "allow": [

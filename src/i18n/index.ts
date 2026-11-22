@@ -22,4 +22,10 @@ void i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
+// Keep <html lang> in step with the UI language for every change path.
+i18n.on('languageChanged', (lng) => {
+  document.documentElement.lang = lng;
+});
+document.documentElement.lang = i18n.resolvedLanguage ?? 'en';
+
 export default i18n;

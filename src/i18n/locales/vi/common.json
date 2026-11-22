@@ -23,5 +23,27 @@
     "finder": "Tìm trường đại học",
     "myUnis": "Trường của tôi",
     "settings": "Cài đặt"
+  },
+  "theme": {
+    "label": "Chủ đề màu",
+    "system": "Theo hệ thống",
+    "light": "Sáng",
+    "dark": "Tối",
+    "current": "Chủ đề màu: {{mode}}"
+  },
+  "chip": {
+    "remove": "Xóa {{label}}"
+  },
+  "fact": {
+    "official": "chính thức",
+    "thirdParty": "bên thứ ba",
+    "missing": "Không tìm thấy — hãy kiểm tra trang chính thức",
+    "sourceButton": "Xem nguồn {{index}}"
+  },
+  "error": {
+    "screenTitle": "Có lỗi xảy ra trên màn hình này",
+    "reload": "Tải lại",
+    "startupTitle": "UniWorld không thể mở dữ liệu đã lưu",
+    "tryAgain": "Thử lại"
   }
 }

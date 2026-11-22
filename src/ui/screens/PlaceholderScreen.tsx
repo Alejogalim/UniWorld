@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
+import { EmptyState } from '@/ui/components/EmptyState';
 
-/** One-line "coming soon" empty state. The page title lives in the shell's top bar. */
+/** "Coming soon" empty state inside the page measure. The page title lives in the shell's top bar. */
 export function PlaceholderScreen() {
   const { t } = useTranslation('common');
   return (
-    <section className="flex h-full flex-col gap-2 p-8">
-      <p className="text-muted-foreground">{t('comingSoonLine')}</p>
-    </section>
+    <div className="max-w-[1120px] px-12 py-8">
+      <EmptyState title={t('comingSoon')} description={t('comingSoonLine')} />
+    </div>
   );
 }

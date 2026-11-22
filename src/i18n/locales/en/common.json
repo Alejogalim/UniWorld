@@ -23,5 +23,27 @@
     "finder": "University Finder",
     "myUnis": "My universities",
     "settings": "Settings"
+  },
+  "theme": {
+    "label": "Color theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "current": "Color theme: {{mode}}"
+  },
+  "chip": {
+    "remove": "Remove {{label}}"
+  },
+  "fact": {
+    "official": "official",
+    "thirdParty": "third-party",
+    "missing": "Not found — check official site",
+    "sourceButton": "Show source {{index}}"
+  },
+  "error": {
+    "screenTitle": "Something broke on this screen",
+    "reload": "Reload",
+    "startupTitle": "UniWorld could not open your saved data",
+    "tryAgain": "Try again"
   }
 }
