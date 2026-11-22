@@ -528,15 +528,6 @@
   outline: 2px solid var(--signal);
   outline-offset: 2px;
 }
-.lang-button select {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  appearance: none;
-}
 
 /* Still sky (plans 21, 26): one static canvas behind everything in both themes, drawn from src/ui/layout/Starfield.tsx. Its backing
    store is the viewport at DPR 1. It is redrawn only on resize, so it never repaints on a timer. */
