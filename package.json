@@ -15,6 +15,7 @@
     "search": "bun run scripts/search.ts",
     "provider": "bun run scripts/test-provider.ts",
     "counselor": "bun run scripts/counselor.ts",
+    "eval:counselor": "bun run scripts/eval-counselor.ts",
     "build:globe": "bun run scripts/build-globe-data.ts"
   },
   "dependencies": {

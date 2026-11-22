@@ -41,6 +41,7 @@ const careersJson = JSON.stringify({
 
 class FakeHttp implements HttpClient {
   calls = 0;
+  systems: string[] = [];
 
   async fetch(_url: string, init?: HttpRequestInit): Promise<HttpResponseLike> {
     this.calls++;
@@ -48,6 +49,7 @@ class FakeHttp implements HttpClient {
       messages?: { role: string; content: string }[];
     };
     const system = body.messages?.[0]?.content ?? '';
+    this.systems.push(system);
     const content = system.includes('career synthesizer')
       ? careersJson
       : 'That sounds meaningful. What draws you to it?';
@@ -99,6 +101,17 @@ describe('Counselor', () => {
       { role: 'user', content: 'I love building things.' },
       { role: 'assistant', content: reply },
     ]);
+  });
+
+  it('tells the prompt how many answers the student has given', async () => {
+    const store = new InMemoryCounselorStore();
+    const http = new FakeHttp();
+    const counselor = new Counselor(deps(http, store), store);
+    const { sessionId } = await counselor.start();
+    await counselor.send(sessionId, 'I love building things.');
+    await counselor.send(sessionId, 'Mostly robots.');
+    expect(http.systems[0]).toContain('Student answers so far: 1.');
+    expect(http.systems[1]).toContain('Student answers so far: 2.');
   });
 
   it('generates and stores 3-5 career paths with weighted fits', async () => {

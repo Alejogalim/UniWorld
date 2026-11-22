@@ -28,14 +28,6 @@ export class Counselor {
     return profile;
   }
 
-  private async history(sessionId: number): Promise<ChatMessage[]> {
-    const messages = await this.store.listMessages(sessionId);
-    return messages.slice(-MAX_HISTORY).map((message) => ({
-      role: message.role,
-      content: message.content,
-    }));
-  }
-
   async send(
     sessionId: number,
     text: string,
@@ -47,9 +39,11 @@ export class Counselor {
 
     await this.store.addMessage(sessionId, { role: 'user', content: text });
     const client = await createAiClient(session.provider, this.deps, { sessionId });
+    const stored = await this.store.listMessages(sessionId);
+    const studentAnswers = stored.filter((message) => message.role === 'user').length;
     const messages: ChatMessage[] = [
-      { role: 'system', content: counselorSystemPrompt(profile) },
-      ...(await this.history(sessionId)),
+      { role: 'system', content: counselorSystemPrompt(profile, { studentAnswers }) },
+      ...stored.slice(-MAX_HISTORY).map((message) => ({ role: message.role, content: message.content })),
     ];
 
     const reply = await client.stream(messages, {
