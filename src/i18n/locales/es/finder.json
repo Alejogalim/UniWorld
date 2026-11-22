@@ -21,15 +21,14 @@
   },
   "scope": {
     "world": "Todo el mundo",
-    "hint": "Haz clic en un país del globo o de la lista para añadirlo. Haz clic otra vez para quitarlo.",
     "current": "Buscando en",
     "addCountry": "Añadir un país",
     "noMatches": "Ningún país coincide",
     "filterPlaceholder": "Filtrar países",
+    "filterHint": "Filtra, o haz clic en un país del globo",
     "selected": "Seleccionados",
     "clear": "Borrar",
-    "selectedEmpty": "Aún no hay países seleccionados.",
-    "hoverHint": "Pasa el cursor o usa las flechas sobre un país para enfocarlo en el globo."
+    "selectedEmpty": "Aún no hay países seleccionados."
   },
   "continent": {
     "Africa": "África",

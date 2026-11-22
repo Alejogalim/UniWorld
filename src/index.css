@@ -298,6 +298,15 @@
     display: none;
   }
 
+  /* Finder glass panel (plan 32): when docked right, the glass layer's left edge fades out so land reads
+     through. A mask on the background layer only, so the text stays crisp. Not a colour gradient. */
+  @media (min-width: 900px) {
+    .finder-glass {
+      -webkit-mask-image: linear-gradient(to right, rgb(0 0 0 / 0.2), #000 0.75rem);
+      mask-image: linear-gradient(to right, rgb(0 0 0 / 0.2), #000 0.75rem);
+    }
+  }
+
   /* Lit status connectors are a true sine wave: a solid colour revealed by a repeating wave mask,
      sliding one full period per cycle so the wave travels like an audio waveform. */
   @keyframes status-wave-move {

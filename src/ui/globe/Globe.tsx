@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import type { Continent, UiLang } from '@/core/contracts';
 import { countryName } from '@/ui/data/countries';
 import { continentOf, loadCountries, viewForCountry, type CountryFeature, type GeoView } from './geo';
+import { easeOutCubic, globeOffsetFor, lerpOffset, OFFSET_TWEEN_MS, type ViewInset } from './framing';
 
 export interface GlobeViewProps {
   /** ISO codes of the selected countries. */
@@ -21,6 +22,10 @@ export interface GlobeViewProps {
   /** Fill the parent (full-bleed background) instead of drawing a square. */
   fill?: boolean;
   theme: 'light' | 'dark';
+  /** Space a floating panel covers (CSS px). The globe keeps its size; its centre moves into the free area. */
+  viewInset?: ViewInset;
+  /** Fires once per gesture when the user drags (rotates) the globe, not on a plain click. */
+  onUserDrag?: () => void;
 }
 
 interface Palette {
@@ -99,6 +104,8 @@ export default function GlobeView({
   listHover,
   fill = false,
   theme,
+  viewInset,
+  onUserDrag,
 }: GlobeViewProps) {
   const { t, i18n } = useTranslation('finder');
   const reduceMotion = useReducedMotion() ?? false;
@@ -120,6 +127,11 @@ export default function GlobeView({
     uiLang: i18n.language as UiLang,
     onToggleCountry,
     reduceMotion,
+    onUserDrag,
+    /** globeOffset currently applied, [x, y] px from the canvas centre. */
+    offset: [0, 0] as [number, number],
+    /** Pending requestAnimationFrame of the offset tween, 0 when none. */
+    offsetFrame: 0,
     /** Key of the styles last sent to the globe; the setters run only when it changes. */
     appliedKey: '',
     /** Pending requestAnimationFrame for a style update, 0 when none. */
@@ -136,6 +148,7 @@ export default function GlobeView({
   state.current.fill = fill;
   state.current.onToggleCountry = onToggleCountry;
   state.current.reduceMotion = reduceMotion;
+  state.current.onUserDrag = onUserDrag;
   state.current.uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
 
   // Build the scene once.
@@ -265,8 +278,9 @@ export default function GlobeView({
       const angularRadius = Math.asin(Math.min(1, 100 / distance));
       const tanHalfFov = Math.tan((camera.fov * Math.PI) / 360);
       const projectedRadius = (Math.tan(angularRadius) / tanHalfFov) * (rect.height / 2);
-      const dx = event.clientX - rect.left - rect.width / 2;
-      const dy = event.clientY - rect.top - rect.height / 2;
+      // The sphere's centre sits at the canvas centre plus the framing offset (plan 32).
+      const dx = event.clientX - rect.left - (rect.width / 2 + state.current.offset[0]);
+      const dy = event.clientY - rect.top - (rect.height / 2 + state.current.offset[1]);
       const over = dx * dx + dy * dy <= projectedRadius * projectedRadius;
       if (over === state.current.pointerOverGlobe) return;
       state.current.pointerOverGlobe = over;
@@ -276,6 +290,28 @@ export default function GlobeView({
     el.addEventListener('pointerenter', onEnter);
     el.addEventListener('pointerleave', onLeave);
     el.addEventListener('pointermove', onPointerMove);
+
+    // A real drag (not a click on a country) tells the Finder to fold its panel (plan 32).
+    const DRAG_THRESHOLD_PX = 6;
+    let dragStart: { x: number; y: number } | null = null;
+    let dragReported = false;
+    const onDragDown = (event: PointerEvent) => {
+      dragStart = { x: event.clientX, y: event.clientY };
+      dragReported = false;
+    };
+    const onDragMove = (event: PointerEvent) => {
+      if (!dragStart || dragReported || event.buttons === 0) return;
+      if (Math.hypot(event.clientX - dragStart.x, event.clientY - dragStart.y) < DRAG_THRESHOLD_PX) return;
+      dragReported = true;
+      state.current.onUserDrag?.();
+    };
+    const onDragEnd = () => {
+      dragStart = null;
+    };
+    el.addEventListener('pointerdown', onDragDown);
+    el.addEventListener('pointermove', onDragMove);
+    window.addEventListener('pointerup', onDragEnd);
+    window.addEventListener('pointercancel', onDragEnd);
 
     let lastAltitude: number | null = null;
     const resize = new ResizeObserver(([entry]) => {
@@ -303,6 +339,12 @@ export default function GlobeView({
       el.removeEventListener('pointerenter', onEnter);
       el.removeEventListener('pointerleave', onLeave);
       el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerdown', onDragDown);
+      el.removeEventListener('pointermove', onDragMove);
+      window.removeEventListener('pointerup', onDragEnd);
+      window.removeEventListener('pointercancel', onDragEnd);
+      cancelAnimationFrame(s.offsetFrame);
+      s.offsetFrame = 0;
       globe.controls().autoRotate = false;
       // Browsers cap live WebGL contexts; the globe remounts often, so release the context explicitly.
       globe.renderer().forceContextLoss();
@@ -369,6 +411,39 @@ export default function GlobeView({
     if (!globe || !flyTo) return;
     globe.pointOfView(flyTo, state.current.reduceMotion ? 0 : 900);
   }, [flyTo]);
+
+  // Off-centre framing (plan 32): move the projection centre into the free area, same size and zoom.
+  // globe.gl re-applies globeOffset on every resize, so only changes of the inset need handling here.
+  const insetRight = viewInset?.right ?? 0;
+  const insetBottom = viewInset?.bottom ?? 0;
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    const s = state.current;
+    const target = globeOffsetFor({ right: insetRight, bottom: insetBottom });
+    const from = s.offset;
+    const apply = (offset: [number, number]) => {
+      s.offset = offset;
+      globe.globeOffset(offset);
+    };
+    cancelAnimationFrame(s.offsetFrame);
+    s.offsetFrame = 0;
+    if (s.reduceMotion || (from[0] === target[0] && from[1] === target[1])) {
+      apply(target);
+      return;
+    }
+    const start = performance.now();
+    const step = (now: number) => {
+      const k = easeOutCubic((now - start) / OFFSET_TWEEN_MS);
+      apply(lerpOffset(from, target, k));
+      s.offsetFrame = k < 1 ? requestAnimationFrame(step) : 0;
+    };
+    s.offsetFrame = requestAnimationFrame(step);
+    return () => {
+      cancelAnimationFrame(s.offsetFrame);
+      s.offsetFrame = 0;
+    };
+  }, [insetRight, insetBottom]);
 
   // Reduced motion turns off the polygon rise transition.
   useEffect(() => {

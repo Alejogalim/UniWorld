@@ -21,15 +21,14 @@
   },
   "scope": {
     "world": "Whole world",
-    "hint": "Click a country on the globe or in the list to add it. Click it again to remove it.",
     "current": "Searching in",
     "addCountry": "Add a country",
     "noMatches": "No country matches",
     "filterPlaceholder": "Filter countries",
+    "filterHint": "Filter, or click a country on the globe",
     "selected": "Selected",
     "clear": "Clear",
-    "selectedEmpty": "No countries selected yet.",
-    "hoverHint": "Hover or arrow onto a country to focus it on the globe."
+    "selectedEmpty": "No countries selected yet."
   },
   "continent": {
     "Africa": "Africa",

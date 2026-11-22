@@ -294,7 +294,7 @@ The working column sits to the right: a page title centered above the content on
 
 Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
 
-The Finder is the one two-region screen: the globe fills the field at rest and shrinks to a 380px column at the left when a search runs. Results are a ranked column of rows, not a grid.
+The Finder is the one full-bleed screen: the globe fills the field at its full size and never shrinks. Careers, countries and search live in one slim glass panel docked right (384px wide, 16px from the top, right and bottom; `bg-panel/55` with `backdrop-blur-md`, a hairline border, and a soft left-edge fade that is a mask on the glass layer, not a colour gradient, so land reads through). Tabs sit at the top and the active tab scrolls inside. The countries tab is one column: the filter field, region chips, the selected countries as removable chips, then the list. The globe's projection centre is offset into the free area left of the panel (a camera view offset, not a smaller globe), so a focused country always lands in view. Dragging the globe folds the panel into its pill, except while a search runs or the Search tab shows results; clicking the pill opens it on the same tab. Below 900px the panel is a bottom sheet (45vh) and the globe offsets upward instead. Results are a ranked column of rows, not a grid.
 
 Spanish and Vietnamese run up to 30% longer than English, so no control has a fixed width and labels wrap rather than truncate.
 
@@ -348,7 +348,7 @@ Unchanged in behaviour. A 14px label in Chart Grey, the value in body text, and 
 Ocean `#fbfaf8` in light and `#060607` in dark, so the sphere glows against the stars. Land `#d9d9d9` in light and `#26262a` in dark. Graticule faint. Selected countries are filled with ember. Idle rotation at 0.35 degrees per second. The globe is a circle.
 
 ### Motion
-State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. A few stars twinkle and a rare shooting star crosses; nothing drifts. The globe fly-to and contraction keep their durations. `prefers-reduced-motion` removes transforms and keeps opacity.
+State changes: 180ms, `cubic-bezier(0.2, 0, 0, 1)`. Press: 120ms scale. The panel glow fades in over 300ms on first paint, opacity only. The screen transition keeps the 8px slide and fade. Result rows arrive in rank order with a 24ms stagger capped at eight rows. A few stars twinkle and a rare shooting star crosses; nothing drifts. The globe fly-to and contraction keep their durations. The globe re-centres into the area the Finder panel leaves free over 300ms (ease-out) when the panel opens, folds or the window resizes; reduced motion jumps. `prefers-reduced-motion` removes transforms and keeps opacity.
 
 ## Do's and Don'ts
 

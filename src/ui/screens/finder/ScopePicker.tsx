@@ -11,8 +11,8 @@ interface ScopePickerProps {
 }
 
 /**
- * Two panes inside the countries tab: the scrollable country list on the left,
- * and the world/continent chips plus the selected summary on the right.
+ * The countries tab as one column (plan 32): the filter field, the world/continent chips,
+ * the selected countries as removable chips, then the country list.
  */
 export function ScopePicker({ onFlyTo, onHoverCountry }: ScopePickerProps) {
   const { t } = useTranslation('finder');
@@ -29,15 +29,8 @@ export function ScopePicker({ onFlyTo, onHoverCountry }: ScopePickerProps) {
   };
 
   return (
-    <div className="grid h-full min-h-0 overflow-hidden @max-[679px]:overflow-y-auto @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(220px,0.65fr)] @min-[680px]:gap-4">
-      <div className="flex min-h-0 flex-col overflow-hidden">
-        <CountryPicker fill showSelected={false} onHoverCountry={onHoverCountry} />
-      </div>
-
-      <aside className="flex min-h-0 flex-col gap-3 overflow-hidden">
-        <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">
-          {t('sections.countries')}
-        </h2>
+    <div className="flex h-full min-h-0 flex-col">
+      <CountryPicker fill showSelected={false} onHoverCountry={onHoverCountry}>
         <div className="flex flex-wrap gap-2">
           <Chip selected={scope.kind === 'global'} onClick={() => setScope({ kind: 'global' })}>
             {t('scope.world')}
@@ -48,12 +41,10 @@ export function ScopePicker({ onFlyTo, onHoverCountry }: ScopePickerProps) {
             </Chip>
           ))}
         </div>
-        <p className="text-xs text-chart-grey">{t('scope.hint')}</p>
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <SelectedCountries />
+        <div className="max-h-28 shrink-0 overflow-y-auto">
+          <SelectedCountries removable />
         </div>
-        <p className="text-xs text-chart-grey">{t('scope.hoverHint')}</p>
-      </aside>
+      </CountryPicker>
     </div>
   );
 }

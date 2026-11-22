@@ -1,8 +1,8 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/ui/components/Chip';
+import { Badge, Chip } from '@/ui/components/Chip';
 import { Flag } from '@/ui/components/Flag';
 import { Input } from '@/ui/components/Input';
 import { countryName } from '@/ui/data/countries';
@@ -16,6 +16,8 @@ interface CountryPickerProps {
   fill?: boolean;
   /** Hide the selected-countries summary when it lives in the other column. */
   showSelected?: boolean;
+  /** Rendered between the filter field and the list (the Finder puts the region and selected chips here). */
+  children?: ReactNode;
 }
 
 /** Accent-insensitive, case-insensitive match on the name, or an exact code. */
@@ -31,6 +33,7 @@ export function CountryPicker({
   onHoverCountry,
   fill = false,
   showSelected = true,
+  children,
 }: CountryPickerProps) {
   const { t, i18n } = useTranslation('finder');
   const scope = useFinder((s) => s.scope);
@@ -72,7 +75,7 @@ export function CountryPicker({
 
   return (
     <div
-      className={cn('flex flex-col gap-3', fill && 'h-full min-h-0 overflow-hidden')}
+      className={cn('flex flex-col gap-3', fill && 'h-full min-h-0')}
       onMouseLeave={() => onHoverCountry(null)}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) onHoverCountry(null);
@@ -86,7 +89,7 @@ export function CountryPicker({
         aria-activedescendant={activeIndex >= 0 ? optionId(activeIndex) : undefined}
         autoComplete="off"
         value={query}
-        placeholder={t('scope.filterPlaceholder')}
+        placeholder={t('scope.filterHint')}
         aria-label={t('scope.filterPlaceholder')}
         onChange={(event) => {
           setQuery(event.target.value);
@@ -109,16 +112,16 @@ export function CountryPicker({
         }}
       />
 
+      {children}
+
       <div
         id={listboxId}
         role="listbox"
         aria-multiselectable="true"
         aria-label={t('sections.countries')}
         className={cn(
-          'grid min-h-0 grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline @min-[520px]:grid-cols-2',
-          fill
-            ? 'flex-1 @max-[679px]:max-h-[38vh] @max-[679px]:flex-none'
-            : 'max-h-[min(38vh,360px)]',
+          'grid grid-cols-1 gap-x-1 overflow-y-auto rounded-control border border-hairline',
+          fill ? 'min-h-32 flex-1' : 'min-h-0 max-h-[min(38vh,360px)]',
         )}
       >
         {filtered.length === 0 ? (
@@ -170,11 +173,21 @@ export function CountryPicker({
   );
 }
 
-/** Read-only summary of the chosen countries. Deselection happens by toggling a row in the list. */
-export function SelectedCountries({ compact = false }: { compact?: boolean }) {
+/**
+ * Summary of the chosen countries. `compact` is the read-only line in the results header;
+ * `removable` shows them as chips with a remove control and renders nothing when none are chosen.
+ */
+export function SelectedCountries({
+  compact = false,
+  removable = false,
+}: {
+  compact?: boolean;
+  removable?: boolean;
+}) {
   const { t, i18n } = useTranslation('finder');
   const scope = useFinder((s) => s.scope);
   const setScope = useFinder((s) => s.setScope);
+  const toggleCountry = useFinder((s) => s.toggleCountry);
   const uiLang = i18n.resolvedLanguage ?? 'en';
   const codes = scope.kind === 'countries' ? scope.codes : [];
 
@@ -204,6 +217,25 @@ export function SelectedCountries({ compact = false }: { compact?: boolean }) {
         {codes.length === 0 ? <span>{t('scope.selectedEmpty')}</span> : badges}
         {clear}
       </div>
+    );
+  }
+
+  if (removable) {
+    if (codes.length === 0) return null;
+    return (
+      <section aria-live="polite" aria-label={t('scope.selected')} className="flex flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-2">
+          <h3 className="text-sm font-medium text-foreground">{t('scope.selected')}</h3>
+          {clear}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {codes.map((iso) => (
+            <Chip key={iso} onRemove={() => toggleCountry(iso)}>
+              {countryName(iso, uiLang)}
+            </Chip>
+          ))}
+        </div>
+      </section>
     );
   }
 
