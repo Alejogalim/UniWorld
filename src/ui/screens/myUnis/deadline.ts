@@ -52,6 +52,19 @@ export function parseDeadline(text: string | null): string | null {
   return candidates[0].date;
 }
 
+/** A deadline is urgent when it is still ahead and within 30 days. */
+export function isUrgent(days: number): boolean {
+  return days >= 0 && days < 30;
+}
+
+/** Format an ISO date (YYYY-MM-DD) in the UI language, e.g. "Nov 22, 2026". */
+export function formatDeadline(isoDate: string, uiLang: string): string {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  const date = new Date(y, (m ?? 1) - 1, d ?? 1);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  return new Intl.DateTimeFormat(uiLang, { dateStyle: 'medium' }).format(date);
+}
+
 /** Whole days from `today` to the ISO date (negative when past). Both are local calendar dates. */
 export function daysUntil(isoDate: string, today: Date | string = new Date()): number {
   const [y, m, d] = isoDate.split('-').map(Number);

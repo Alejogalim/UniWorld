@@ -5,6 +5,7 @@
   "sections": {
     "careers": "Nghề nghiệp",
     "scope": "Nơi muốn học",
+    "countries": "Quốc gia",
     "filters": "Bộ lọc",
     "results": "Kết quả"
   },
@@ -14,10 +15,15 @@
   },
   "scope": {
     "world": "Toàn thế giới",
-    "hint": "Nhấn vào một quốc gia trên quả địa cầu để thêm. Nhấn lại để bỏ.",
+    "hint": "Nhấn vào một quốc gia trên quả địa cầu hoặc trong danh sách để thêm. Nhấn lại để bỏ.",
     "current": "Đang tìm ở",
     "addCountry": "Thêm quốc gia",
-    "noMatches": "Không có quốc gia nào khớp"
+    "noMatches": "Không có quốc gia nào khớp",
+    "filterPlaceholder": "Lọc quốc gia",
+    "selected": "Đã chọn",
+    "clear": "Xóa",
+    "selectedEmpty": "Chưa chọn quốc gia nào.",
+    "hoverHint": "Di chuột hoặc dùng phím mũi tên qua một quốc gia để tập trung trên quả địa cầu."
   },
   "continent": {
     "Africa": "Châu Phi",

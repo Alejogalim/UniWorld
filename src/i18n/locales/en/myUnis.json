@@ -4,43 +4,54 @@
     "description": "Open a university in the Finder and add it to your list.",
     "action": "Open the Finder"
   },
-  "groups": {
-    "dueSoon": "Due soon",
-    "inProgress": "In progress",
-    "decided": "Decided"
+  "summary": {
+    "total_one": "university",
+    "total_other": "universities",
+    "urgent": "with a deadline in the next 30 days"
   },
-  "next": {
-    "line_one": "Next: <name>{{name}}</name> closes in <days>{{count}} day</days>",
-    "line_other": "Next: <name>{{name}}</name> closes in <days>{{count}} days</days>",
-    "today": "Next: <name>{{name}}</name> closes <days>today</days>"
-  },
-  "row": {
-    "edit": "Edit {{name}}"
-  },
-  "deadline": {
-    "none": "No deadline",
-    "inDays_one": "in {{count}} day",
-    "inDays_other": "in {{count}} days",
-    "today": "Today",
-    "closed": "Closed"
-  },
-  "exams": {
-    "placeholder": "SAT, IELTS",
-    "hint": "Separate with commas. Changes save when you leave the field."
-  },
-  "notes": {
-    "empty": "Add a note"
-  },
-  "panel": {
-    "close": "Close",
+  "card": {
+    "edit": "Edit",
+    "editFor": "Edit {{name}}",
+    "deadline": "Deadline",
     "program": "Program",
     "language": "Language",
-    "deadline": "Deadline",
-    "status": "Status",
     "exams": "Required exams",
     "notes": "Notes"
   },
+  "editor": {
+    "title": "Edit university",
+    "back": "Back",
+    "save": "Save",
+    "saving": "Saving…",
+    "removing": "Removing…",
+    "remove": "Remove from list",
+    "discard": "Discard your unsaved changes?",
+    "discardConfirm": "Discard changes",
+    "discardCancel": "Keep editing",
+    "programRequired": "Enter a program name.",
+    "languageHint": "Comma-separated language codes, for example en, de.",
+    "examsHint": "Separate exams with commas."
+  },
+  "deadline": {
+    "none": "No deadline",
+    "passed": "Passed",
+    "daysLeft_one": "{{count}} day left",
+    "daysLeft_other": "{{count}} days left",
+    "label": "Deadline for {{name}}",
+    "clear": "Clear"
+  },
+  "exams": {
+    "placeholder": "SAT, IELTS",
+    "label": "Required exams for {{name}}"
+  },
   "status": {
+    "label": "Status for {{name}}",
+    "current": "Current status: {{status}}",
+    "pipeline": "Application progress",
+    "outcome": "Outcome",
+    "afterApplying": "After applying",
+    "none": "No outcome yet",
+    "final": "Final status",
     "considering": "Considering",
     "preparing": "Preparing",
     "applied": "Applied",
@@ -48,6 +59,10 @@
     "admitted": "Admitted",
     "waitlisted": "Waitlisted",
     "rejected": "Rejected"
+  },
+  "notes": {
+    "label": "Notes for {{name}}",
+    "placeholder": "Anything you want to remember"
   },
   "remove": {
     "button": "Remove",

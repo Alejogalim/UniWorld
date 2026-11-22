@@ -5,6 +5,7 @@
   "sections": {
     "careers": "Carreras",
     "scope": "Dónde estudiar",
+    "countries": "Países",
     "filters": "Filtros",
     "results": "Resultados"
   },
@@ -14,10 +15,15 @@
   },
   "scope": {
     "world": "Todo el mundo",
-    "hint": "Haz clic en un país del globo para añadirlo. Haz clic otra vez para quitarlo.",
+    "hint": "Haz clic en un país del globo o de la lista para añadirlo. Haz clic otra vez para quitarlo.",
     "current": "Buscando en",
     "addCountry": "Añadir un país",
-    "noMatches": "Ningún país coincide"
+    "noMatches": "Ningún país coincide",
+    "filterPlaceholder": "Filtrar países",
+    "selected": "Seleccionados",
+    "clear": "Borrar",
+    "selectedEmpty": "Aún no hay países seleccionados.",
+    "hoverHint": "Pasa el cursor o usa las flechas sobre un país para enfocarlo en el globo."
   },
   "continent": {
     "Africa": "África",

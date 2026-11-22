@@ -269,6 +269,66 @@
       0 14px 60px -24px color-mix(in oklch, var(--ember-0) 55%, transparent);
   }
 
+  /* Status card: the rim and an outer glow take their colour from the application status. */
+  .status-card {
+    --rim: linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--card-accent) 60%, transparent),
+      color-mix(in oklch, var(--card-accent) 18%, transparent)
+    );
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--card-accent) 16%, transparent),
+      0 0 32px -12px color-mix(in oklch, var(--card-accent) 65%, transparent);
+    transition: box-shadow 200ms ease;
+  }
+  .status-card:hover {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--card-accent) 24%, transparent),
+      0 0 44px -12px color-mix(in oklch, var(--card-accent) 80%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .status-card { transition: none; }
+  }
+
+  /* Below md the seven-step status track scrolls sideways inside the card; hide the bar. */
+  .status-track-scroll {
+    scrollbar-width: none;
+  }
+  .status-track-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Lit status connectors are a true sine wave: a solid colour revealed by a repeating wave mask,
+     sliding one full period per cycle so the wave travels like an audio waveform. */
+  @keyframes status-wave-move {
+    from {
+      -webkit-mask-position: 0 center;
+      mask-position: 0 center;
+    }
+    to {
+      -webkit-mask-position: 24px center;
+      mask-position: 24px center;
+    }
+  }
+  .status-wave-line {
+    height: 8px;
+    background-color: var(--wave-color, var(--evidence));
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 C3 1 9 1 12 4 S21 7 24 4' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 C3 1 9 1 12 4 S21 7 24 4' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    -webkit-mask-size: 24px 8px;
+    mask-size: 24px 8px;
+    -webkit-mask-position: 0 center;
+    mask-position: 0 center;
+  }
+  .status-wave-line--animated {
+    animation: status-wave-move 1.4s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .status-wave-line--animated { animation: none; }
+  }
+
   /* Primary button fill: a vertical ember gradient (light: deep orange; dark: amber to ember). */
   .ember-button {
     background-image: linear-gradient(to bottom, var(--ember-button-top), var(--ember-button-bottom));

@@ -4,43 +4,54 @@
     "description": "Abre una universidad en el buscador y añádela a tu lista.",
     "action": "Abrir el buscador"
   },
-  "groups": {
-    "dueSoon": "Vence pronto",
-    "inProgress": "En curso",
-    "decided": "Decididas"
+  "summary": {
+    "total_one": "universidad",
+    "total_other": "universidades",
+    "urgent": "con fecha límite en los próximos 30 días"
   },
-  "next": {
-    "line_one": "Próxima: <name>{{name}}</name> cierra en <days>{{count}} día</days>",
-    "line_other": "Próxima: <name>{{name}}</name> cierra en <days>{{count}} días</days>",
-    "today": "Próxima: <name>{{name}}</name> cierra <days>hoy</days>"
-  },
-  "row": {
-    "edit": "Editar {{name}}"
-  },
-  "deadline": {
-    "none": "Sin fecha límite",
-    "inDays_one": "en {{count}} día",
-    "inDays_other": "en {{count}} días",
-    "today": "Hoy",
-    "closed": "Cerrada"
-  },
-  "exams": {
-    "placeholder": "SAT, IELTS",
-    "hint": "Sepáralos con comas. Los cambios se guardan al salir del campo."
-  },
-  "notes": {
-    "empty": "Añadir una nota"
-  },
-  "panel": {
-    "close": "Cerrar",
+  "card": {
+    "edit": "Editar",
+    "editFor": "Editar {{name}}",
+    "deadline": "Fecha límite",
     "program": "Programa",
     "language": "Idioma",
-    "deadline": "Fecha límite",
-    "status": "Estado",
     "exams": "Exámenes requeridos",
     "notes": "Notas"
   },
+  "editor": {
+    "title": "Editar universidad",
+    "back": "Volver",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "removing": "Quitando…",
+    "remove": "Quitar de la lista",
+    "discard": "¿Descartar los cambios sin guardar?",
+    "discardConfirm": "Descartar cambios",
+    "discardCancel": "Seguir editando",
+    "programRequired": "Escribe el nombre de un programa.",
+    "languageHint": "Códigos de idioma separados por comas, por ejemplo en, de.",
+    "examsHint": "Separa los exámenes con comas."
+  },
+  "deadline": {
+    "none": "Sin fecha límite",
+    "passed": "Vencida",
+    "daysLeft_one": "Queda {{count}} día",
+    "daysLeft_other": "Quedan {{count}} días",
+    "label": "Fecha límite de {{name}}",
+    "clear": "Borrar"
+  },
+  "exams": {
+    "placeholder": "SAT, IELTS",
+    "label": "Exámenes requeridos de {{name}}"
+  },
   "status": {
+    "label": "Estado de {{name}}",
+    "current": "Estado actual: {{status}}",
+    "pipeline": "Progreso de la solicitud",
+    "outcome": "Resultado",
+    "afterApplying": "Después de solicitar",
+    "none": "Sin resultado todavía",
+    "final": "Estado final",
     "considering": "Considerando",
     "preparing": "Preparando",
     "applied": "Solicitada",
@@ -48,6 +59,10 @@
     "admitted": "Admitido",
     "waitlisted": "Lista de espera",
     "rejected": "Rechazada"
+  },
+  "notes": {
+    "label": "Notas de {{name}}",
+    "placeholder": "Lo que quieras recordar"
   },
   "remove": {
     "button": "Quitar",

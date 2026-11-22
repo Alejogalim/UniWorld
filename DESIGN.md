@@ -327,13 +327,10 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 - Urgent deadlines: an ember pill (`.ember-button`) holding the days-left number.
 
 ### My universities (Uni Manager)
-- **Grouped list, not a table.** Three ruled sections, each with a small heading and a count in tabular numerals: Due soon (deadline within 30 days, not yet decided), In progress (everything else not decided), and Decided (admitted or rejected). Each group sorts nearest deadline first. Empty groups are hidden.
-- **One line above the groups** names the next deadline: "Next: [name] closes in [days]". The name is ink and the days are signal. It appears only when a Due soon row exists.
-- **Three-zone row:** identity (flag, name, then program · city · language, exams and a one-line note only when present), deadline, and status. The whole row is a button that opens the editing panel. Rows have no underlines, chips, or inline controls.
-- **Deadlines:** relative first ("in 12 days", "Today", "Closed" in muted ink, "No deadline" in muted ink), with the date beneath in `tabular-nums`. Ember appears only for deadlines inside 30 days.
-- **Status dots, not selects:** admitted in evidence green; waiting and waitlisted in ember-2; applied in ink; considering and preparing in hairline; rejected in chart grey with muted label. The dot is decorative and the label carries the meaning.
-- **Side panel for edits:** a right drawer on the panel fill with a hairline left edge, 26rem wide, over a 30% black scrim. Escape, the scrim, or the close button dismisses it. Focus moves in on open, cycles inside while open, and returns to the row on close. Fields save on blur or Enter (selects and dates at once). Remove sits at the foot behind a two-step confirm. The fade and slide take 180ms and drop to nothing under reduced motion.
-- **No KPI strip** and no global screen-title change.
+Implemented in `src/ui/screens/MyUnis.tsx` and `src/ui/screens/myUnis/` (`TrackedUniCard`, `TrackedUniEditor`, `StatusProgress`, `status.ts`).
+- **Overview of independent cards**, nearest deadline first (`sortByDeadline`), then no deadline, then passed. Each card is wide and read-only: name and place top-left, deadline top-right (relative note: passed, urgent in signal, or a quiet day count), the facts through the middle, and the status track along the bottom. The card rim and outer glow take their colour from the status accent.
+- **Status track** (`StatusProgress`): considering, preparing, applied, waiting, then one shared final-outcome dot (admitted, waitlisted or rejected). One continuous wave runs behind the nodes; the lit layer is clipped to the current stage.
+- **Full editor** per university (`TrackedUniEditor`): a local draft of every field, saved in one update on Save, with the three-stage pipeline plus the outcome controls.
 
 ### Settings
 - **One centred 640px column** under the page title. Sections are 32px apart.

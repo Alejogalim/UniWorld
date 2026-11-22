@@ -46,6 +46,9 @@ export function AppShell() {
   const [railCollapsed, setRailCollapsed] = useState(false);
 
   const onCounselor = location.pathname.startsWith('/counselor');
+  // The counselor, the Finder and My universities fill the working column: the Finder's globe needs the
+  // space above its bottom dock, and the university cards/editor start at the top.
+  const hideTitle = onCounselor || location.pathname === '/finder' || location.pathname === '/my-unis';
 
   return (
     <div
@@ -133,8 +136,8 @@ export function AppShell() {
         </div>
       </aside>
 
-      <div className={cn('grid min-h-0 min-w-0', onCounselor ? 'grid-rows-[minmax(0,1fr)]' : 'grid-rows-[auto_minmax(0,1fr)]')}>
-        {!onCounselor && (
+      <div className={cn('grid min-h-0 min-w-0', hideTitle ? 'grid-rows-[minmax(0,1fr)]' : 'grid-rows-[auto_minmax(0,1fr)]')}>
+        {!hideTitle && (
           <header className="flex items-baseline justify-center bg-transparent px-8 py-4">
             <h1 key={location.pathname} className="screen-title">
               <span className="screen-title__type">{t(active?.titleKey ?? 'appName')}</span>
