@@ -86,6 +86,7 @@
     --signal: #b53204;
     --signal-deep: #952903;
     --evidence: #2a7050;
+    --rejected: #c42a3a;
     --land: #d9d9d9;
     --globe-ocean: #fbfaf8;
     --shadow-ink: rgb(64 32 12 / 0.28);
@@ -163,6 +164,7 @@
     /* Lighter than --signal: the hover lifts the label contrast on black. */
     --signal-deep: #ff8a4d;
     --evidence: #5fbf8f;
+    --rejected: #f2626b;
     --land: #26262a;
     --globe-ocean: #060607;
     --shadow-ink: rgb(0 0 0 / 0.5);

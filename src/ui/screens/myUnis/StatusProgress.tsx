@@ -55,7 +55,7 @@ const KNOCKOUT = '0 0 0 2px var(--track-ground)';
 const OUTCOME_NODE: Record<FinalOutcomeStatus, { Icon: LucideIcon; fill: string }> = {
   admitted: { Icon: Check, fill: 'var(--evidence)' },
   waitlisted: { Icon: Pause, fill: 'var(--foreground)' },
-  rejected: { Icon: X, fill: 'var(--chart-grey)' },
+  rejected: { Icon: X, fill: 'var(--rejected)' },
 };
 /** How long the node fade-in trails the line as it draws from the first node to the last. */
 const NODE_TRAIL_MS = 480;
@@ -225,7 +225,7 @@ export function StatusProgress({
             const labelClass = cn(
               'text-center text-xs leading-4 break-words transition-colors duration-300 ease-[cubic-bezier(0.2,0,0,1)]',
               isCurrent
-                ? 'font-semibold text-foreground'
+                ? (rejected ? 'font-semibold text-[var(--rejected)]' : 'font-semibold text-foreground')
                 : done && !rejected
                   ? 'text-foreground/75'
                   : 'text-chart-grey',

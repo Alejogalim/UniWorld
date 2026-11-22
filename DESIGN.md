@@ -12,6 +12,7 @@ colors:
   signal: "#b53204"
   signal-deep: "#952903"
   evidence: "#2a7050"
+  rejected: "#c42a3a"
   ember-0: "#b3210a"
   ember-1: "#ff5a1f"
   ember-2: "#f7b267"
@@ -28,6 +29,7 @@ colors:
   signal-dark: "#ff6a2b"
   signal-deep-dark: "#ff8a4d"
   evidence-dark: "#5fbf8f"
+  rejected-dark: "#f2626b"
   globe-ocean-dark: "#060607"
   button-top-dark: "#ff8a3d"
   button-bottom-dark: "#ff5a1f"
@@ -141,6 +143,7 @@ Monochrome first. Ember is the only colour, and it is spent in named places.
 | `--hairline` | `#c2beb8` | `#39393c` |
 | `--signal` / `--signal-deep` | `#b53204` / `#952903` | `#ff6a2b` / `#ff8a4d` |
 | `--evidence` | `#2a7050` | `#5fbf8f` |
+| `--rejected` | `#c42a3a` | `#f2626b` (rejected outcome only) |
 | `--ember-0` / `-1` / `-2` | `#b3210a` / `#ff5a1f` / `#f7b267` | same |
 | `--ember-button-top` / `-bottom` | `#c4400b` / `#b83304` | `#ff8a3d` / `#ff5a1f` |
 | `--ember-glow` | none (transparent) | ember-1 at 55% (focus ring and range thumb) |
@@ -335,7 +338,7 @@ Implemented in `src/ui/screens/MyUnis.tsx` and `src/ui/screens/myUnis/` (`Tracke
   - **Labels:** 12px / 16px, centred under each node 8px below it, in equal-width columns. Current: ink, weight 600 (19.8 light, 19.55 dark). Completed: ink at 75% (9.3 / 11.0). Upcoming: chart grey (6.0 / 6.0). Labels wrap; they never truncate.
   - **Light travels along the track:** every 5 to 7 s (random per card) a soft ember light (`--ember-1`, a 32px tail at 40% with a brighter 8px core, peak opacity 0.7) slides from the first node to the current one, decelerating, and fades into it; it never passes the current step. ember-1 rather than signal so it reads on the ink line in light mode (6.35:1). The current node breathes: a 1px ember ring grows to 1.8x at opacity 0.4 and fades, every 3.6 to 4.4 s. Both are named exceptions to "nothing that glows is ever animated": tiny elements, transform and opacity only, per-card CSS timing, running only while the card is on screen and the window is visible. They stop once a final outcome is reached.
   - **Status change:** the completed line fills from the old node to the new one (500ms, scaleX), the new current node pops with a soft spring (from 0.6, little overshoot), and its label fades to ink (300ms, `cubic-bezier(0.2, 0, 0, 1)`). A card remembers (for the session) the status it last showed, so the change plays when the list returns from the editor.
-  - **Outcomes:** the final node becomes a 16px solid disc with a 10px lucide glyph knocked out in the ground colour. Admitted: evidence green with a check (the only green, see the Evidence Rule). Waitlisted: ink with a pause glyph. Rejected: chart grey with an x, and the completed line, nodes and labels go chart grey too. On an actual change to admitted or waitlisted, one soft ember ring expands once around the final node (1400ms); rejected has no flourish. No sparks, no second accent.
+  - **Outcomes:** the final node becomes a 16px solid disc with a 10px lucide glyph knocked out in the ground colour. Admitted: evidence green with a check (the only green, see the Evidence Rule). Waitlisted: ink with a pause glyph. Rejected: a red disc (`--rejected`, #c42a3a light / #f2626b dark) with an x and its label in the same red; the completed line, nodes and other labels go chart grey. On an actual change to admitted or waitlisted, one soft ember ring expands once around the final node (1400ms); rejected has no flourish. No sparks, no second accent.
   - **First paint:** on entering Shortlist each card's line draws in left to right once (600ms, 60ms stagger per card, capped at eight cards), the nodes following it.
 - **Full editor** per university (`TrackedUniEditor`): a local draft of every field, saved in one update on Save, with the three-stage pipeline plus the outcome controls.
 
