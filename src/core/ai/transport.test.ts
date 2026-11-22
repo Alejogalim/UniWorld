@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import type { HttpResponseLike } from '../ports';
-import { consumeSse } from './transport';
+import { consumeSse, extractContent, looksTruncated } from './transport';
 
 function response(text: string): HttpResponseLike {
   return {
@@ -19,6 +19,35 @@ const sse = [
   'data: [DONE]',
   '',
 ].join('\n');
+
+describe('extractContent', () => {
+  it('surfaces a truncation finish reason and keeps reasoning out of content', () => {
+    const result = extractContent({
+      choices: [
+        {
+          finish_reason: 'length',
+          message: { content: '', reasoning_content: 'We need to think about this...' },
+        },
+      ],
+    });
+    expect(result.content).toBe('');
+    expect(result.finishReason).toBe('length');
+    expect(result.reasoning).toContain('think');
+    expect(looksTruncated(result.content, result.finishReason)).toBe(true);
+  });
+
+  it('treats an empty reply as truncated even without a finish reason', () => {
+    const result = extractContent({ choices: [{ message: { content: '' } }] });
+    expect(looksTruncated(result.content, result.finishReason)).toBe(true);
+  });
+
+  it('does not flag a normal answer as truncated', () => {
+    const result = extractContent({
+      choices: [{ finish_reason: 'stop', message: { content: '{"ok":true}' } }],
+    });
+    expect(looksTruncated(result.content, result.finishReason)).toBe(false);
+  });
+});
 
 describe('consumeSse', () => {
   it('parses a full SSE payload when the adapter has no stream body', async () => {

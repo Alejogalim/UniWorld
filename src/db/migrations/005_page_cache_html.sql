@@ -1,0 +1,1 @@
+ALTER TABLE page_cache ADD COLUMN html TEXT;

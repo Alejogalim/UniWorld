@@ -6,6 +6,7 @@ import {
   extractContent,
   ProviderError,
   readError,
+  withTimeoutSignal,
 } from './transport';
 import type { AiClient, ChatMessage, ChatOptions, SearchHit, SearchOptions } from './types';
 
@@ -58,10 +59,10 @@ export class OpenCodeClient implements AiClient {
       max_tokens: options.maxTokens ?? 2000,
     };
     if (options.json) body.response_format = { type: 'json_object' };
-    let response = await this.post(body, options.signal);
+    let response = await this.post(body, withTimeoutSignal(options.signal));
     if (!response.ok && response.status === 400 && options.json) {
       delete body.response_format;
-      response = await this.post(body, options.signal);
+      response = await this.post(body, withTimeoutSignal(options.signal));
     }
     if (!response.ok) throw new ProviderError(await readError(response), response.status);
     const payload: unknown = await response.json();
@@ -82,6 +83,8 @@ export class OpenCodeClient implements AiClient {
       stream: true,
     };
     if (options.json) body.response_format = { type: 'json_object' };
+    // No wall-clock timeout here: a long answer would be cut mid-stream. Only
+    // the caller can abort streaming.
     const response = await this.post(body, options.signal);
     if (!response.ok) throw new ProviderError(await readError(response), response.status);
     return consumeSse(response, onToken);

@@ -76,8 +76,8 @@ export const tauriProfile: ProfileStore = {
 
 /** Non-secret settings from the `settings` table (model id, default provider). */
 export class TauriSettingsStore implements SettingsStore {
-  async getModel(): Promise<string | null> {
-    return this.read('model');
+  async getModel(provider: Provider = 'openrouter'): Promise<string | null> {
+    return this.read(provider === 'opencode' ? 'model_opencode' : 'model');
   }
 
   async getDefaultProvider(): Promise<Provider | null> {

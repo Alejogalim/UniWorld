@@ -12,6 +12,12 @@ export type UiLang = 'en' | 'es' | 'vi';
 export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2' | 'native';
 export type Program = 'IB' | 'AP' | 'US';
 export type Provider = 'openrouter' | 'opencode';
+
+/** One selectable model for the Settings dropdown. */
+export interface AiModel {
+  id: string;
+  name: string;
+}
 export type Continent =
   | 'Africa' | 'Asia' | 'Europe' | 'North America' | 'South America' | 'Oceania';
 
@@ -95,6 +101,8 @@ export type Scope =
 
 export interface SearchInput {
   careers: string[];
+  /** Degree/programme keywords from the saved careers, when the UI can pass them. */
+  degreeKeywords?: string[];
   scope: Scope;
   filters: {
     tuitionFreeOnly: boolean; // default false
@@ -113,6 +121,10 @@ export interface UniResult {
   lat?: number;
   lng?: number;
   program: string;
+  /** Official page where the programme name was found (evidence). */
+  programUrl?: string;
+  /** Exact text that matched the programme keyword on that page. */
+  programQuote?: string;
   overview: Fact<string>;
   languages: Fact<string[]>;
   tuition: Fact<string>; // e.g. "Free", "~€12,000/yr", "Free for EU/EEA"
@@ -144,10 +156,24 @@ export interface UniDetail {
   checkedAt: string; // ISO date
 }
 
+export type RemovalReason =
+  | 'not_in_registry'
+  | 'out_of_scope'
+  | 'site_unreachable'
+  | 'programme_not_found'
+  | 'not_bachelor'
+  | 'language_not_spoken'
+  | 'tuition_not_free'
+  | 'ai_answer_rejected'
+  | 'over_cap';
+
+/** How many candidates each removal reason cost. Only non-zero entries are sent. */
+export type RemovalReasons = Partial<Record<RemovalReason, number>>;
+
 export type FinderEvent =
   | { type: 'progress'; message: string }
   | { type: 'result'; uni: UniResult } // streamed as verified, max 12 per search
-  | { type: 'done'; verified: number; removed: number }
+  | { type: 'done'; verified: number; removed: number; reasons?: RemovalReasons }
   | { type: 'error'; message: string };
 
 // ---------- Tracker (owned by A's store, listed here for reference) ----------
@@ -158,6 +184,8 @@ export type TrackedStatus =
 // ---------- The API the UI calls (B implements, A consumes) ----------
 export interface CoreApi {
   testConnection(provider: Provider): Promise<{ ok: boolean; error?: string }>;
+  /** Models the provider offers; the key is used when it exists but is not required. */
+  listModels(provider: Provider): Promise<AiModel[]>;
 
   counselor: {
     start(): Promise<{ sessionId: number }>;

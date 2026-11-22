@@ -58,9 +58,15 @@
     "saveFailed": "The key could not be saved: {{error}}",
     "model": {
       "label": "Model",
-      "hint": "Leave empty to use the default model, {{model}}.",
-      "save": "Save model",
-      "saved": "Model saved."
+      "hint": "Models offered by the selected provider. The default is {{model}}.",
+      "defaultOption": "Default ({{model}})",
+      "loading": "Loading models…",
+      "empty": "No models available",
+      "noMatches": "No matching models",
+      "loadFailed": "The model list could not be loaded: {{error}}",
+      "retry": "Try again",
+      "saved": "Model saved automatically.",
+      "saveFailed": "The model could not be saved: {{error}}"
     },
     "counselorProvider": {
       "label": "AI provider",

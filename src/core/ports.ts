@@ -50,8 +50,8 @@ export interface SecretStore {
 }
 
 export interface SettingsStore {
-  /** Model ID for OpenRouter; falls back to the built-in default. */
-  getModel(): Promise<string | null>;
+  /** Model ID for one provider; falls back to that provider's built-in default. */
+  getModel(provider?: Provider): Promise<string | null>;
   /** Which provider the counselor should prefer. */
   getDefaultProvider?(): Promise<Provider | null>;
 }
@@ -90,6 +90,22 @@ export interface DetailCache {
   put(detail: UniDetail): Promise<void>;
 }
 
+export interface CachedPage {
+  /** Final URL after redirects. */
+  url: string;
+  title: string | null;
+  text: string;
+  /** Raw HTML (capped) so cached pages can still yield same-site links. */
+  html?: string;
+  fetchedAt: string;
+}
+
+/** Raw fetched page text, so repeat searches and the detail page skip the network. */
+export interface PageCache {
+  get(url: string): Promise<CachedPage | null>;
+  put(url: string, page: CachedPage): Promise<void>;
+}
+
 export interface CounselorSession {
   id: number;
   provider: Provider;
@@ -125,6 +141,7 @@ export interface CoreDeps {
   sql?: SqlClient;
   searches?: SearchCache;
   details?: DetailCache;
+  pages?: PageCache;
   counselorStore?: CounselorPersistence;
   /** Directory used by the CLI for its JSON cache. Unused in the app. */
   cacheDir?: string;

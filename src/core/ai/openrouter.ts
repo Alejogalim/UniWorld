@@ -7,7 +7,13 @@ import {
 } from '../config';
 import { canonicalJson, normalizeUrl } from '../normalize';
 import type { HttpClient } from '../ports';
-import { consumeSse, extractContent, ProviderError, readError } from './transport';
+import {
+  consumeSse,
+  extractContent,
+  ProviderError,
+  readError,
+  withTimeoutSignal,
+} from './transport';
 import type { AiClient, ChatMessage, ChatOptions, SearchHit, SearchOptions } from './types';
 
 export interface OpenRouterOptions {
@@ -110,10 +116,10 @@ export class OpenRouterClient implements AiClient {
     };
     if (options.json) base.response_format = { type: 'json_object' };
 
-    let response = await this.post(base, options.signal);
+    let response = await this.post(base, withTimeoutSignal(options.signal));
     if (!response.ok && response.status === 400 && options.json) {
       delete base.response_format;
-      response = await this.post(base, options.signal);
+      response = await this.post(base, withTimeoutSignal(options.signal));
     }
     if (!response.ok) {
       throw new ProviderError(await readError(response), response.status);
@@ -138,6 +144,7 @@ export class OpenRouterClient implements AiClient {
       provider: { zdr: true },
     };
     if (options.json) body.response_format = { type: 'json_object' };
+    // No wall-clock timeout for streaming: only the caller can abort it.
     const response = await this.post(body, options.signal);
     if (!response.ok) throw new ProviderError(await readError(response), response.status);
     return consumeSse(response, onToken);
@@ -174,10 +181,10 @@ export class OpenRouterClient implements AiClient {
       };
     }
 
-    let response = await this.post(base, options.signal);
+    let response = await this.post(base, withTimeoutSignal(options.signal));
     if (!response.ok && response.status === 400) {
       delete base.web_search_options;
-      response = await this.post(base, options.signal);
+      response = await this.post(base, withTimeoutSignal(options.signal));
     }
     if (!response.ok && response.status === 400) {
       return this.searchWithServerTool(messages, maxResults, options);
@@ -216,7 +223,7 @@ export class OpenRouterClient implements AiClient {
       ],
       provider: { zdr: true },
     };
-    const toolResponse = await this.post(toolBody, options.signal);
+    const toolResponse = await this.post(toolBody, withTimeoutSignal(options.signal));
     if (!toolResponse.ok) {
       return markdownLinks(
         await toolResponse.text().catch(() => ''),

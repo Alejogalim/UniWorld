@@ -1,6 +1,6 @@
 import type { CoreApi, CounselorWeights, Provider, SearchInput } from './contracts';
 import { Counselor } from './counselor/index';
-import { testProviderConnection } from './ai/index';
+import { listProviderModels, testProviderConnection } from './ai/index';
 import { createFinder, type FinderApi } from './finder/index';
 import type { RorStore } from './grounding/rorStore';
 import type { CoreDeps } from './ports';
@@ -35,6 +35,7 @@ export function createCoreApi(options: CoreApiOptions): CoreApi {
 
   return {
     testConnection: (provider: Provider) => testProviderConnection(provider, deps),
+    listModels: (provider: Provider) => listProviderModels(provider, deps),
     counselor: {
       start: () => counselor.start(),
       send: (sessionId: number, text: string, onToken?: (token: string) => void) =>

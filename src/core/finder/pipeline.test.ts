@@ -232,11 +232,16 @@ describe('Finder search pipeline', () => {
     const done = events.find((event) => event.type === 'done');
     const progress = events.filter((event) => event.type === 'progress');
 
-    expect(results).toHaveLength(1);
+    const unique = new Set(
+      results.flatMap((event) => (event.type === 'result' ? [event.uni.rorId] : [])),
+    );
+    // Unranked results stream first, then the ranked version replaces them.
+    expect(unique.size).toBe(1);
     expect(done).toEqual({ type: 'done', verified: 1, removed: 0 });
     expect(progress.length).toBeGreaterThan(0);
 
-    const uni = results[0] && results[0].type === 'result' ? results[0].uni : null;
+    const last = results.at(-1);
+    const uni = last && last.type === 'result' ? last.uni : null;
     expect(uni?.name).toBe('University of Barcelona');
     expect(uni?.tuition.value).toBe('Free');
     expect(uni?.languages.value).toEqual(['English']);

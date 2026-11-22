@@ -27,7 +27,7 @@ Stored as `JSON.stringify(notes)` in `counselor_session.notes_json` (NULL = no n
 
 ## Files
 Create:
-- `src/db/migrations/004_counselor_notes.sql`
+- `src/db/migrations/006_counselor_notes.sql`
 - `src/core/counselor/transcript.ts`
 - `src/core/counselor/transcript.test.ts`
 
@@ -54,7 +54,7 @@ Nothing else.
 
 ## Steps
 
-- [x] 1. Create `src/db/migrations/004_counselor_notes.sql`:
+- [x] 1. Create `src/db/migrations/006_counselor_notes.sql`:
 ```sql
 -- Running counselor notes (plan 30): a short JSON summary of what the student has shared, per checklist area.
 -- NULL until the first update. Never holds secrets.
@@ -65,7 +65,7 @@ ALTER TABLE counselor_session ADD COLUMN notes_json TEXT;
     }, Migration {
         version: 4,
         description: "counselor_notes",
-        sql: include_str!("../../src/db/migrations/004_counselor_notes.sql"),
+        sql: include_str!("../../src/db/migrations/006_counselor_notes.sql"),
         kind: MigrationKind::Up,
 ```
   (i.e. the closing `}];` of the vec now follows the version-4 entry).
@@ -635,5 +635,5 @@ Do not start the app and do not run the eval with a real key. The orchestrator c
 - `bun run check:i18n`: passed (es, vi match en).
 - `cargo check --offline` (src-tauri): finished, exit 0.
 - `OPENROUTER_API_KEY= OPENCODE_API_KEY= bun run eval:counselor`: "eval:counselor skipped ...", exit 0. No networked eval run.
-- `git status --short`: only listed files modified, plus new `004_counselor_notes.sql`, `transcript.ts`, `transcript.test.ts`, and pre-existing `.impeccable/`, `graphify-out/`. Plan file also updated (checkboxes and these notes). Nothing committed.
+- `git status --short`: only listed files modified, plus new `006_counselor_notes.sql`, `transcript.ts`, `transcript.test.ts`, and pre-existing `.impeccable/`, `graphify-out/`. Plan file also updated (checkboxes and these notes). Nothing committed.
 

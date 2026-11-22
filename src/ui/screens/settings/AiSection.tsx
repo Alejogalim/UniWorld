@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCore } from '@/app/useCore';
-import { DEFAULT_MODEL } from '@/core';
-import type { Provider } from '@/core/contracts';
+import { DEFAULT_MODEL, OPENCODE_MODEL } from '@/core';
+import type { AiModel, Provider } from '@/core/contracts';
 import { deleteSetting, getSetting, setSetting } from '@/store/settings';
 import { deleteSecret, getSecret, setSecret } from '@/store/secrets';
 import { Badge } from '@/ui/components/Chip';
+import { Combobox, type ComboboxOption } from '@/ui/components/Combobox';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Field } from '@/ui/components/Field';
 import { Input, Select } from '@/ui/components/Input';
@@ -148,16 +149,24 @@ function KeyBlock({ provider, present, primary, title, badge, hint, removeConfir
   );
 }
 
-/** Both provider keys, the model ID and which provider the counselor uses. */
+/** Both provider keys, the model list and which provider the counselor uses. */
 export function AiSection() {
   const { t } = useTranslation('settings');
+  const core = useCore();
   const [present, setPresent] = useState<Presence>({ openrouter: null, opencode: null });
   const [provider, setProvider] = useState<Provider>('openrouter');
-  const [model, setModel] = useState('');
-  const [savedModel, setSavedModel] = useState('');
-  const [modelBusy, setModelBusy] = useState(false);
-  const [modelNote, setModelNote] = useState<{ tone: 'saved' } | { tone: 'fail'; text: string } | null>(null);
+  const [savedModels, setSavedModels] = useState<Record<Provider, string>>({
+    openrouter: '',
+    opencode: '',
+  });
+  const [modelsByProvider, setModelsByProvider] = useState<Partial<Record<Provider, AiModel[]>>>({});
+  const [modelsBusy, setModelsBusy] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelsReload, setModelsReload] = useState(0);
+  const [modelSaved, setModelSaved] = useState(false);
+  const [modelSaveError, setModelSaveError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [settingsReady, setSettingsReady] = useState(false);
 
   // Presence only: the key values never leave the keychain for display.
   const refreshPresence = useCallback(async () => {
@@ -167,15 +176,25 @@ export function AiSection() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([refreshPresence(), getSetting('default_provider'), getSetting('model')])
-      .then(([, defaultProvider, savedModelValue]) => {
+    Promise.all([
+      refreshPresence(),
+      getSetting('default_provider'),
+      getSetting('model'),
+      getSetting('model_opencode'),
+    ])
+      .then(([, defaultProvider, openrouterModel, opencodeModel]) => {
         if (cancelled) return;
         setProvider(defaultProvider === 'opencode' ? 'opencode' : 'openrouter');
-        setModel(savedModelValue ?? '');
-        setSavedModel(savedModelValue ?? '');
+        setSavedModels({
+          openrouter: openrouterModel ?? '',
+          opencode: opencodeModel ?? '',
+        });
       })
       .catch((err: unknown) => {
         if (!cancelled) setLoadError(messageOf(err));
+      })
+      .finally(() => {
+        if (!cancelled) setSettingsReady(true);
       });
     return () => {
       cancelled = true;
@@ -185,6 +204,8 @@ export function AiSection() {
   const chooseProvider = async (next: Provider) => {
     setProvider(next);
     setLoadError(null);
+    setModelSaved(false);
+    setModelSaveError(null);
     try {
       await setSetting('default_provider', next);
     } catch (err) {
@@ -198,20 +219,63 @@ export function AiSection() {
     if (provider === 'opencode') await chooseProvider('openrouter');
   };
 
-  const saveModel = async () => {
-    const value = model.trim();
-    setModelBusy(true);
-    setModelNote(null);
+  const modelBlocked = provider === 'opencode' && present.opencode !== true;
+
+  // The model list belongs to the selected provider; reload it on provider changes and Retry.
+  useEffect(() => {
+    if (!settingsReady) return;
+    if (modelBlocked) {
+      setModelsBusy(false);
+      setModelsError(null);
+      return;
+    }
+    let cancelled = false;
+    setModelsBusy(true);
+    setModelsError(null);
+    core
+      .listModels(provider)
+      .then((models) => {
+        if (!cancelled) setModelsByProvider((prev) => ({ ...prev, [provider]: models }));
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setModelsError(messageOf(err));
+      })
+      .finally(() => {
+        if (!cancelled) setModelsBusy(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [provider, modelBlocked, modelsReload, core, settingsReady]);
+
+  const defaultModel = provider === 'opencode' ? OPENCODE_MODEL : DEFAULT_MODEL;
+  const model = savedModels[provider];
+  const models = modelsByProvider[provider] ?? [];
+  const modelDisabled = modelBlocked || modelsBusy || Boolean(modelsError) || models.length === 0;
+
+  const options: ComboboxOption[] = [
+    { value: '', label: t('ai.model.defaultOption', { model: defaultModel }) },
+    ...models.map((item) => ({ value: item.id, label: item.name, code: item.id })),
+  ];
+  // Keep a stored ID that the provider no longer lists, instead of silently dropping it.
+  if (model && !models.some((item) => item.id === model)) {
+    options.push({ value: model, label: model, code: model });
+  }
+
+  const chooseModel = async (next: string) => {
+    if (next === model) return;
+    const previous = model;
+    setModelSaved(false);
+    setModelSaveError(null);
+    setSavedModels((prev) => ({ ...prev, [provider]: next }));
     try {
-      if (value) await setSetting('model', value);
-      else await deleteSetting('model');
-      setModel(value);
-      setSavedModel(value);
-      setModelNote({ tone: 'saved' });
+      const key = provider === 'opencode' ? 'model_opencode' : 'model';
+      if (next) await setSetting(key, next);
+      else await deleteSetting(key);
+      setModelSaved(true);
     } catch (err) {
-      setModelNote({ tone: 'fail', text: t('ai.saveFailed', { error: messageOf(err) }) });
-    } finally {
-      setModelBusy(false);
+      setSavedModels((prev) => ({ ...prev, [provider]: previous }));
+      setModelSaveError(t('ai.model.saveFailed', { error: messageOf(err) }));
     }
   };
 
@@ -242,7 +306,7 @@ export function AiSection() {
         />
 
         <div className="flex flex-col gap-5 border-t border-hairline pt-6">
-          <div className="grid max-w-[640px] gap-5 sm:grid-cols-2">
+          <div className="grid max-w-[880px] gap-5 sm:grid-cols-2">
             <Field label={t('ai.counselorProvider.label')} hint={t('ai.counselorProvider.hint')}>
               {(c) => (
                 <Select {...c} value={provider} onChange={(e) => void chooseProvider(e.target.value as Provider)}>
@@ -253,29 +317,36 @@ export function AiSection() {
                 </Select>
               )}
             </Field>
-          </div>
 
-          <div className="flex flex-col gap-3">
-            <Field label={t('ai.model.label')} hint={t('ai.model.hint', { model: DEFAULT_MODEL })}>
+            <Field label={t('ai.model.label')} hint={t('ai.model.hint', { model: defaultModel })}>
               {(c) => (
-                <Input
-                  {...c}
+                <Combobox
+                  id={c.id}
+                  aria-describedby={c['aria-describedby']}
+                  invalid={c['aria-invalid']}
+                  options={options}
                   value={model}
-                  placeholder={DEFAULT_MODEL}
-                  spellCheck={false}
-                  onChange={(e) => setModel(e.target.value)}
-                  className="max-w-md font-mono"
+                  onChange={(next) => void chooseModel(next)}
+                  placeholder={modelsBusy ? t('ai.model.loading') : t('ai.model.empty')}
+                  noMatchesLabel={t('ai.model.noMatches')}
+                  disabled={modelDisabled}
                 />
               )}
             </Field>
-            <div className="flex flex-wrap items-center gap-3">
-              <Button variant="secondary" disabled={modelBusy || model.trim() === savedModel} onClick={() => void saveModel()}>
-                {t('ai.model.save')}
-              </Button>
-              {modelNote?.tone === 'saved' && <span className="text-sm text-chart-grey">{t('ai.model.saved')}</span>}
-            </div>
-            {modelNote?.tone === 'fail' && <ErrorNote message={modelNote.text} />}
           </div>
+
+          {modelsError && (
+            <ErrorNote
+              message={t('ai.model.loadFailed', { error: modelsError })}
+              action={
+                <Button variant="secondary" size="sm" onClick={() => setModelsReload((value) => value + 1)}>
+                  {t('ai.model.retry')}
+                </Button>
+              }
+            />
+          )}
+          {modelSaved && <p className="text-sm text-chart-grey">{t('ai.model.saved')}</p>}
+          {modelSaveError && <ErrorNote message={modelSaveError} />}
         </div>
 
         {loadError && <ErrorNote message={t('ai.loadFailed', { error: loadError })} />}

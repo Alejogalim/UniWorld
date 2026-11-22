@@ -1,12 +1,14 @@
 import type { Fact, UniDetail } from '../contracts';
-import { callJson } from '../ai/json';
+import { AiFormatError, callJson, nextTokenBudget } from '../ai/json';
 import { detailPrompt } from '../ai/prompts';
 import { createAiClient, pickFinderProvider } from '../ai/index';
 import type { SearchHit } from '../ai/types';
 import {
   DETAIL_CACHE_TTL_MS,
+  DETAIL_MAX_TOKENS,
   EXTRACT_MAX_CHARS_PER_HIT,
   EXTRACT_MAX_TOTAL_CHARS,
+  PAGE_FETCH_TIMEOUT_MS,
 } from '../config';
 import {
   CitationIndex,
@@ -17,7 +19,7 @@ import {
 import type { RorStore } from '../grounding/rorStore';
 import { hostOf } from '../normalize';
 import type { CoreDeps } from '../ports';
-import { uniDetailAiSchema } from '../schemas';
+import { uniDetailAiSchema, type UniDetailAi } from '../schemas';
 import { fetchUniversityPages } from './webFetch';
 
 function emptyFact<T>(checkedAt: string): Fact<T> {
@@ -119,7 +121,11 @@ export async function loadDetail(
     deps.logger?.info?.(
       `OpenRouter key not set; fetching ${record.name}'s official pages for OpenCode extraction.`,
     );
-    hits = await fetchUniversityPages(deps.http, record, program, deps.logger);
+    hits = await fetchUniversityPages(deps.http, record, program, deps.logger, undefined, {
+      pageCache: deps.pages,
+      timeoutMs: PAGE_FETCH_TIMEOUT_MS,
+      deadline: Date.now() + 60_000,
+    });
   }
 
   if (hits.length === 0) {
@@ -127,19 +133,34 @@ export async function loadDetail(
     return emptyDetail(record.ror_id, program, checkedAt);
   }
 
-  const parsed = await callJson({
-    schema: uniDetailAiSchema,
-    messages: detailPrompt(
-      record.name,
-      program,
-      hits,
-      EXTRACT_MAX_CHARS_PER_HIT,
-      EXTRACT_MAX_TOTAL_CHARS,
-    ),
-    complete: (messages) =>
-      client.chat(messages, { json: true, temperature: 0.1, maxTokens: 3000 }),
-    logger: deps.logger,
-  });
+  let parsed: UniDetailAi;
+  try {
+    parsed = await callJson({
+      schema: uniDetailAiSchema,
+      messages: detailPrompt(
+        record.name,
+        program,
+        hits,
+        EXTRACT_MAX_CHARS_PER_HIT,
+        EXTRACT_MAX_TOTAL_CHARS,
+      ),
+      complete: (messages, attempt) =>
+        client.chat(messages, {
+          json: true,
+          temperature: 0.1,
+          maxTokens: nextTokenBudget(DETAIL_MAX_TOKENS, attempt),
+        }),
+      logger: deps.logger,
+    });
+  } catch (error) {
+    // A malformed AI reply must not turn the page into "could not load"; a real
+    // provider/network error still surfaces.
+    if (!(error instanceof AiFormatError)) throw error;
+    deps.logger?.error?.(
+      `Detail extraction failed for ${record.name}: ${error.message}`,
+    );
+    return emptyDetail(record.ror_id, program, checkedAt);
+  }
 
   const index = CitationIndex.fromHits(hits);
   const domains = [...record.domains, ...(record.website ? [record.website] : [])];

@@ -31,6 +31,7 @@ export {
   createAiClient,
   counselorProvider,
   testProviderConnection,
+  listProviderModels,
   hasKey,
   resolveModel,
   MissingKeyError,
@@ -40,6 +41,7 @@ export {
   pickFinderProvider,
 } from './ai/index';
 export type { FinderKeyState } from './ai/index';
+export { fetchProviderModels } from './ai/models';
 export { OPENCODE_MAX_UNIVERSITIES } from './finder/suggest';
 export { callJson, AiFormatError } from './ai/json';
 export * from './schemas';

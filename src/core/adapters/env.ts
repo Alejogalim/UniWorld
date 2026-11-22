@@ -14,10 +14,12 @@ export class StaticSettings implements SettingsStore {
   constructor(
     private readonly model: string | null = process.env.UNIFINDER_MODEL?.trim() || null,
     private readonly defaultProvider: Provider | null = readDefaultProvider(),
+    private readonly opencodeModel: string | null =
+      process.env.UNIFINDER_OPENCODE_MODEL?.trim() || null,
   ) {}
 
-  async getModel(): Promise<string | null> {
-    return this.model;
+  async getModel(provider: Provider = 'openrouter'): Promise<string | null> {
+    return provider === 'opencode' ? this.opencodeModel : this.model;
   }
 
   async getDefaultProvider(): Promise<Provider | null> {

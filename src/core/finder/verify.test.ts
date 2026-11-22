@@ -231,6 +231,40 @@ describe('verifyCandidates', () => {
     expect(removed).toBe(1);
   });
 
+  it('keeps a university that does not state its language of instruction', () => {
+    const empty = { value: null, sourceUrl: null, quote: null };
+    const { verified, removed, reasons } = verifyCandidates(
+      [candidate({ languages: empty })],
+      { ror, index, profile, input, checkedAt: '2026-11-21' },
+    );
+    expect(removed).toBe(0);
+    expect(reasons).toEqual({});
+    expect(verified).toHaveLength(1);
+    expect(verified[0]!.result.languages.value).toBeNull();
+  });
+
+  it('counts a verified, unspeakable language as language_not_spoken', () => {
+    const german = CitationIndex.fromHits([
+      { url: OVERVIEW_URL, text: 'The University of Barcelona is a public university located in Barcelona.' },
+      { url: LANGUAGES_URL, text: 'The language of instruction is German.' },
+      { url: TUITION_URL, text: 'There are no tuition fees for all students.' },
+    ]);
+    const { verified, reasons } = verifyCandidates(
+      [
+        candidate({
+          languages: {
+            value: ['German'],
+            sourceUrl: LANGUAGES_URL,
+            quote: 'The language of instruction is German',
+          },
+        }),
+      ],
+      { ror, index: german, profile, input, checkedAt: '2026-11-21' },
+    );
+    expect(verified).toHaveLength(0);
+    expect(reasons.language_not_spoken).toBe(1);
+  });
+
   it('includes a need-to-learn language only when the filter is on', () => {
     const french = CitationIndex.fromHits([
       { url: OVERVIEW_URL, text: 'The University of Barcelona is a public university located in Barcelona.' },
@@ -321,6 +355,36 @@ describe('verifyCandidates', () => {
     expect(verified).toHaveLength(1);
     expect(verified[0]!.result.languages.value).toEqual(expect.arrayContaining(['English', 'Spanish']));
     expect(verified[0]!.result.tuition.value).toBe('Free');
+  });
+
+  it('prefers free tuition regardless of candidate order when merging', () => {
+    const both = CitationIndex.fromHits([
+      { url: OVERVIEW_URL, text: 'The University of Barcelona is a public university located in Barcelona.' },
+      { url: LANGUAGES_URL, text: 'The language of instruction is English.' },
+      {
+        url: TUITION_URL,
+        text: 'International students pay tuition of €12,000 per year. There are no tuition fees for all students.',
+      },
+    ]);
+    const paid = candidate({
+      tuition: {
+        value: '€12,000 per year',
+        sourceUrl: TUITION_URL,
+        quote: 'International students pay tuition of €12,000 per year',
+      },
+    });
+    const free = candidate({
+      tuition: {
+        value: 'Free',
+        sourceUrl: TUITION_URL,
+        quote: 'There are no tuition fees for all students',
+      },
+    });
+    const ctx = { ror, index: both, profile, input, checkedAt: '2026-11-21' };
+    const forward = verifyCandidates([paid, free], ctx);
+    const reverse = verifyCandidates([free, paid], ctx);
+    expect(forward.verified[0]!.result.tuition.value).toBe('Free');
+    expect(reverse.verified[0]!.result.tuition.value).toBe('Free');
   });
 
   it('filters by continent using the ROR record', () => {

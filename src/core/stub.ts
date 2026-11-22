@@ -99,6 +99,12 @@ const stubCareers: CareerPath[] = [
 export function createStubCoreApi(): CoreApi {
   return {
     testConnection: async () => ({ ok: true }),
+    listModels: async (provider) => [
+      {
+        id: provider === 'opencode' ? 'deepseek-v4.1-flash' : 'deepseek/deepseek-v4.1-flash',
+        name: 'DeepSeek',
+      },
+    ],
     counselor: {
       start: async () => ({ sessionId: 1 }),
       send: async (_sessionId, _text, onToken) => {

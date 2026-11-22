@@ -59,8 +59,18 @@ pub fn run() {
         kind: MigrationKind::Up,
     }, Migration {
         version: 4,
+        description: "page_cache",
+        sql: include_str!("../../src/db/migrations/004_page_cache.sql"),
+        kind: MigrationKind::Up,
+    }, Migration {
+        version: 5,
+        description: "page_cache_html",
+        sql: include_str!("../../src/db/migrations/005_page_cache_html.sql"),
+        kind: MigrationKind::Up,
+    }, Migration {
+        version: 6,
         description: "counselor_notes",
-        sql: include_str!("../../src/db/migrations/004_counselor_notes.sql"),
+        sql: include_str!("../../src/db/migrations/006_counselor_notes.sql"),
         kind: MigrationKind::Up,
     }];
 

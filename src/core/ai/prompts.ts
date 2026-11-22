@@ -7,6 +7,9 @@ import { languageName, primaryLanguage } from '../grounding/languages';
 import { normalizeText } from '../normalize';
 import { CAREER_MAX, CAREER_MIN } from '../config';
 
+/** Reasoning models otherwise spend the token budget thinking instead of answering. */
+const JSON_ONLY = 'Respond with the JSON object only. No reasoning, no commentary.';
+
 export function respondIn(profile: Profile): string {
   return languageName(primaryLanguage(profile));
 }
@@ -246,6 +249,7 @@ export function careersPrompt(
         'For each career, score four dimensions from 0 to 10: passions, strengths, goals, earning.',
         'whyYou must quote or paraphrase specific things the student said; no generic claims.',
         'No career should be a restatement of another.',
+        JSON_ONLY,
         'Return only JSON matching this shape (numbers are 0-10):',
         JSON.stringify(shape),
       ].join(' '),
@@ -327,6 +331,7 @@ export function queryPlanPrompt(
         'Include the student\'s instruction languages and filters when relevant (e.g. "no tuition fees", "taught in English").',
         'Prefer queries that surface university program pages, not rankings or blogs.',
         'Do not include a country outside the selected scope.',
+        JSON_ONLY,
         'Return only JSON matching this shape:',
         JSON.stringify(shape),
       ].join(' '),
@@ -374,7 +379,7 @@ export function extractionPrompt(
         country: 'country name or null',
         countryCode: 'ISO alpha-2 or null',
         city: 'city or null',
-        programName: 'matched program name',
+        programName: 'programme name exactly as written on the page',
         languages: { value: ['English'], sourceUrl: 'exact URL', quote: 'exact excerpt' },
         instructionLanguages: ['English'],
         languageRequirement: {
@@ -401,6 +406,9 @@ export function extractionPrompt(
         'sourceUrls must only contain URLs from the provided sources.',
         'Only include real universities that offer a program related to the requested careers.',
         'Do not merge two universities. If the text is about a ranking or a country in general, omit it.',
+        'The overview must be a factual one-line description of the university or programme, never a ranking or marketing sentence.',
+        'programName must be copied exactly as it appears in the SOURCE text, in the page\'s own language. If no specific programme is named on the page, omit that candidate.',
+        JSON_ONLY,
         'Return only JSON matching this shape:',
         JSON.stringify(shape),
       ].join(' '),
@@ -444,6 +452,7 @@ export function rankingPrompt(
         'Use Unknown when entry requirements are not provided.',
         'cost may be the string "depends_on_citizenship" when tuition depends on citizenship.',
         'whyFits must be one line in English naming real profile facts, e.g. "Taught in English (your C1) · tuition-free · your IB 38 meets their 36".',
+        JSON_ONLY,
         'Return one item for every provided rorId and no others. Return only JSON matching this shape:',
         JSON.stringify(shape),
       ].join(' '),
@@ -487,6 +496,8 @@ export function detailPrompt(
         'Every non-null fact must cite one of the given URLs and include an exact quote copied from that URL\'s TEXT.',
         'The quote must be 5-30 words and must contain or clearly imply the value.',
         'nextDeadline must be the next upcoming deadline for an international first-year applicant. If the year is unclear, return null.',
+        'The overview must be a factual one-line description of the university or programme, never a ranking or marketing sentence.',
+        JSON_ONLY,
         'Return only JSON matching this shape:',
         JSON.stringify(shape),
       ].join(' '),

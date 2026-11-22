@@ -8,10 +8,12 @@ import type {
 } from '../contracts';
 import type {
   CachedDetail,
+  CachedPage,
   CachedSearch,
   CounselorPersistence,
   CounselorSession,
   DetailCache,
+  PageCache,
   SearchCache,
   StoredMessage,
 } from '../ports';
@@ -47,6 +49,18 @@ export class InMemoryDetailCache implements DetailCache {
       detail,
       checkedAt: detail.checkedAt,
     });
+  }
+}
+
+export class InMemoryPageCache implements PageCache {
+  private readonly entries = new Map<string, CachedPage>();
+
+  async get(url: string): Promise<CachedPage | null> {
+    return this.entries.get(url) ?? null;
+  }
+
+  async put(url: string, page: CachedPage): Promise<void> {
+    this.entries.set(url, page);
   }
 }
 
