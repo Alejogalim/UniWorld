@@ -131,7 +131,7 @@ Monochrome first. Ember is the only colour, and it is spent in named places.
 | token | light | dark |
 |---|---|---|
 | `--background` | `#efefef` | `#000000` |
-| `--panel` / `--surface-fill` | `#ffffff` flat | `#0c0c0d`, gradient `#151517` to `#0b0b0c` |
+| `--panel` / `--surface-fill` | `#ffffff` flat (as a one-colour gradient, so the rim can layer under it) | `#0c0c0d`, gradient `#151517` to `#0b0b0c` |
 | `--shoal` | `#f4f4f4` | `#161617` |
 | `--foreground` | `#0a0a0a` | `#ffffff` |
 | `--chart-grey` | `#636366` | `#8e8e93` |
@@ -140,8 +140,8 @@ Monochrome first. Ember is the only colour, and it is spent in named places.
 | `--evidence` | `#2f7a56` | `#5fbf8f` |
 | `--ember-0` / `-1` / `-2` | `#b3210a` / `#ff5a1f` / `#f7b267` | same |
 | `--ember-button-top` / `-bottom` | `#c4400b` / `#b83304` | `#ff8a3d` / `#ff5a1f` |
-| `--ember-wash` | ember-2 at 10% (bottom of a light ember panel) | not used |
-| `--ember-glow` / `--ember-glow-wide` | none | ember-1 at 55% and 45% |
+| `--ember-glow` | none | ember-1 at 55% (focus ring and range thumb) |
+| `.panel-ember` outer glow | none (no glow on paper) | a 1px `--rim-top` ring, ember-1 at 45% (44px, spread -6px), ember-0 at 55% (60px, offset 14px down) |
 | `--rim-top` / `--rim-bottom` | 6% black | 16% white to 4% white |
 | `--globe-ocean` | `#efefef` | `#060607` |
 | `--land` | `#d9d9d9` | `#26262a` |
@@ -167,13 +167,14 @@ Stars and text (dark only). A single star pixel under text is the worst case, an
 
 | pair | ratio | target |
 |---|---|---|
-| ink text over a base star at alpha .45 (worst pixel) | 4.76 | 4.5:1 |
-| chart grey text over a star at the text cap, alpha .15 (worst pixel) | 4.63 | 4.5:1 |
-| ink text over a star at the text cap, alpha .15 (worst pixel) | 15.08 | 4.5:1 |
-| chart grey text over a bright star's glow at .15 x .45 | 5.78 | 4.5:1 |
-| chart grey nav label over a rail star at alpha .15 | 4.63 | 4.5:1 |
+| ink text over a base star at alpha .15 (worst pixel) | 15.13 | 4.5:1 |
+| chart grey text over a base star at alpha .15 (worst pixel) | 4.64 | 4.5:1 |
+| chart grey text over a warm star (`#fff4ea`) at alpha .15 | 4.70 | 4.5:1 |
+| chart grey text over a bright star's glow at .15 x .45 | 5.79 | 4.5:1 |
+| chart grey text over a base star at alpha .30 (not used: rejected) | 2.63 | 4.5:1 |
+| chart grey text over two stacked stars at .15 (worst pixel, overlapping layers) | 2.85 | 4.5:1 (residual) |
 
-Stars are capped where text can sit: alpha 0.15 over the rail and the content column, easing to 0.45 only in the right gutter beyond the 1120px column, which has no text. The cap eases over a smooth ramp, so nothing pops. A star is a dot of 1 to 3 px, and the measured figures are per pixel, not an average over a text run.
+The table above is the strict per-pixel view from plan 18, when every baked star was capped at alpha 0.15. The owner has since raised star alphas to 0.14 to 0.32 (bright cores 0.6) so the stars read as stars. Under those values chart-grey text can drop below 4.5:1 on a single star pixel, and two stacked stars are worse. This is accepted by design: the stars are decorative, sit behind the content, and cover a small share of the window. The measured figures are per pixel, not an average over a text run.
 
 ### Named Rules
 **The Ember Rule.** Ember marks what the student must act on now: the primary action on the screen, the country they selected, a deadline inside 30 days, the search in progress, the one ember panel of the screen. Never a heading, never a link. If two ember things compete on one screen, one of them is wrong.
@@ -224,18 +225,19 @@ Circles are allowed for the globe, flag discs and dots. Nothing else: no 2px, 4p
 
 ## Surfaces & Depth
 
-- **Panel (dark):** a vertical gradient `#151517` to `#0b0b0c`, with a 1px gradient rim (top 16% white, bottom 4% white). The rim is drawn with a mask (`.rim`), so it keeps the radius. An inner top highlight is added to `.panel-ember`.
+- **Panel (dark):** a vertical gradient `#151517` to `#0b0b0c`, with a 1px gradient rim (top 16% white, bottom 4% white). The rim is two background layers (`.rim`): the fill on the padding box and the rim gradient on the border box, so it keeps the radius. There is no mask and no pseudo-element. `.panel-ember` has no inner highlight.
 - **Panel (light):** flat white, 28px, a 6% black ring. No shadow.
-- **Rim:** `.rim` is a 1px gradient border on any element. It is used on panels, the active nav item, chips when selected, popovers, inputs' surrounds, and the composer.
+- **Rim:** `.rim` is a 1px gradient border on any element. It is used on panels, the active nav item, the selected program row, popovers and the composer. The rim gradient paints under the whole box, so a rim needs an opaque `--rim-fill` (`.surface`, or a `[--rim-fill:…]` class matching its background).
 - **Shadow:** none at rest. The one floating shadow (`--shadow-float`) is for popovers and dialogs. The dark ember glow is a named exception (below).
 - **Flat by default:** structure is drawn with hairlines and tonal steps, not shadows.
+- **Flat controls** (secondary buttons, the round footer buttons, the Toggle when off): a plain 1px `border-hairline` (`--hairline`, solid). Measured for the boundary: 1.82 / 1.70 / 1.57 on black, panel and shoal in dark; 1.55 / 1.78 / 1.62 on background, panel and shoal in light. The gradient rim stays on panels, popovers, the active nav row, the program row and the composer.
 
 ## Gradients & Glow
 
 Gradients and glows are allowed in these places and nowhere else:
 
 1. **Dark panel surface and rim.** Vertical gradients on `Panel` in dark mode only.
-2. **Ember panel (`.panel-ember`).** Dark: a radial ember glow (`--ember-0` at the bottom edge fading out at 70% of the radius) in the bottom 45% of the card at 35% opacity, clipped to the card with no blur filter, with a soft outer glow (`--ember-glow-wide`). Light: a peach wash (`--ember-wash`) in the bottom 35%, no glow. It fades in over 300ms on first paint (opacity only). One per screen.
+2. **Ember panel (`.panel-ember`).** The glow is outside the box only, and static: dark has a soft halo around the whole card (a 1px rim ring, ember-1 at 45% over 44px, ember-0 at 55% over 60px, offset 14px down). There is no inner wash and no fade-in. Light has no glow. One per screen.
 3. **Primary button (`.ember-button`).** A vertical gradient in both themes, and in dark a soft ember glow on hover and focus.
 4. **Large numerals (`.numeral-ember`).** Dark only: ink to ember-2 over the lower half of the glyph.
 5. **Ambient haze (`.ambient-haze`).** Dark only: one faint radial ember glow (opacity 0.14) at the bottom centre of the window, behind the content and above the stars.
@@ -246,18 +248,20 @@ Everything else is flat. Light mode has no glow.
 
 ## Starfield
 
-Implemented in `src/ui/layout/Starfield.tsx`, mounted once in `AppShell` as the first child of the shell.
+Implemented in `src/ui/layout/Starfield.tsx` (baking) and `src/index.css` (`.star-field`, `.star-layer`, `.star-twinkle`, keyframes). Mounted once in `AppShell` as the first child of the shell.
 
-- **Dark theme only.** Nothing renders in light mode. The canvas is removed when the theme changes to light.
-- **Density:** one star per 26 000 px, clamped 40 to 110. On resize (150 ms debounce) the existing stars are rescaled and only the count changes, so the field does not re-roll.
-- **Layers:** radius 0.5, 0.9 and 1.4 px, with drift speeds of 1.5, 3 and 5 px per second toward the upper-left (55%, 30% and 15% of stars).
-- **Alpha:** 0.08 to 0.38 base, with a slow sine twinkle of plus or minus 20% over 4 to 9 seconds, each star with its own phase. At most four bright stars: radius 1.6, alpha 0.6, with a 6px glow (a pre-rendered sprite). Capped at 0.15 over the rail and content, 0.45 in the right gutter (see the contrast table).
-- **Colour:** pure white, and `#fff4ea` on about 15% of stars.
-- **Edges:** stars wrap, and fade within 40px of each edge so none pops.
-- **Performance:** one canvas, a requestAnimationFrame loop capped at 30 fps, device pixel ratio capped at 2, paused when `document.hidden`, no React state in the loop, and listeners removed on unmount.
-- **Reduced motion:** one static frame, no animation.
+- **Dark theme only.** Nothing renders in light mode. The field is recomputed when the theme changes to dark.
+- **Method:** the stars are drawn once into tiles on an offscreen canvas (device pixel ratio capped at 2) and the tiles are baked to PNG data URLs. The layers move only by CSS `transform` (`@keyframes star-drift`), so there is no per-frame JavaScript, no canvas in the DOM and no resize handler. A tile repeats, so a resize needs no re-bake.
+- **Layers:** three drifting layers, each one tile oversized on every side so the loop is invisible. Tile sizes 512, 640 and 768 px, each moving exactly one tile in x and y per cycle, which gives drift speeds of about 2, 3.5 and 5 px per second toward the upper-left (durations 256 s, 183 s and 154 s).
+- **Density:** one star per 7 000 px², summed over the layers (about 300 on 1920 x 1080), split 55%, 30% and 15% across the layers. Radii 0.5, 0.8 and 1.2 px.
+- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. Warm stars use the same range as their layer. The bright stars (six per tile on the 768 px layer, radius 1.3) have a core alpha of 0.6 and a 5px soft glow baked in at 0.45 of the star's alpha (about 0.27). The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15).
+- **Contrast note:** the stars are decorative. A star under a text glyph may locally dip below 4.5:1 by design (see the contrast table); the owner chose visibility over a per-pixel text target.
+- **Twinkle:** two extra layers of 25 stars each (1024 px tiles, radius 0.8). Baked alpha 0.2 to 0.4 is the peak. Opacity fades between 0.35 and 1, over 7 s and 8.5 s, `ease-in-out`, `alternate`, with different delays.
+- **Colour:** pure white, and `#fff4ea` (`--star-warm`) on about 15% of stars.
+- **Pause:** the root gets `is-paused` when `document.hidden` (a visibility listener), and the layers stop their animation.
+- **Reduced motion:** the layers are static tiles (animation removed in CSS).
 - **Control:** the round star button in the rail footer. It is persisted as the `stars` setting (`on` or `off`, default on) and reports `aria-pressed`.
-- **Layer:** `-z-1` inside the isolated shell, under the rail, header, content and the ambient haze.
+- **Layer:** `z-index: -1` inside the isolated shell, under the rail, header, content and the ambient haze. `contain: strict` and `overflow: hidden`.
 
 ## Layout
 

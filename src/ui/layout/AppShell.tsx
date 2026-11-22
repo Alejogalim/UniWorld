@@ -66,7 +66,7 @@ export function AppShell() {
                 cn(
                   'nav-item relative flex h-10 items-center gap-2 rounded-control px-3 font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal',
                   isActive
-                    ? 'rim bg-shoal font-semibold text-foreground'
+                    ? 'rim bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))] font-semibold text-foreground'
                     : 'text-chart-grey hover:bg-shoal hover:text-foreground',
                 )
               }

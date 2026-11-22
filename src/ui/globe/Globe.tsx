@@ -109,6 +109,13 @@ export default function GlobeView({
     uiLang: i18n.language as UiLang,
     onToggleCountry,
     reduceMotion,
+    /** Key of the styles last sent to the globe; the setters run only when it changes. */
+    appliedKey: '',
+    /** Pending requestAnimationFrame for a style update, 0 when none. */
+    frame: 0,
+    /** Set once the scene exists: re-applies styles now, and schedules them for the next frame. */
+    applyNow: (() => {}) as () => void,
+    schedule: (() => {}) as () => void,
   });
   state.current.selected = selected;
   state.current.highlightContinent = highlightContinent;
@@ -116,47 +123,59 @@ export default function GlobeView({
   state.current.reduceMotion = reduceMotion;
   state.current.uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
 
-  const isOn = (iso: string) => {
-    const s = state.current;
-    return (
-      s.selected.has(iso) ||
-      (s.highlightContinent !== null && continentOf(iso) === s.highlightContinent)
-    );
-  };
-
-  const applyStyles = () => {
-    const globe = globeRef.current;
-    const s = state.current;
-    if (!globe || !s.palette) return;
-    const p = s.palette;
-    globe
-      .polygonAltitude((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        return iso === s.hovered ? 0.03 : 0.006;
-      })
-      .polygonCapColor((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        return isOn(iso) ? p.signal : p.land;
-      })
-      .polygonSideColor((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        return isOn(iso) ? shade(p.signal, 0.82) : p.landSide;
-      })
-      .polygonStrokeColor((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        if (iso === s.hovered) return p.ink;
-        return isOn(iso) ? p.signal : p.hairline;
-      });
-  };
-
   // Build the scene once.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    const s = state.current;
+
+    const isOn = (iso: string) =>
+      s.selected.has(iso) || (s.highlightContinent !== null && continentOf(iso) === s.highlightContinent);
+    // Accessors are created once here and read everything from `s`, so they are never re-created on render.
+    const isoOf = (d: object) => (d as CountryFeature).properties.iso;
+    const altitude = (d: object) => (isoOf(d) === s.hovered ? 0.03 : 0.006);
+    const capColor = (d: object) => (isOn(isoOf(d)) ? s.palette?.signal : s.palette?.land) ?? 'transparent';
+    const sideColor = (d: object) =>
+      (isOn(isoOf(d)) ? (s.palette ? shade(s.palette.signal, 0.82) : undefined) : s.palette?.landSide) ??
+      'transparent';
+    const strokeColor = (d: object) => {
+      const iso = isoOf(d);
+      if (iso === s.hovered) return s.palette?.ink ?? 'transparent';
+      return (isOn(iso) ? s.palette?.signal : s.palette?.hairline) ?? 'transparent';
+    };
+
+    // Re-sends the accessors only when the hovered id, the selection or the continent highlight changed.
+    const applyNow = () => {
+      s.frame = 0;
+      const globe = globeRef.current;
+      if (!globe || !s.palette) return;
+      const key = [s.hovered ?? '', [...s.selected].sort().join(','), s.highlightContinent ?? ''].join('|');
+      if (key === s.appliedKey) return;
+      s.appliedKey = key;
+      globe
+        .polygonAltitude(altitude)
+        .polygonCapColor(capColor)
+        .polygonSideColor(sideColor)
+        .polygonStrokeColor(strokeColor);
+    };
+    // Hover and selection changes land on the next frame, so a burst of pointer moves costs one update.
+    const schedule = () => {
+      if (s.frame) return;
+      s.frame = requestAnimationFrame(applyNow);
+    };
+    s.applyNow = applyNow;
+    s.schedule = schedule;
+
     const globe = new Globe(el)
       .backgroundColor('rgba(0,0,0,0)')
       .showGraticules(true)
       .atmosphereAltitude(0.12)
+      .polygonsTransitionDuration(0)
+      .polygonCapCurvatureResolution(10)
+      .polygonAltitude(altitude)
+      .polygonCapColor(capColor)
+      .polygonSideColor(sideColor)
+      .polygonStrokeColor(strokeColor)
       .polygonLabel((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
         const style =
@@ -167,7 +186,7 @@ export default function GlobeView({
         const iso = polygon ? (polygon as CountryFeature).properties.iso : null;
         state.current.hovered = iso;
         syncRotation();
-        applyStyles();
+        schedule();
         el.style.cursor = iso ? 'pointer' : '';
       })
       .onPolygonClick((polygon: object) => {
@@ -175,6 +194,16 @@ export default function GlobeView({
       });
 
     globe.controls().autoRotateSpeed = 0.35;
+    // The software-composited WebView gains nothing from a sharper globe; 1 keeps the WebGL fill cost down.
+    globe.renderer().setPixelRatio(1);
+
+    // No rendering while the window is hidden; the scene resumes on return.
+    const onVisibility = () => {
+      if (document.hidden) globe.pauseAnimation();
+      else globe.resumeAnimation();
+    };
+    if (document.hidden) globe.pauseAnimation();
+    document.addEventListener('visibilitychange', onVisibility);
 
     // Rotation pauses while the pointer is over the globe or a country is hovered.
     const syncRotation = () => {
@@ -196,12 +225,17 @@ export default function GlobeView({
     const resize = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
       globe.width(Math.floor(width)).height(Math.floor(height));
+      globe.renderer().setPixelRatio(1);
     });
     resize.observe(el);
 
     globeRef.current = globe;
     return () => {
       resize.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+      cancelAnimationFrame(s.frame);
+      s.frame = 0;
+      s.appliedKey = '';
       el.removeEventListener('pointerenter', onEnter);
       el.removeEventListener('pointerleave', onLeave);
       globe.controls().autoRotate = false;
@@ -254,14 +288,14 @@ export default function GlobeView({
       | undefined;
     graticule?.material.color.set(p.graticule);
     globe.polygonsData(countries);
-    applyStyles();
+    state.current.appliedKey = '';
+    state.current.applyNow();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countries, theme]);
 
   // Re-apply styles whenever selection or continent highlight changes.
   useEffect(() => {
-    applyStyles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    state.current.schedule();
   }, [selected, highlightContinent]);
 
   // Camera moves.

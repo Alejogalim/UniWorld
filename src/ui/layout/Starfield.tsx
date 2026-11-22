@@ -1,291 +1,229 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTheme } from '@/app/theme';
 
-/** Plan 16 starfield: one fixed canvas behind every screen, dark theme only. */
+/*
+ * Plan 18 starfield: stars are drawn once into tiles (an offscreen canvas, baked on mount and on theme change)
+ * and the tiles drift by CSS transform on the compositor. No per-frame JS, no canvas in the DOM.
+ * Dark theme only. The keyframes and layer rules live in src/index.css (.star-field, .star-layer, .star-twinkle).
+ */
 
-interface Star {
+interface LayerSpec {
+  /** Tile size in CSS px; the drift moves the layer by exactly one tile, so the loop is seamless. */
+  tile: number;
+  /** Seconds per tile: tile / speed (px per second), so speeds are about 2, 3.5 and 5 px/s. */
+  duration: number;
+  /** Share of the field's stars on this layer. */
+  share: number;
+  radius: number;
+  /** Bright stars on this layer (radius 1.3, with a baked glow). */
+  bright: number;
+  /** Random alpha range for the base and warm stars on this layer. */
+  alpha: [number, number];
+}
+
+const LAYERS: LayerSpec[] = [
+  { tile: 512, duration: 256, share: 0.55, radius: 0.5, bright: 0, alpha: [0.14, 0.22] },
+  { tile: 640, duration: 183, share: 0.3, radius: 0.8, bright: 0, alpha: [0.18, 0.27] },
+  { tile: 768, duration: 154, share: 0.15, radius: 1.2, bright: 6, alpha: [0.22, 0.32] },
+];
+
+/** One star per this many CSS px², summed over the layers (about 300 on 1920 x 1080). */
+const PX_PER_STAR = 7000;
+/** Bright cores are fixed at this alpha; their 5px glow is drawn at a proportional alpha. */
+const BRIGHT_ALPHA = 0.6;
+const BRIGHT_RADIUS = 1.3;
+const GLOW_RADIUS = 5;
+const GLOW_STRENGTH = 0.45;
+const WARM_SHARE = 0.15;
+
+/** Two twinkle layers: one tile of sparse stars each, faded by opacity only. Baked alpha is the peak. */
+const TWINKLE_TILE = 1024;
+const TWINKLE_STARS = 25;
+const TWINKLE_ALPHA_MIN = 0.2;
+const TWINKLE_ALPHA_MAX = 0.4;
+const TWINKLES = [
+  { duration: 7, delay: 0 },
+  { duration: 8.5, delay: -3.5 },
+];
+
+const MAX_DPR = 2;
+
+interface BakedStar {
   x: number;
   y: number;
-  /** Radius in CSS px: 0.5, 0.9 or 1.4 by depth layer; bright stars are 1.6. */
   r: number;
-  /** Drift speed in px per second toward the upper-left. */
-  speed: number;
   alpha: number;
-  twinkleSpeed: number;
-  phase: number;
   warm: boolean;
-  bright: boolean;
+  glow: boolean;
 }
 
-const LAYERS = [
-  { r: 0.5, speed: 1.5, weight: 0.55 },
-  { r: 0.9, speed: 3, weight: 0.3 },
-  { r: 1.4, speed: 5, weight: 0.15 },
-];
-const MAX_BRIGHT = 4;
-const FRAME_MS = 1000 / 30;
-const MAX_DPR = 2;
-const EDGE_FADE = 40;
-const TWINKLE_DEPTH = 0.2;
-
-/*
- * Text safety (review 17, item 4). Grey text stays at 4.5:1 over black only while a star pixel is at or below
- * about 15% white. So stars are capped at TEXT_CAP everywhere text can sit (rail and content column), and the
- * right gutter beyond the 1120px column, which has no text, returns to FULL_CAP. The rail is held to the text
- * cap rather than the review's 0.30: grey nav labels would otherwise measure 2.6:1 over a star pixel.
- */
-const TEXT_CAP = 0.15;
-const FULL_CAP = 0.45;
-/** Content column: 220px rail + 1120px max width - 48px page margin. Text never reaches past this. */
-const TEXT_RIGHT = 1292;
-const SAFE_FROM = 200;
-const SAFE_TO = 260;
-const GUTTER_FROM = TEXT_RIGHT + 40;
-const GUTTER_RAMP = 60;
-/** Bright-star glow sprite: 6px radius, so a 12px square. */
-const GLOW_PX = 12;
-
-function starCount(width: number, height: number): number {
-  return Math.min(110, Math.max(40, Math.round((width * height) / 26000)));
-}
-
-function makeStar(width: number, height: number, brightAllowed: boolean): Star {
-  const roll = Math.random();
-  let acc = 0;
-  let layer = LAYERS[LAYERS.length - 1];
-  for (const candidate of LAYERS) {
-    acc += candidate.weight;
-    if (roll < acc) {
-      layer = candidate;
-      break;
-    }
-  }
-  // The few brightest stars sit in the nearest layer, as the large star in the reference does.
-  const isBright = brightAllowed && layer.r === 1.4 && Math.random() < 0.5;
-  return {
-    x: Math.random() * width,
-    y: Math.random() * height,
-    r: isBright ? 1.6 : layer.r,
-    speed: layer.speed,
-    alpha: isBright ? 0.6 : 0.08 + Math.random() * 0.3,
-    twinkleSpeed: (2 * Math.PI) / (4 + Math.random() * 5),
-    phase: Math.random() * Math.PI * 2,
-    warm: !isBright && Math.random() < 0.15,
-    bright: isBright,
-  };
-}
-
-/**
- * Brings `stars` to the count for this size. Existing stars are kept, so a resize never re-rolls the field:
- * extra stars are added at random and surplus ones are dropped from the end.
- */
-function fitStars(stars: Star[], width: number, height: number) {
-  const target = starCount(width, height);
-  stars.length = Math.min(stars.length, target);
-  let bright = stars.filter((star) => star.bright).length;
-  while (stars.length < target) {
-    const star = makeStar(width, height, bright < MAX_BRIGHT);
-    if (star.bright) bright += 1;
-    stars.push(star);
-  }
-}
-
-function edgeFade(pos: number, size: number): number {
-  return Math.min(1, pos / EDGE_FADE, (size - pos) / EDGE_FADE);
-}
-
-function smooth01(value: number): number {
-  const t = Math.min(1, Math.max(0, value));
-  return t * t * (3 - 2 * t);
-}
-
-/**
- * The alpha cap at this x, and how much of the text zone the star sits in (0 to 1). The cap eases between
- * the two zones over a smooth ramp, so a star drifting across the edge never pops.
- */
-function starCap(x: number): { cap: number; textness: number } {
-  const text = smooth01((x - SAFE_FROM) / (SAFE_TO - SAFE_FROM));
-  const gutter = smooth01((x - GUTTER_FROM) / GUTTER_RAMP);
-  return { cap: TEXT_CAP + (FULL_CAP - TEXT_CAP) * gutter, textness: text * (1 - gutter) };
-}
-
-/** The bright-star glow, pre-rendered once per size: the star colour fading to transparent. */
-function makeGlowSprite(color: string, dpr: number): HTMLCanvasElement {
-  const px = Math.ceil(GLOW_PX * dpr);
-  const sprite = document.createElement('canvas');
-  sprite.width = px;
-  sprite.height = px;
-  const ctx = sprite.getContext('2d');
-  if (ctx) {
-    const mid = px / 2;
-    const glow = ctx.createRadialGradient(mid, mid, 0, mid, mid, mid);
-    glow.addColorStop(0, color);
-    glow.addColorStop(1, 'transparent');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, px, px);
-  }
-  return sprite;
+interface Field {
+  layers: { key: string; tile: number; duration: number; image: string }[];
+  twinkles: { key: string; tile: number; duration: number; delay: number; image: string }[];
 }
 
 interface StarColors {
-  /** Ink in dark mode (white). */
+  /** --foreground in dark mode (white). */
   base: string;
   /** --star-warm, the barely warm tint on about 15% of stars. */
   warm: string;
 }
 
-function draw(
-  ctx: CanvasRenderingContext2D,
-  stars: Star[],
-  width: number,
-  height: number,
-  time: number,
-  colors: StarColors,
-  glow: HTMLCanvasElement | null,
-) {
-  ctx.clearRect(0, 0, width, height);
+function randomStar(size: number, radius: number, alpha: number, warm: boolean, glow: boolean): BakedStar {
+  return { x: Math.random() * size, y: Math.random() * size, r: radius, alpha, warm, glow };
+}
+
+function starsForTile(spec: LayerSpec): BakedStar[] {
+  const count = Math.round((spec.share * spec.tile * spec.tile) / PX_PER_STAR);
+  const [alphaMin, alphaMax] = spec.alpha;
+  const stars: BakedStar[] = [];
+  for (let i = 0; i < count; i += 1) {
+    const bright = i < spec.bright;
+    const alpha = bright ? BRIGHT_ALPHA : alphaMin + Math.random() * (alphaMax - alphaMin);
+    const warm = !bright && Math.random() < WARM_SHARE;
+    stars.push(
+      bright
+        ? randomStar(spec.tile, BRIGHT_RADIUS, alpha, false, true)
+        : randomStar(spec.tile, spec.radius, alpha, warm, false),
+    );
+  }
+  return stars;
+}
+
+function twinkleStars(): BakedStar[] {
+  const stars: BakedStar[] = [];
+  for (let i = 0; i < TWINKLE_STARS; i += 1) {
+    const alpha = TWINKLE_ALPHA_MIN + Math.random() * (TWINKLE_ALPHA_MAX - TWINKLE_ALPHA_MIN);
+    stars.push(randomStar(TWINKLE_TILE, 0.8, alpha, Math.random() < WARM_SHARE, false));
+  }
+  return stars;
+}
+
+/**
+ * Draws one tile. Every star is also drawn at the four neighbouring offsets when it sits near an edge, so the
+ * tile wraps with no seam. Returns a PNG data URL for background-image.
+ */
+function bakeTile(size: number, dpr: number, stars: BakedStar[], colors: StarColors): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(size * dpr);
+  canvas.height = Math.round(size * dpr);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   for (const star of stars) {
-    ctx.globalAlpha = 1;
-    const twinkle = 1 + TWINKLE_DEPTH * Math.sin(time * star.twinkleSpeed + star.phase);
-    const fade = Math.max(0, Math.min(edgeFade(star.x, width), edgeFade(star.y, height)));
-    const { cap, textness } = starCap(star.x);
-    const alpha = Math.min(1, star.alpha * twinkle, cap) * fade;
-    if (alpha <= 0) continue;
     const color = star.warm ? colors.warm : colors.base;
-    if (star.bright && glow && textness < 1) {
-      // The glow sprite is drawn at its CSS size; its strength comes from globalAlpha and fades out over text.
-      ctx.globalAlpha = alpha * 0.45 * (1 - textness);
-      ctx.drawImage(glow, star.x - GLOW_PX / 2, star.y - GLOW_PX / 2, GLOW_PX, GLOW_PX);
+    for (const ox of [-size, 0, size]) {
+      for (const oy of [-size, 0, size]) {
+        const x = star.x + ox;
+        const y = star.y + oy;
+        if (x < -GLOW_RADIUS || x > size + GLOW_RADIUS || y < -GLOW_RADIUS || y > size + GLOW_RADIUS) continue;
+        if (star.glow) {
+          const glow = ctx.createRadialGradient(x, y, 0, x, y, GLOW_RADIUS);
+          glow.addColorStop(0, colors.base);
+          glow.addColorStop(1, 'transparent');
+          ctx.globalAlpha = star.alpha * GLOW_STRENGTH;
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(x, y, GLOW_RADIUS, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = star.alpha;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, star.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-    ctx.fill();
   }
   ctx.globalAlpha = 1;
+  return canvas.toDataURL('image/png');
+}
+
+function readColors(): StarColors {
+  // Star colours come from the dark tokens (--foreground, --star-warm), not literals.
+  const styles = getComputedStyle(document.documentElement);
+  return {
+    base: styles.getPropertyValue('--foreground').trim() || '#ffffff',
+    warm: styles.getPropertyValue('--star-warm').trim() || '#ffffff',
+  };
+}
+
+function bakeField(): Field {
+  const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+  const colors = readColors();
+  return {
+    layers: LAYERS.map((spec, index) => ({
+      key: `layer-${index}`,
+      tile: spec.tile,
+      duration: spec.duration,
+      image: bakeTile(spec.tile, dpr, starsForTile(spec), colors),
+    })),
+    twinkles: TWINKLES.map((spec, index) => ({
+      key: `twinkle-${index}`,
+      tile: TWINKLE_TILE,
+      duration: spec.duration,
+      delay: spec.delay,
+      image: bakeTile(TWINKLE_TILE, dpr, twinkleStars(), colors),
+    })),
+  };
 }
 
 export function Starfield({ enabled }: { enabled: boolean }) {
   const resolved = useTheme((s) => s.resolved);
   const active = enabled && resolved === 'dark';
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [field, setField] = useState<Field | null>(null);
 
+  // Bake once per activation (mount in dark, or the switch from light to dark). Tiles repeat, so a resize
+  // needs no re-bake: the layers are oversized and the pattern is infinite.
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!active || !canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    // Star colours come from the dark tokens (--foreground, --star-warm), not literals.
-    const styles = getComputedStyle(document.documentElement);
-    const colors: StarColors = {
-      base: styles.getPropertyValue('--foreground').trim() || 'white',
-      warm: styles.getPropertyValue('--star-warm').trim() || 'white',
-    };
-    let width = 0;
-    let height = 0;
-    let stars: Star[] = [];
-    let glow: HTMLCanvasElement | null = null;
-    let frame = 0;
-    let lastDraw = 0;
-    let elapsed = 0;
-    let resizeTimer: number | undefined;
-
-    const size = () => {
-      const prevWidth = width;
-      const prevHeight = height;
-      width = window.innerWidth;
-      height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      glow = makeGlowSprite(colors.base, dpr);
-      // Rescale the existing stars to the new size so the field stays put; only the count changes.
-      if (prevWidth > 0 && prevHeight > 0) {
-        const sx = width / prevWidth;
-        const sy = height / prevHeight;
-        for (const star of stars) {
-          star.x *= sx;
-          star.y *= sy;
-        }
-      }
-      fitStars(stars, width, height);
-    };
-
-    const step = (now: number) => {
-      frame = 0;
-      // A 4 ms tolerance: 60 Hz frames land 33.3 ms apart, and rounding must not skip them down to 20 fps.
-      if (now - lastDraw < FRAME_MS - 4) {
-        frame = requestAnimationFrame(step);
-        return;
-      }
-      const dt = lastDraw === 0 ? 0 : Math.min(now - lastDraw, 200) / 1000;
-      lastDraw = now;
-      elapsed += dt;
-      for (const star of stars) {
-        star.x -= star.speed * 0.8 * dt;
-        star.y -= star.speed * 0.6 * dt;
-        if (star.x < 0) star.x += width;
-        if (star.y < 0) star.y += height;
-      }
-      draw(ctx, stars, width, height, elapsed, colors, glow);
-      frame = requestAnimationFrame(step);
-    };
-
-    const start = () => {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      if (document.hidden) return;
-      if (reduceMotion.matches) {
-        draw(ctx, stars, width, height, 0, colors, glow);
-        return;
-      }
-      lastDraw = 0;
-      frame = requestAnimationFrame(step);
-    };
-
-    const onResize = () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => {
-        size();
-        start();
-      }, 150);
-    };
-    const onVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-      } else {
-        start();
-      }
-    };
-
-    size();
-    start();
-    window.addEventListener('resize', onResize);
-    document.addEventListener('visibilitychange', onVisibility);
-    reduceMotion.addEventListener('change', start);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      window.clearTimeout(resizeTimer);
-      window.removeEventListener('resize', onResize);
-      document.removeEventListener('visibilitychange', onVisibility);
-      reduceMotion.removeEventListener('change', start);
-    };
+    if (!active) {
+      setField(null);
+      return;
+    }
+    setField(bakeField());
   }, [active]);
 
-  if (!active) return null;
+  // Pause the drift while the window is hidden. The class is toggled on the root, not React state.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!field || !root) return;
+    const onVisibility = () => root.classList.toggle('is-paused', document.hidden);
+    onVisibility();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, [field]);
+
+  if (!active || !field) return null;
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-1 will-change-transform"
-    />
+    <div ref={rootRef} aria-hidden="true" className="star-field">
+      {field.layers.map((layer) => (
+        <div
+          key={layer.key}
+          className="star-layer"
+          style={
+            {
+              '--star-tile': `${layer.tile}px`,
+              '--star-duration': `${layer.duration}s`,
+              backgroundImage: `url(${layer.image})`,
+            } as CSSProperties
+          }
+        />
+      ))}
+      {field.twinkles.map((layer) => (
+        <div
+          key={layer.key}
+          className="star-twinkle"
+          style={
+            {
+              '--star-tile': `${layer.tile}px`,
+              '--star-duration': `${layer.duration}s`,
+              animationDelay: `${layer.delay}s`,
+              backgroundImage: `url(${layer.image})`,
+            } as CSSProperties
+          }
+        />
+      ))}
+    </div>
   );
 }

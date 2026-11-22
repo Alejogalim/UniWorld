@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface PanelProps extends React.ComponentProps<"div"> {
   /** Nested region: shoal instead of the card surface. */
   inset?: boolean;
-  /** `ember`: the one memorable element on a screen, with an ember glow rising from its bottom edge. */
+  /** `ember`: the one memorable element on a screen, with a soft glow around the outside of the box. */
   variant?: "default" | "ember";
 }
 
@@ -14,7 +14,7 @@ export function Panel({ inset = false, variant = "default", className, ...props 
     <div
       className={cn(
         "rim surface p-6 text-foreground",
-        inset && "bg-shoal bg-none",
+        inset && "bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))]",
         variant === "ember" && "panel-ember",
         className,
       )}

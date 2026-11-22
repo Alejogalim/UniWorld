@@ -96,14 +96,11 @@
     /* Primary button fill (light): darker so white text clears 4.5:1 at both ends. */
     --ember-button-top: #c4400b;
     --ember-button-bottom: #b83304;
-    /* A very soft peach wash for the bottom of an ember panel on paper. */
-    --ember-wash: color-mix(in oklch, var(--ember-2) 10%, transparent);
     /* No glow on light paper: transparent shadows, because `none` breaks Tailwind's box-shadow list. */
     --ember-glow: 0 0 #0000;
-    --ember-glow-wide: 0 0 #0000;
 
     /* Surfaces: a sheet laid on the ground. Light cards are flat white with a 6% ring. */
-    --surface-fill: var(--panel);
+    --surface-fill: linear-gradient(var(--panel), var(--panel));
     --rim-top: rgb(0 0 0 / 0.06);
     --rim-bottom: rgb(0 0 0 / 0.06);
     --rim: linear-gradient(to bottom, var(--rim-top), var(--rim-bottom));
@@ -162,9 +159,7 @@
 
     --ember-button-top: #ff8a3d;
     --ember-button-bottom: #ff5a1f;
-    --ember-wash: color-mix(in oklch, var(--ember-2) 10%, transparent);
     --ember-glow: 0 0 32px -8px color-mix(in oklch, var(--ember-1) 55%, transparent);
-    --ember-glow-wide: 0 28px 72px -28px color-mix(in oklch, var(--ember-1) 45%, transparent);
 
     --surface-fill: linear-gradient(180deg, #151517 0%, #0b0b0c 100%);
     --rim-top: rgb(255 255 255 / 0.16);
@@ -208,55 +203,33 @@
     color: transparent;
   }
 
-  /* Rim: a 1px gradient border drawn with a mask, so it follows any radius (border-radius: inherit). */
-  .rim { position: relative; isolation: isolate; }
-  .rim::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    padding: 1px;
-    background: var(--rim);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    pointer-events: none;
+  /* Rim: a 1px gradient border with no mask and no pseudo-element. The fill is the first background layer
+     (padding-box) and the rim gradient is the second (border-box), so the border follows the element's radius.
+     The rim gradient paints the whole box underneath the fill, so a rim must set an OPAQUE --rim-fill
+     (.surface does, or a [--rim-fill:linear-gradient(var(--shoal),var(--shoal))] class). Plan 18, step 3. */
+  .rim {
+    position: relative;
+    border: 1px solid transparent;
+    background:
+      var(--rim-fill, linear-gradient(transparent, transparent)) padding-box,
+      var(--rim) border-box;
+    background-repeat: no-repeat;
   }
 
-  /* Surface: a soft 28px sheet. Dark cards are a gradient; light cards are flat white. */
+  /* Surface: a soft 28px sheet. Its fill is handed to .rim as the padding-box layer. Dark cards are a
+     gradient; light cards are flat white. Always used with .rim. */
   .surface {
     border-radius: var(--radius-card);
-    background: var(--surface-fill);
+    --rim-fill: var(--surface-fill);
   }
 
-  /* Ember panel: the one memorable element per screen. Dark: an ember gradient rising from the
-     bottom edge with a soft outer glow. Light: a peach wash in the bottom third. Children stay above it. */
-  .panel-ember::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
-    pointer-events: none;
-    height: 45%;
-    /* Deep ember at the bottom edge (as the old band); ember-1 here fails grey text at 3.6:1. */
-    background: radial-gradient(120% 100% at 50% 100%, var(--ember-0), transparent 70%);
-    opacity: 0.35;
-    /* Clipped to the card instead of blurred: a blur filter is costly without DMABUF and bled past the corners. */
-    clip-path: inset(0 round var(--radius-card));
-    animation: ember-in 300ms ease-out both;
-  }
-  .panel-ember { isolation: isolate; }
+  /* Ember panel: the one memorable element per screen. Its glow is outside the box only: no inner wash,
+     no inner highlight, no pseudo-element. Dark: a static halo around the whole card. Light: no glow. */
   .dark .panel-ember {
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), var(--ember-glow-wide);
-  }
-  :root:not(.dark) .panel-ember::after {
-    height: 35%;
-    background: linear-gradient(to top, var(--ember-wash), transparent);
-    opacity: 1;
+    box-shadow:
+      0 0 0 1px var(--rim-top),
+      0 0 44px -6px color-mix(in oklch, var(--ember-1) 45%, transparent),
+      0 14px 60px -24px color-mix(in oklch, var(--ember-0) 55%, transparent);
   }
 
   /* Primary button fill: a vertical ember gradient (light: deep orange; dark: amber to ember). */
@@ -271,6 +244,7 @@
     z-index: -1;
     display: none;
     pointer-events: none;
+    contain: strict;
     opacity: 0.14;
     background: radial-gradient(60% 45% at 50% 100%, var(--ember-1), transparent 70%);
   }
@@ -302,10 +276,6 @@
   .dark .ui-range::-webkit-slider-thumb { box-shadow: 0 0 0 4px color-mix(in oklch, var(--ember-1) 28%, transparent); }
   .dark .ui-range::-moz-range-thumb { box-shadow: 0 0 0 4px color-mix(in oklch, var(--ember-1) 28%, transparent); }
   .ui-range:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; border-radius: 999px; }
-}
-
-@keyframes ember-in {
-  from { opacity: 0; }
 }
 
 /* Screen title: the measure is plotted left to right, the word lettered in behind it. */
@@ -390,30 +360,17 @@
    The language select sits invisibly over its button. */
 .lang-button {
   position: relative;
-  isolation: isolate;
   display: grid;
   place-items: center;
   width: 40px;
   height: 40px;
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-pill);
   color: var(--foreground);
-  background: transparent;
-}
-.lang-button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  padding: 1px;
-  background: var(--rim);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  pointer-events: none;
+  background-color: transparent;
 }
 .lang-button:hover {
-  background: var(--shoal);
+  background-color: var(--shoal);
 }
 .lang-button:focus-within {
   outline: 2px solid var(--signal);
@@ -427,6 +384,46 @@
   opacity: 0;
   cursor: pointer;
   appearance: none;
+}
+
+/* Starfield (plan 18): pre-rendered tiles moved by the compositor. No per-frame JS, no canvas in the DOM.
+   Each layer is oversized by one tile on every side, so a drift of exactly one tile (in x and y) is invisible. */
+.star-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.star-layer,
+.star-twinkle {
+  position: absolute;
+  background-repeat: repeat;
+  background-size: var(--star-tile) var(--star-tile);
+  will-change: transform;
+}
+.star-layer {
+  inset: calc(var(--star-tile) * -1);
+  transform: translate3d(0, 0, 0);
+  animation: star-drift var(--star-duration) linear infinite;
+}
+.star-twinkle {
+  inset: 0;
+  will-change: opacity;
+  animation: star-twinkle var(--star-duration) ease-in-out infinite alternate;
+}
+.star-field.is-paused .star-layer,
+.star-field.is-paused .star-twinkle {
+  animation-play-state: paused;
+}
+@keyframes star-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(var(--star-tile) * -1), calc(var(--star-tile) * -1), 0); }
+}
+@keyframes star-twinkle {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
 }
 
 /* Rail: transparent over the ground. A 1px hairline separates it in light mode only. */
@@ -470,7 +467,8 @@
   .nav-item:hover .nav-item__icon,
   .nav-item:active { transform: none; }
   .nav-item__fix { animation: none; }
-  .panel-ember::after { animation: none; }
+  .star-layer,
+  .star-twinkle { animation: none; }
 }
 
 /* Ember fill: the search progress dot (DESIGN.md "Where the ember is allowed").

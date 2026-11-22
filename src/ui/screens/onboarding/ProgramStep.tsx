@@ -27,7 +27,7 @@ export function ProgramStep({ errors }: { errors: Errors }) {
                 key={p}
                 className={cn(
                   "relative flex min-h-12 cursor-pointer items-center gap-3 rounded-control px-4 py-3 text-[1.0625rem] font-semibold text-foreground transition-colors duration-[120ms] hover:bg-shoal focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-signal",
-                  checked && "rim bg-shoal",
+                  checked && "rim bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))]",
                 )}
               >
                 {checked && (
