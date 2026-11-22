@@ -39,13 +39,14 @@
     "save": "Lưu",
     "saved": "Đã lưu",
     "find": "Tìm trường đại học",
-    "rank": "Hạng {{n}}"
+    "rank": "Hạng {{n}}",
+    "savedHeading": "Nghề nghiệp đã lưu"
   },
   "errors": {
     "chatTitle": "Cố vấn chưa thể trả lời",
     "careersTitle": "Chưa thể tạo gợi ý nghề nghiệp",
     "saveTitle": "Chưa thể cập nhật nghề này",
-    "missingKey": "Hãy thêm khóa AI trong Cài đặt để trò chuyện với cố vấn.",
+    "missingKey": "Hãy thêm khóa AI trong Cài đặt.",
     "openSettings": "Mở cài đặt",
     "noReply": "Cố vấn chưa trả lời. Hãy thử lại để tiếp tục.",
     "tryAgain": "Thử lại"

@@ -72,7 +72,8 @@ export function FinderScreen() {
   const showTooFew = phase === 'done' && (progress.some(isTooFew) || (summary !== null && summary.verified < 3));
 
   const globe = (
-    <div className={cn('w-full', split ? 'max-w-[380px]' : 'max-w-[640px]')}>
+    // At rest the globe is square and as large as the height allows (header, padding and scope chips).
+    <div className={cn('w-full', split ? 'max-w-[380px]' : 'max-w-[calc(100vh-240px)]')}>
       <Suspense fallback={<div className="grid aspect-square place-items-center"><Spinner label={t('common:loading')} /></div>}>
         <GlobeView
           selected={selected}
@@ -97,6 +98,7 @@ export function FinderScreen() {
       onSearch={() => void search()}
       onFlyTo={(view) => setFlyTo({ ...view })}
       globe={globe}
+      beside={!split}
     />
   );
 

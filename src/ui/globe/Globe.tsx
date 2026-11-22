@@ -219,8 +219,15 @@ export default function GlobeView({
     if (!globe || !countries) return;
     state.current.palette = readPalette();
     const p = state.current.palette;
-    const material = globe.globeMaterial() as unknown as { color: { set: (hex: string) => void } };
+    // A matte surface: no specular highlight on the sphere.
+    const material = globe.globeMaterial() as unknown as {
+      color: { set: (hex: string) => void };
+      specular: { setScalar: (value: number) => void };
+      shininess: number;
+    };
     material.color.set(p.ocean);
+    material.specular.setScalar(0);
+    material.shininess = 0;
     globe.polygonsData(countries);
     applyStyles();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -89,7 +89,7 @@
     "addError": "Could not add this university. Try again.",
     "errorTitle": "This page could not load",
     "tryAgain": "Try again",
-    "missingKey": "Reading university pages needs an OpenRouter key. Add it in Settings.",
+    "missingKey": "Add an AI key in Settings.",
     "openSettings": "Open settings",
     "sections": {
       "overview": "Overview",
@@ -101,6 +101,8 @@
       "exams": "Required exams",
       "requirements": "Entry requirements",
       "apply": "How to apply"
-    }
+    },
+    "untitled": "University details",
+    "addNeedsName": "Open this university from the Finder to add it to your list."
   }
 }

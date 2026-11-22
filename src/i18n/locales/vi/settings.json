@@ -1,0 +1,91 @@
+{
+  "sections": {
+    "profile": "Hồ sơ",
+    "profileLine": "Những gì Tư vấn và Tìm trường biết về bạn.",
+    "interface": "Giao diện",
+    "interfaceLine": "Ngôn ngữ và chủ đề màu. Cả hai được áp dụng ngay.",
+    "ai": "Nhà cung cấp AI",
+    "aiLine": "Khóa được lưu trong chuỗi khóa của hệ điều hành, không bao giờ lưu trong cơ sở dữ liệu hay dưới dạng văn bản thường. Tìm trường cần OpenRouter. Tư vấn hoạt động với một trong hai nhà cung cấp.",
+    "data": "Dữ liệu của bạn",
+    "dataLine": "Mọi thứ UniWorld đã lưu trên máy tính này.",
+    "about": "Giới thiệu",
+    "aboutLine": "Thông tin lấy từ đâu và UniWorld không làm gì."
+  },
+  "profile": {
+    "empty": "Bạn chưa có hồ sơ. Hãy tạo hồ sơ để dùng Tư vấn và Tìm trường.",
+    "create": "Tạo hồ sơ",
+    "edit": "Sửa hồ sơ",
+    "name": "Tên",
+    "primaryLanguage": "Ngôn ngữ chính",
+    "otherLanguages": "Ngôn ngữ khác",
+    "none": "Không có",
+    "program": "Chương trình",
+    "citizenship": "Quốc tịch",
+    "residence": "Quốc gia cư trú",
+    "languageLevel": "{{language}} ({{level}})"
+  },
+  "interface": {
+    "language": "Ngôn ngữ giao diện",
+    "theme": "Chủ đề màu"
+  },
+  "ai": {
+    "openrouter": {
+      "title": "OpenRouter",
+      "badge": "Bắt buộc cho Tìm trường",
+      "hint": "Tìm kiếm web đã xác minh cho Tìm trường. Tư vấn và trang của trường cũng dùng khóa này."
+    },
+    "opencode": {
+      "title": "OpenCode Go",
+      "badge": "Thử nghiệm",
+      "hint": "Chỉ dùng cho trò chuyện với Tư vấn. Không có tìm kiếm web. Không bắt buộc."
+    },
+    "saved": "Đã lưu trong chuỗi khóa",
+    "missing": "Chưa thiết lập",
+    "keyInput": "Khóa mới",
+    "keyPlaceholder": "Dán khóa để thay khóa đã lưu",
+    "saveKey": "Lưu khóa",
+    "testConnection": "Kiểm tra kết nối",
+    "testing": "Đang kiểm tra…",
+    "connected": "Kết nối hoạt động",
+    "testFailed": "Kết nối thất bại",
+    "removeKey": "Xóa khóa",
+    "removeOpenrouterConfirm": "Xóa khóa OpenRouter khỏi máy tính này? Tìm trường sẽ không tìm kiếm cho đến khi bạn thêm lại khóa.",
+    "removeOpencodeConfirm": "Xóa khóa OpenCode Go khỏi máy tính này? Tư vấn sẽ dùng OpenRouter.",
+    "removeYes": "Có, xóa khóa",
+    "cancel": "Hủy",
+    "keySaved": "Đã lưu khóa vào chuỗi khóa của máy.",
+    "noDetail": "Nhà cung cấp không nói rõ lý do. Hãy kiểm tra khóa và thử lại.",
+    "saveFailed": "Không lưu được khóa: {{error}}",
+    "model": {
+      "label": "Mô hình",
+      "hint": "Để trống để dùng mô hình mặc định, {{model}}.",
+      "save": "Lưu mô hình",
+      "saved": "Đã lưu mô hình."
+    },
+    "counselorProvider": {
+      "label": "Nhà cung cấp của Tư vấn",
+      "openrouter": "OpenRouter",
+      "opencode": "OpenCode Go",
+      "needsKey": "OpenCode Go (hãy thêm khóa ở trên trước)"
+    },
+    "keySaving": "Đang lưu…",
+    "loadFailed": "Không đọc được cài đặt AI: {{error}}"
+  },
+  "data": {
+    "clear": "Xóa toàn bộ dữ liệu của tôi",
+    "clearConfirm": "Thao tác này xóa khỏi máy tính này: hồ sơ, các cuộc trò chuyện, nghề nghiệp, tìm kiếm, chi tiết đã lưu, danh sách trường và cả hai khóa AI.",
+    "deleteEverything": "Xóa tất cả",
+    "deleting": "Đang xóa…",
+    "deleteFailed": "Một số dữ liệu chưa xóa được. {{error}} Hãy thử lại.",
+    "cancel": "Hủy"
+  },
+  "about": {
+    "paragraph": "UniWorld hiển thị các trường đại học thật và thông tin thật. Mỗi thông tin đều có nguồn và đoạn trích gốc. Khi không tìm thấy thông tin, ứng dụng nói rõ và không đoán.",
+    "sourcesTitle": "Nguồn dữ liệu và bản đồ",
+    "ror": "ROR, cơ sở dữ liệu trường đại học. CC0.",
+    "domains": "Hipo university-domains-list. MIT.",
+    "naturalEarth": "Natural Earth, cho quả địa cầu. Thuộc phạm vi công cộng.",
+    "version": "Phiên bản",
+    "open": "Mở {{site}}"
+  }
+}

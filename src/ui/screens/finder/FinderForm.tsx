@@ -14,12 +14,14 @@ interface FinderFormProps {
   hasKey: boolean | null;
   onSearch: () => void;
   onFlyTo: (view: GeoView) => void;
-  /** Rendered between the careers and the scope (the globe). */
+  /** The globe itself. The scope chips are rendered under it by this component. */
   globe: ReactNode;
+  /** At rest: careers and filters on the left, the globe and scope on the right. */
+  beside?: boolean;
 }
 
 /** Careers, scope, filters and the search action. Used at rest and while editing a search. */
-export function FinderForm({ hasKey, onSearch, onFlyTo, globe }: FinderFormProps) {
+export function FinderForm({ hasKey, onSearch, onFlyTo, globe, beside = false }: FinderFormProps) {
   const { t } = useTranslation('finder');
   const navigate = useNavigate();
   const careers = useFinder((s) => s.careers);
@@ -28,23 +30,29 @@ export function FinderForm({ hasKey, onSearch, onFlyTo, globe }: FinderFormProps
   const canSearch = !noCareer && hasKey === true && phase !== 'searching';
   const reason = noCareer ? t('search.noCareer') : null;
 
-  return (
-    <div className="flex flex-col gap-8">
-      <section className="flex flex-col gap-3">
-        <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">{t('sections.careers')}</h2>
-        <CareerPicker />
-      </section>
+  const careersSection = (
+    <section className="flex flex-col gap-3">
+      <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">{t('sections.careers')}</h2>
+      <CareerPicker />
+    </section>
+  );
 
-      <section className="flex flex-col gap-4">
-        {globe}
-        <ScopePicker onFlyTo={onFlyTo} />
-      </section>
+  const globeSection = (
+    <section className="flex flex-col gap-4">
+      {globe}
+      <ScopePicker onFlyTo={onFlyTo} />
+    </section>
+  );
 
-      <section className="flex flex-col gap-3 border-t border-hairline pt-6">
-        <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">{t('sections.filters')}</h2>
-        <Filters />
-      </section>
+  const filtersSection = (
+    <section className="flex flex-col gap-3 border-t border-hairline pt-6">
+      <h2 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">{t('sections.filters')}</h2>
+      <Filters />
+    </section>
+  );
 
+  const actions = (
+    <>
       {hasKey === false && (
         <ErrorNote
           message={t('key.message')}
@@ -64,6 +72,28 @@ export function FinderForm({ hasKey, onSearch, onFlyTo, globe }: FinderFormProps
         </div>
         {reason && <p className="text-sm text-chart-grey">{reason}</p>}
       </div>
+    </>
+  );
+
+  if (beside) {
+    return (
+      <div className="grid gap-8 min-[1100px]:grid-cols-[420px_minmax(0,1fr)]">
+        <div className="flex min-w-0 flex-col gap-8">
+          {careersSection}
+          {filtersSection}
+          {actions}
+        </div>
+        <div className="flex min-w-0 flex-col gap-4">{globeSection}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-8">
+      {careersSection}
+      {globeSection}
+      {filtersSection}
+      {actions}
     </div>
   );
 }

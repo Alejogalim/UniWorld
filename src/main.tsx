@@ -5,11 +5,10 @@ import "./i18n";
 import "./index.css";
 import { initTheme } from "./app/theme";
 
-// The saved theme is applied before the first render, so the page never flashes the wrong palette.
-void initTheme().finally(() => {
-  ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-  );
-});
+// The cached theme is applied before the first render; the saved one loads in the background.
+initTheme();
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

@@ -110,7 +110,8 @@
     "testing": "Đang kiểm tra…",
     "connected": "Kết nối hoạt động",
     "failedTitle": "Kết nối thất bại",
-    "noDetail": "Nhà cung cấp không nêu lý do. Kiểm tra khóa và thử lại."
+    "noDetail": "Nhà cung cấp không nêu lý do. Kiểm tra khóa và thử lại.",
+    "savedInKeychain": "Đã lưu trong chuỗi khóa của máy. Nhập khóa mới để thay thế."
   },
   "actions": {
     "next": "Tiếp",

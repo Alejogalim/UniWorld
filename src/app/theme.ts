@@ -29,6 +29,7 @@ export const useTheme = create<ThemeState>((set) => ({
     const resolved = resolve(mode);
     apply(resolved);
     set({ mode, resolved });
+    cacheMode(mode);
     await setSetting('theme', mode);
   },
 }));
@@ -41,17 +42,50 @@ systemQuery.addEventListener('change', () => {
   useTheme.setState({ resolved });
 });
 
-/** Called once from main.tsx: applies the system theme at once, then the saved choice. */
-export async function initTheme(): Promise<void> {
-  apply(resolve('system'));
-  let mode: ThemeMode = 'system';
+const CACHE_KEY = 'uniworld.theme';
+
+function isMode(value: unknown): value is ThemeMode {
+  return value === 'system' || value === 'light' || value === 'dark';
+}
+
+/** Last chosen mode, kept in localStorage so the first paint already has the right palette. */
+function readCachedMode(): ThemeMode | null {
   try {
-    const saved = await getSetting('theme');
-    if (saved === 'light' || saved === 'dark' || saved === 'system') mode = saved;
-  } catch (err) {
-    console.error('Failed to load theme setting', err);
+    const value = window.localStorage.getItem(CACHE_KEY);
+    return isMode(value) ? value : null;
+  } catch {
+    return null;
   }
-  const resolved = resolve(mode);
+}
+
+function cacheMode(mode: ThemeMode): void {
+  try {
+    window.localStorage.setItem(CACHE_KEY, mode);
+  } catch {
+    // Storage can be blocked; the database copy is still written by setMode.
+  }
+}
+
+/**
+ * Called once from main.tsx before the first render. It applies the cached choice (or the
+ * system theme) synchronously and never waits for the database. The saved choice is then
+ * read in the background and applied, unless the user has already picked a mode meanwhile.
+ */
+export function initTheme(): void {
+  const startMode = readCachedMode() ?? 'system';
+  const resolved = resolve(startMode);
   apply(resolved);
-  useTheme.setState({ mode, resolved });
+  useTheme.setState({ mode: startMode, resolved });
+
+  getSetting('theme')
+    .then((saved) => {
+      if (!isMode(saved) || useTheme.getState().mode !== startMode) return;
+      cacheMode(saved);
+      const next = resolve(saved);
+      apply(next);
+      useTheme.setState({ mode: saved, resolved: next });
+    })
+    .catch((err: unknown) => {
+      console.error('Failed to load theme setting', err);
+    });
 }

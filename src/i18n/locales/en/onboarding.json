@@ -110,7 +110,8 @@
     "testing": "Testing…",
     "connected": "Connection works",
     "failedTitle": "Connection failed",
-    "noDetail": "The provider did not say why. Check the key and try again."
+    "noDetail": "The provider did not say why. Check the key and try again.",
+    "savedInKeychain": "Saved in your keychain. Type a new key to replace it."
   },
   "actions": {
     "next": "Next",

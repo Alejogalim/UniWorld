@@ -4,6 +4,7 @@ import { useLocation } from 'react-router';
 import { createTauriSqlClient } from '@/core/adapters/tauri';
 import { SqlCounselorStore } from '@/store/counselor';
 import { Chip } from '@/ui/components/Chip';
+import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Input } from '@/ui/components/Input';
 import { useFinder } from './useFinder';
 
@@ -53,7 +54,7 @@ export function CareerPicker() {
 
   return (
     <div className="flex flex-col gap-3">
-      {loadError && <p role="alert" className="text-sm text-foreground">{loadError}</p>}
+      {loadError && <ErrorNote message={loadError} />}
       {saved && saved.length === 0 && custom.length === 0 && (
         <p className="text-sm text-chart-grey">{t('careers.none')}</p>
       )}

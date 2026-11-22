@@ -89,7 +89,7 @@
     "addError": "Không thể thêm trường. Hãy thử lại.",
     "errorTitle": "Không thể tải trang này",
     "tryAgain": "Thử lại",
-    "missingKey": "Đọc các trang của trường cần khóa OpenRouter. Hãy thêm khóa trong Cài đặt.",
+    "missingKey": "Hãy thêm khóa AI trong Cài đặt.",
     "openSettings": "Mở cài đặt",
     "sections": {
       "overview": "Tổng quan",
@@ -101,6 +101,8 @@
       "exams": "Kỳ thi yêu cầu",
       "requirements": "Yêu cầu đầu vào",
       "apply": "Cách nộp hồ sơ"
-    }
+    },
+    "untitled": "Thông tin trường",
+    "addNeedsName": "Hãy mở trường này từ Tìm trường để thêm vào danh sách."
   }
 }

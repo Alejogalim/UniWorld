@@ -2,8 +2,6 @@
   "appName": "UniWorld",
   "beta": "Beta",
   "loading": "Loading…",
-  "comingSoon": "Coming soon",
-  "comingSoonLine": "Coming soon. This screen is not built yet.",
   "language": {
     "label": "Interface language",
     "en": "English",
@@ -18,7 +16,7 @@
     "settings": "Settings"
   },
   "screens": {
-    "onboarding": "Welcome",
+    "onboarding": "Your profile",
     "counselor": "Counselor",
     "finder": "University Finder",
     "myUnis": "My universities",
@@ -45,5 +43,8 @@
     "reload": "Reload",
     "startupTitle": "UniWorld could not open your saved data",
     "tryAgain": "Try again"
+  },
+  "errors": {
+    "saveFailed": "Could not save: {{error}}"
   }
 }

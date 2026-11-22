@@ -46,6 +46,8 @@ export interface OnboardingDraft {
   residence: string | null;
   openrouterKey: string;
   opencodeKey: string;
+  /** Keys already in the keychain (checked on open). A stored key does not have to be typed again. */
+  storedKeys: { openrouter: boolean; opencode: boolean };
 }
 
 const EMPTY_GRADES: GradesDraft = {
@@ -70,6 +72,7 @@ const INITIAL: OnboardingDraft = {
   residence: null,
   openrouterKey: '',
   opencodeKey: '',
+  storedKeys: { openrouter: false, opencode: false },
 };
 
 let keySeq = 0;

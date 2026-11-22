@@ -88,7 +88,7 @@ export function validateStep(step: number, d: OnboardingDraft): Errors {
   }
   if (step === 3 && !d.program) errors.program = { key: 'program.errorRequired' };
   if (step === 4) validateGrades(d, errors);
-  if (step === 6 && d.openrouterKey.trim() === '') {
+  if (step === 6 && d.openrouterKey.trim() === '' && !d.storedKeys.openrouter) {
     errors.openrouterKey = { key: 'ai.openrouter.errorRequired' };
   }
   return errors;

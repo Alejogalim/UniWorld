@@ -15,18 +15,21 @@ import viFinder from './locales/vi/finder.json';
 import enMyUnis from './locales/en/myUnis.json';
 import esMyUnis from './locales/es/myUnis.json';
 import viMyUnis from './locales/vi/myUnis.json';
+import enSettings from './locales/en/settings.json';
+import esSettings from './locales/es/settings.json';
+import viSettings from './locales/vi/settings.json';
 
 export const resources = {
-  en: { common: enCommon, onboarding: enOnboarding, counselor: enCounselor, finder: enFinder, myUnis: enMyUnis },
-  es: { common: esCommon, onboarding: esOnboarding, counselor: esCounselor, finder: esFinder, myUnis: esMyUnis },
-  vi: { common: viCommon, onboarding: viOnboarding, counselor: viCounselor, finder: viFinder, myUnis: viMyUnis },
+  en: { common: enCommon, onboarding: enOnboarding, counselor: enCounselor, finder: enFinder, myUnis: enMyUnis, settings: enSettings },
+  es: { common: esCommon, onboarding: esOnboarding, counselor: esCounselor, finder: esFinder, myUnis: esMyUnis, settings: esSettings },
+  vi: { common: viCommon, onboarding: viOnboarding, counselor: viCounselor, finder: viFinder, myUnis: viMyUnis, settings: viSettings },
 } as const;
 
 void i18n.use(initReactI18next).init({
   resources,
   lng: 'en',
   fallbackLng: 'en',
-  ns: ['common', 'onboarding', 'counselor', 'finder', 'myUnis'],
+  ns: ['common', 'onboarding', 'counselor', 'finder', 'myUnis', 'settings'],
   defaultNS: 'common',
   interpolation: { escapeValue: false },
 });

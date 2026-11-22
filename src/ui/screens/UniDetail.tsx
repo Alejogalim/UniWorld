@@ -50,9 +50,13 @@ export function UniDetailScreen() {
   const uni = state?.uni;
   const tracked = state?.tracked;
   const program = (search.get('program') || uni?.program || tracked?.programName || '').trim();
-  const name = uni?.name ?? tracked?.name ?? rorId;
-  const city = uni?.city ?? tracked?.city ?? null;
-  const countryCode = uni?.countryCode ?? tracked?.countryCode ?? '';
+  const trackedByRor = useTracked((s) => s.items.find((i) => i.rorId === rorId));
+  const trackedLoaded = useTracked((s) => s.loaded);
+  // Route state first, then the tracked list. The rorId is never shown or saved as a name.
+  const name = (uni?.name || tracked?.name || trackedByRor?.name || '').trim();
+  const nameKnown = name !== '';
+  const city = uni?.city ?? tracked?.city ?? trackedByRor?.city ?? null;
+  const countryCode = uni?.countryCode ?? tracked?.countryCode ?? trackedByRor?.countryCode ?? '';
 
   const [status, setStatus] = useState<LoadStatus>('loading');
   const [detail, setDetail] = useState<UniDetailData | null>(null);
@@ -63,7 +67,6 @@ export function UniDetailScreen() {
   const [addError, setAddError] = useState<unknown>(null);
   const [listError, setListError] = useState<unknown>(null);
 
-  const trackedLoaded = useTracked((s) => s.loaded);
   const existing = useTracked((s) => s.find(rorId, program));
 
   const load = (refresh: boolean) => {
@@ -100,7 +103,7 @@ export function UniDetailScreen() {
   }, [trackedLoaded]);
 
   const addToList = () => {
-    if (!detail) return;
+    if (!detail || !nameKnown) return;
     setAdding(true);
     setAddError(null);
     useTracked
@@ -178,9 +181,12 @@ export function UniDetailScreen() {
       </Button>
     </div>
   ) : (
-    <Button onClick={addToList} disabled={!detail || busy || adding}>
-      {t('detail.addToList')}
-    </Button>
+    <div className="flex flex-col items-end gap-2">
+      <Button onClick={addToList} disabled={!detail || !nameKnown || busy || adding}>
+        {t('detail.addToList')}
+      </Button>
+      {!nameKnown && trackedLoaded && <p className="max-w-[40ch] text-right text-xs text-chart-grey">{t('detail.addNeedsName')}</p>}
+    </div>
   );
 
   return (
@@ -193,7 +199,7 @@ export function UniDetailScreen() {
             <div className="flex min-w-0 items-center gap-2">
               <Flag code={countryCode} />
               <h2 className="min-w-0 text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.015em] break-words text-foreground">
-                {name}
+                {nameKnown ? name : t('detail.untitled')}
               </h2>
             </div>
             {place && <p className="text-sm leading-[1.55] text-chart-grey">{place}</p>}

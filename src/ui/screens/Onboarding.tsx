@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import type { UiLang } from "@/core/contracts";
 import { useProfile } from "@/store/profile";
+import { getSecret } from "@/store/secrets";
 import { ErrorNote } from "@/ui/components/ErrorNote";
 import { Button } from "@/ui/components/ui/button";
 import { Spinner } from "@/ui/components/Spinner";
@@ -32,6 +33,9 @@ function uiLangOf(raw: string | undefined): UiLang {
 export function OnboardingScreen() {
   const { t, i18n } = useTranslation("onboarding");
   const navigate = useNavigate();
+  const location = useLocation();
+  // Opened from Settings ("Edit profile"): Finish returns there instead of the counselor.
+  const fromSettings = (location.state as { from?: string } | null)?.from === "settings";
   const reduceMotion = useReducedMotion();
   const draft = useOnboardingDraft();
   const { step } = draft;
@@ -43,9 +47,26 @@ export function OnboardingScreen() {
   // Editing an existing profile: fill the draft from it once, without keys.
   useEffect(() => {
     const state = useOnboardingDraft.getState();
-    if (state.prefilled) return;
-    const existing = useProfile.getState().profile;
-    if (existing) state.prefill(existing);
+    if (!state.prefilled) {
+      const existing = useProfile.getState().profile;
+      if (existing) state.prefill(existing);
+    }
+  }, []);
+
+  // Keys already in the keychain need not be typed again. Only presence is read, never the value shown.
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([getSecret("openrouter"), getSecret("opencode")])
+      .then(([openrouter, opencode]) => {
+        if (cancelled) return;
+        useOnboardingDraft.getState().set({
+          storedKeys: { openrouter: Boolean(openrouter?.trim()), opencode: Boolean(opencode?.trim()) },
+        });
+      })
+      .catch((err: unknown) => console.error("Could not read the saved keys", err));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const errors: Errors = attempted ? validateStep(step, draft) : {};
@@ -79,7 +100,7 @@ export function OnboardingScreen() {
       if (!profile) throw new Error("Some required answers are missing.");
       await useProfile.getState().save(profile);
       // Navigate first so the screen does not re-prefill from the profile just saved.
-      navigate("/counselor", { replace: true });
+      navigate(fromSettings ? "/settings" : "/counselor", { replace: true });
       useOnboardingDraft.getState().reset();
     } catch (err) {
       setFinishError(err instanceof Error ? err.message : String(err));
@@ -147,9 +168,9 @@ export function OnboardingScreen() {
           e.preventDefault();
           next();
         }}
-        className="flex flex-1 flex-col pt-10"
+        className="flex flex-col pt-10"
       >
-        <div className="flex-1">
+        <div>
           <AnimatePresence mode="wait" custom={dir} initial={false}>
             <motion.div
               key={step}
@@ -171,7 +192,7 @@ export function OnboardingScreen() {
           </div>
         )}
 
-        <div className="mt-10 flex flex-wrap items-center gap-2">
+        <div className="mt-6 flex flex-wrap items-center gap-2">
           {step > 0 && (
             <Button type="button" variant="secondary" disabled={saving} onClick={() => goTo(step - 1, -1)}>
               {t("actions.back")}
@@ -185,7 +206,7 @@ export function OnboardingScreen() {
           <Button
             type="submit"
             autoFocus={step === 0}
-            disabled={saving || (step === LAST && draft.openrouterKey.trim() === "")}
+            disabled={saving || (step === LAST && draft.openrouterKey.trim() === "" && !draft.storedKeys.openrouter)}
           >
             {saving ? (
               <>

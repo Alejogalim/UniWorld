@@ -89,7 +89,7 @@
     "addError": "No se pudo añadir la universidad. Inténtalo de nuevo.",
     "errorTitle": "No se pudo cargar esta página",
     "tryAgain": "Intentar de nuevo",
-    "missingKey": "Leer las páginas de las universidades necesita una clave de OpenRouter. Añádela en Ajustes.",
+    "missingKey": "Añade una clave de IA en Configuración.",
     "openSettings": "Abrir ajustes",
     "sections": {
       "overview": "Resumen",
@@ -101,6 +101,8 @@
       "exams": "Exámenes requeridos",
       "requirements": "Requisitos de admisión",
       "apply": "Cómo solicitar"
-    }
+    },
+    "untitled": "Detalles de la universidad",
+    "addNeedsName": "Abre esta universidad desde el Buscador para añadirla a tu lista."
   }
 }

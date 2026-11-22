@@ -4,7 +4,7 @@ import { Eye, EyeOff, ExternalLink } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useCore } from "@/app/useCore";
 import type { Provider } from "@/core/contracts";
-import { deleteSecret, setSecret } from "@/store/secrets";
+import { setSecret } from "@/store/secrets";
 import { Badge } from "@/ui/components/Chip";
 import { ErrorNote } from "@/ui/components/ErrorNote";
 import { Field } from "@/ui/components/Field";
@@ -21,9 +21,9 @@ const KEYS_PAGE = "https://openrouter.ai/keys";
  * (never SQLite, never the profile). An empty OpenCode field removes its stored key.
  */
 export async function saveProviderKeys(keys: { openrouter: string; opencode: string }): Promise<void> {
-  await setSecret("openrouter", keys.openrouter);
+  // An empty field keeps what is stored. Keys are removed in Settings, not by emptying a field.
+  if (keys.openrouter) await setSecret("openrouter", keys.openrouter);
   if (keys.opencode) await setSecret("opencode", keys.opencode);
-  else await deleteSecret("opencode");
 }
 
 type TestState = { status: "idle" } | { status: "testing" } | { status: "ok" } | { status: "fail"; message: string };
@@ -38,9 +38,11 @@ interface KeyFieldProps {
   test: TestState;
   onTest: () => void;
   autoFocus?: boolean;
+  /** A key is already in the keychain and the field is empty. */
+  stored: boolean;
 }
 
-function KeyField({ provider, label, hint, error, value, onChange, test, onTest, autoFocus }: KeyFieldProps) {
+function KeyField({ provider, label, hint, error, value, onChange, test, onTest, autoFocus, stored }: KeyFieldProps) {
   const { t } = useTranslation("onboarding");
   const [shown, setShown] = useState(false);
   const testing = test.status === "testing";
@@ -74,6 +76,7 @@ function KeyField({ provider, label, hint, error, value, onChange, test, onTest,
           </div>
         )}
       </Field>
+      {stored && value.trim() === "" && <p className="text-xs text-evidence">{t("ai.savedInKeychain")}</p>}
       <div className="flex flex-wrap items-center gap-3">
         <Button
           type="button"
@@ -152,6 +155,7 @@ export function AiKeyStep({ errors }: { errors: Errors }) {
         test={tests.openrouter}
         onTest={() => void test("openrouter")}
         autoFocus
+        stored={useOnboardingDraft((s) => s.storedKeys.openrouter)}
       />
 
       <div className="flex flex-col gap-2 text-sm text-chart-grey">
@@ -179,6 +183,7 @@ export function AiKeyStep({ errors }: { errors: Errors }) {
           onChange={(v) => setKey("opencode", v)}
           test={tests.opencode}
           onTest={() => void test("opencode")}
+          stored={useOnboardingDraft((s) => s.storedKeys.opencode)}
         />
       </div>
 

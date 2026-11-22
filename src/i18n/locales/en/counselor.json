@@ -39,13 +39,14 @@
     "save": "Save",
     "saved": "Saved",
     "find": "Find universities",
-    "rank": "Rank {{n}}"
+    "rank": "Rank {{n}}",
+    "savedHeading": "Saved careers"
   },
   "errors": {
     "chatTitle": "The counselor could not reply",
     "careersTitle": "Career ideas could not be made",
     "saveTitle": "That career could not be updated",
-    "missingKey": "Add an AI key in Settings to talk to the counselor.",
+    "missingKey": "Add an AI key in Settings.",
     "openSettings": "Open settings",
     "noReply": "The counselor did not reply. Try again to continue.",
     "tryAgain": "Try again"

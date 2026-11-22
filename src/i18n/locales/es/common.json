@@ -2,8 +2,6 @@
   "appName": "UniWorld",
   "beta": "Beta",
   "loading": "Cargando…",
-  "comingSoon": "Próximamente",
-  "comingSoonLine": "Próximamente. Esta pantalla todavía no está lista.",
   "language": {
     "label": "Idioma de la interfaz",
     "en": "English",
@@ -18,7 +16,7 @@
     "settings": "Configuración"
   },
   "screens": {
-    "onboarding": "Bienvenida",
+    "onboarding": "Tu perfil",
     "counselor": "Orientador",
     "finder": "Buscador de universidades",
     "myUnis": "Mis universidades",
@@ -45,5 +43,8 @@
     "reload": "Recargar",
     "startupTitle": "UniWorld no pudo abrir tus datos guardados",
     "tryAgain": "Intentar de nuevo"
+  },
+  "errors": {
+    "saveFailed": "No se pudo guardar: {{error}}"
   }
 }

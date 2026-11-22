@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Languages } from 'lucide-react';
 import type { UiLang } from '@/core/contracts';
-import { useProfile } from '@/store/profile';
+import { changeUiLanguage } from '@/app/language';
 
 const LANGS: UiLang[] = ['en', 'es', 'vi'];
 
@@ -12,11 +12,7 @@ export function LanguageSwitcher() {
 
   // Changing the language also saves it on the profile, so the next launch opens in it.
   const changeLanguage = (lng: UiLang) => {
-    void i18n.changeLanguage(lng);
-    const { profile, save } = useProfile.getState();
-    if (profile) {
-      save({ ...profile, uiLang: lng }).catch((err: unknown) => console.error('Failed to save UI language', err));
-    }
+    changeUiLanguage(lng).catch((err: unknown) => console.error('Failed to change the UI language', err));
   };
 
   return (

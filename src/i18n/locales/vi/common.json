@@ -2,8 +2,6 @@
   "appName": "UniWorld",
   "beta": "Thử nghiệm",
   "loading": "Đang tải…",
-  "comingSoon": "Sắp ra mắt",
-  "comingSoonLine": "Sắp ra mắt. Màn hình này chưa được hoàn thiện.",
   "language": {
     "label": "Ngôn ngữ giao diện",
     "en": "English",
@@ -18,7 +16,7 @@
     "settings": "Cài đặt"
   },
   "screens": {
-    "onboarding": "Chào mừng",
+    "onboarding": "Hồ sơ của bạn",
     "counselor": "Tư vấn hướng nghiệp",
     "finder": "Tìm trường đại học",
     "myUnis": "Trường của tôi",
@@ -45,5 +43,8 @@
     "reload": "Tải lại",
     "startupTitle": "UniWorld không thể mở dữ liệu đã lưu",
     "tryAgain": "Thử lại"
+  },
+  "errors": {
+    "saveFailed": "Không lưu được: {{error}}"
   }
 }

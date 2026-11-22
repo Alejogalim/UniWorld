@@ -39,6 +39,41 @@ interface Pending {
 
 export const DEFAULT_WEIGHTS: CounselorWeights = { passions: 5, strengths: 5, goals: 5, earning: 5 };
 
+const BATCH_KEY = 'uniworld.counselor.latestBatch';
+
+/**
+ * The store keeps every career but not which batch it came from. The ids of the newest batch
+ * are remembered per viewer (localStorage, per session). With no record, every career counts as the latest.
+ */
+function readLatestBatch(sessionId: number | null): number[] | null {
+  if (sessionId === null) return null;
+  try {
+    const raw = window.localStorage.getItem(BATCH_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { sessionId?: unknown; ids?: unknown };
+    if (parsed.sessionId !== sessionId || !Array.isArray(parsed.ids)) return null;
+    return parsed.ids.filter((id): id is number => typeof id === 'number');
+  } catch {
+    return null;
+  }
+}
+
+function writeLatestBatch(sessionId: number, ids: number[]): void {
+  try {
+    window.localStorage.setItem(BATCH_KEY, JSON.stringify({ sessionId, ids }));
+  } catch {
+    // Storage can be blocked: the batch then shows as the latest until the next visit.
+  }
+}
+
+function clearLatestBatch(): void {
+  try {
+    window.localStorage.removeItem(BATCH_KEY);
+  } catch {
+    // Nothing to clear when storage is blocked.
+  }
+}
+
 interface CounselorState {
   sessionId: number | null;
   messages: ChatMessage[];
@@ -47,6 +82,8 @@ interface CounselorState {
   studentCount: number;
   weights: CounselorWeights;
   careers: CareerPath[];
+  /** Ids of the most recent batch of career ideas, or null when no batch is recorded. */
+  latestBatchIds: number[] | null;
   status: CounselorStatus;
   error: CounselorError | null;
   pending: Pending | null;
@@ -171,6 +208,7 @@ export const useCounselor = create<CounselorState>((set, get) => ({
   studentCount: 0,
   weights: DEFAULT_WEIGHTS,
   careers: [],
+  latestBatchIds: null,
   status: 'idle',
   error: null,
   pending: null,
@@ -213,7 +251,9 @@ export const useCounselor = create<CounselorState>((set, get) => ({
     set({ status: 'thinking-careers', error: null });
     try {
       const fresh = await useCore().counselor.careers(sessionId, weights);
-      set((s) => ({ careers: [...s.careers, ...fresh], status: 'idle' }));
+      const ids = fresh.map((career) => career.id);
+      writeLatestBatch(sessionId, ids);
+      set((s) => ({ careers: [...s.careers, ...fresh], latestBatchIds: ids, status: 'idle' }));
     } catch (err) {
       set({ status: 'idle', error: errorFrom(err, 'careers') });
     }
@@ -251,13 +291,33 @@ export const useCounselor = create<CounselorState>((set, get) => ({
       intakeStep: 1,
       studentCount: 0,
       careers: [],
+      latestBatchIds: null,
       error: null,
       pending: null,
     });
+    clearLatestBatch();
   },
 }));
 
 let loadPromise: Promise<void> | null = null;
+
+/** Forgets the counselor on this screen (used when all local data is deleted). */
+export function resetCounselorState(): void {
+  clearLatestBatch();
+  useCounselor.setState({
+    sessionId: null,
+    messages: [],
+    intakeStep: 1,
+    studentCount: 0,
+    weights: DEFAULT_WEIGHTS,
+    careers: [],
+    latestBatchIds: null,
+    status: 'idle',
+    error: null,
+    pending: null,
+    loaded: false,
+  });
+}
 
 /** Resumes the newest active session that has messages; otherwise shows question 1 and waits for an answer. */
 async function loadLatest(): Promise<void> {
@@ -320,6 +380,7 @@ async function loadLatest(): Promise<void> {
     studentCount: stored.filter((m) => m.role === 'user').length,
     weights: session?.weights ?? DEFAULT_WEIGHTS,
     careers,
+    latestBatchIds: readLatestBatch(sessionId),
     pending: unanswered,
     error: unanswered
       ? { scope: 'chat', missingKey: false, message: tc('errors.noReply') }

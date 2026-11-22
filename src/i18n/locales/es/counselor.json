@@ -39,13 +39,14 @@
     "save": "Guardar",
     "saved": "Guardada",
     "find": "Buscar universidades",
-    "rank": "Puesto {{n}}"
+    "rank": "Puesto {{n}}",
+    "savedHeading": "Carreras guardadas"
   },
   "errors": {
     "chatTitle": "El orientador no pudo responder",
     "careersTitle": "No se pudieron generar ideas de carrera",
     "saveTitle": "No se pudo actualizar esa carrera",
-    "missingKey": "Añade una clave de IA en Ajustes para hablar con el orientador.",
+    "missingKey": "Añade una clave de IA en Configuración.",
     "openSettings": "Abrir ajustes",
     "noReply": "El orientador no respondió. Inténtalo de nuevo para seguir.",
     "tryAgain": "Intentar de nuevo"

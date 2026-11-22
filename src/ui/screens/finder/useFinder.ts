@@ -54,6 +54,11 @@ const INITIAL = {
   editing: false,
 };
 
+/** Back to the first-run state: no careers, scope or filters. Used when all local data is deleted. */
+export function resetFinderState(): void {
+  useFinder.setState({ ...INITIAL });
+}
+
 /** Keeps results sorted by fit (best first) and capped; a repeated rorId replaces the old row. */
 export function insertResult(list: UniResult[], uni: UniResult): UniResult[] {
   const rest = list.filter((r) => r.rorId !== uni.rorId);

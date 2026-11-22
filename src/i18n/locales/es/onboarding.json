@@ -110,7 +110,8 @@
     "testing": "Probando…",
     "connected": "La conexión funciona",
     "failedTitle": "La conexión falló",
-    "noDetail": "El proveedor no indicó el motivo. Revisa la clave e inténtalo de nuevo."
+    "noDetail": "El proveedor no indicó el motivo. Revisa la clave e inténtalo de nuevo.",
+    "savedInKeychain": "Guardada en tu llavero. Escribe una clave nueva para reemplazarla."
   },
   "actions": {
     "next": "Siguiente",

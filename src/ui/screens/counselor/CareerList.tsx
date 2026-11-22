@@ -14,17 +14,33 @@ const DIMENSIONS = ["passions", "strengths", "goals", "earning"] as const;
 const STAGGER_MS = 24;
 const STAGGER_CAP = 8;
 
+const normalizeTitle = (title: string) => title.trim().toLowerCase();
+
 /** Career ideas as a ranked column of panels, not a grid of equal cards. */
 export function CareerList() {
   const { t } = useTranslation("counselor");
-  const careers = useCounselor((s) => s.careers);
+  const allCareers = useCounselor((s) => s.careers);
+  const latestBatchIds = useCounselor((s) => s.latestBatchIds);
   const status = useCounselor((s) => s.status);
   const error = useCounselor((s) => s.error);
+
+  // Only the newest batch is listed in full. Saved careers from earlier batches go to a sub-list.
+  const latestSet = latestBatchIds ? new Set(latestBatchIds) : null;
+  const careers = latestSet ? allCareers.filter((c) => latestSet.has(c.id)) : allCareers;
+  const latestTitles = new Set(careers.map((c) => normalizeTitle(c.title)));
+  const earlierSaved = latestSet
+    ? dedupeByTitle(
+        allCareers
+          .filter((c) => c.saved && !latestSet.has(c.id))
+          .sort((a, b) => b.id - a.id),
+      ).filter((c) => !latestTitles.has(normalizeTitle(c.title)))
+    : [];
+
   const [initialIds] = useState(() => new Set(careers.map((c) => c.id)));
   const firstNew = careers.findIndex((c) => !initialIds.has(c.id));
 
   const careerError = error && (error.scope === "careers" || error.scope === "save") ? error : null;
-  if (careers.length === 0 && status !== "thinking-careers" && !careerError) return null;
+  if (careers.length === 0 && earlierSaved.length === 0 && status !== "thinking-careers" && !careerError) return null;
 
   return (
     <section className="flex flex-col gap-4">
@@ -55,6 +71,40 @@ export function CareerList() {
           );
         })}
       </ol>
+      {earlierSaved.length > 0 && <SavedCareers careers={earlierSaved} />}
+    </section>
+  );
+}
+
+/** Keeps the first career for each title (the list is already newest first). */
+function dedupeByTitle(careers: CareerPath[]): CareerPath[] {
+  const seen = new Set<string>();
+  return careers.filter((c) => {
+    const key = normalizeTitle(c.title);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** Saved careers from earlier batches: a compact list of titles, each with its own save toggle. */
+function SavedCareers({ careers }: { careers: CareerPath[] }) {
+  const { t } = useTranslation("counselor");
+  const toggleSaved = useCounselor((s) => s.toggleSaved);
+  return (
+    <section className="flex flex-col gap-3 border-t border-hairline pt-6">
+      <h3 className="text-[1.0625rem] leading-[1.35] font-semibold">{t("careers.savedHeading")}</h3>
+      <ul className="flex flex-col">
+        {careers.map((career) => (
+          <li key={career.id} className="flex items-center justify-between gap-4 border-b border-hairline py-2.5">
+            <span className="min-w-0 break-words text-sm">{career.title}</span>
+            <Button variant="quiet" aria-pressed={true} onClick={() => void toggleSaved(career.id)}>
+              <Bookmark className="fill-current" aria-hidden="true" />
+              {t("careers.saved")}
+            </Button>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
