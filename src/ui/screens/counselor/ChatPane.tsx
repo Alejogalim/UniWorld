@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/ui/components/Input";
 import { Button } from "@/ui/components/ui/button";
 import { CounselorErrorNote } from "./CounselorErrorNote";
+import { PrioritiesPanel } from "./PrioritiesPanel";
 import { INTAKE_TOTAL } from "./intake";
 import { useCounselor, type ChatMessage } from "./useCounselor";
 
@@ -110,6 +111,12 @@ export function ChatPane() {
               animate={!initialIds.has(m.id)}
             />
           ))}
+          {/* The last question: how much each thing matters, once the intake is done. */}
+          {intakeStep > INTAKE_TOTAL && (
+            <div className="border-t border-hairline pt-6">
+              <PrioritiesPanel />
+            </div>
+          )}
         </div>
       )}
 

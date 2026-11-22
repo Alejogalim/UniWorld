@@ -8,10 +8,9 @@ import { Button } from "@/ui/components/ui/button";
 import { useProfile } from "@/store/profile";
 import { CareerList } from "./counselor/CareerList";
 import { ChatPane } from "./counselor/ChatPane";
-import { PrioritiesPanel } from "./counselor/PrioritiesPanel";
 import { useCounselor } from "./counselor/useCounselor";
 
-/** Design §7.2: intake chat on the left, importance sliders on the right, career ideas below the chat. */
+/** Design §7.2: the intake chat, then the priorities step as the last question, then career ideas. */
 export function CounselorScreen() {
   const { t } = useTranslation(["counselor", "common"]);
   const navigate = useNavigate();
@@ -56,19 +55,11 @@ export function CounselorScreen() {
   }
 
   return (
-    <div className="flex min-h-full">
-      <div className="flex min-w-0 flex-1 flex-col px-6 py-8 min-[1100px]:px-10">
-        <div className="mx-auto flex w-full max-w-[40rem] flex-col gap-8">
-          <ChatPane />
-          <CareerList />
-        </div>
+    <div className="px-6 py-8 min-[1100px]:px-10">
+      <div className="mx-auto flex w-full max-w-[40rem] flex-col gap-8">
+        <ChatPane />
+        <CareerList />
       </div>
-      <div aria-hidden="true" className="fixed top-0 right-[240px] bottom-0 hidden w-px bg-hairline min-[900px]:block" />
-      <aside className="hidden w-[240px] shrink-0 min-[900px]:flex min-[900px]:flex-col">
-        <div className="sticky top-0 flex flex-col px-4 py-8">
-          <PrioritiesPanel />
-        </div>
-      </aside>
     </div>
   );
 }
