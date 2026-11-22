@@ -14,7 +14,11 @@
     "placeholderAnswer": "Câu trả lời của bạn",
     "placeholderReply": "Trả lời cố vấn",
     "send": "Gửi",
-    "sending": "Đang gửi…"
+    "sending": "Đang gửi…",
+    "startTitle": "Mình bắt đầu từ đâu nhé?",
+    "suggestion1": "Tạo ứng dụng nhỏ cho những vấn đề tôi gặp",
+    "suggestion2": "Giải thích điều gì đó đến khi người khác hiểu",
+    "suggestion3": "Phác thảo những sản phẩm tôi ước có"
   },
   "priorities": {
     "title": "Ưu tiên của bạn",

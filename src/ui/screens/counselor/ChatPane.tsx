@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Textarea } from "@/ui/components/Input";
 import { Button } from "@/ui/components/ui/button";
 import { CounselorErrorNote } from "./CounselorErrorNote";
@@ -7,8 +9,13 @@ import { INTAKE_TOTAL } from "./intake";
 import { useCounselor, type ChatMessage } from "./useCounselor";
 
 const SIX_LINES_PX = 6 * 22 + 16; // 6 lines at 1.55 * 14px, plus 8px padding top and bottom
+const SUGGESTIONS = [1, 2, 3] as const;
 
-/** The counselor conversation: a log that auto-scrolls, then the composer. */
+/**
+ * The counselor conversation. With no answer yet it is a start screen: the opening question
+ * heads a centered column, the composer sits under it, and example answers fill the field.
+ * Once an answer exists the same centered column carries the log.
+ */
 export function ChatPane() {
   const { t } = useTranslation("counselor");
   const messages = useCounselor((s) => s.messages);
@@ -28,11 +35,19 @@ export function ChatPane() {
   const intake = intakeStep <= INTAKE_TOTAL;
   const busy = status !== "idle";
   const canSend = draft.trim().length > 0 && !busy;
+  // No student message yet (and the chat has loaded): nothing to scroll, so the opening question heads the screen.
+  const fresh = messages.length > 0 && messages.every((m) => m.role === "counselor");
+  const opening = messages.find((m) => m.role === "counselor")?.text ?? "";
 
   useLayoutEffect(() => {
     const log = logRef.current;
     if (log && stickToBottom.current) log.scrollTop = log.scrollHeight;
   }, [messages]);
+
+  // Re-measure the field whenever the draft changes, including a suggestion filling it.
+  useLayoutEffect(() => {
+    if (textareaRef.current) resize(textareaRef.current);
+  }, [draft]);
 
   function onLogScroll() {
     const log = logRef.current;
@@ -61,38 +76,55 @@ export function ChatPane() {
     }
   }
 
+  function chooseSuggestion(text: string) {
+    setDraft(text);
+    textareaRef.current?.focus();
+  }
+
   return (
-    <section className="flex min-w-0 flex-col gap-4">
-      <div
-        ref={logRef}
-        role="log"
-        aria-live="polite"
-        aria-label={t("chat.log")}
-        onScroll={onLogScroll}
-        className="flex max-h-[min(60vh,560px)] min-h-32 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)]"
-      >
-        {messages.map((m, i) => (
-          <MessageView
-            key={m.id}
-            message={m}
-            showLabel={m.role === "counselor" && messages[i - 1]?.role !== "counselor"}
-            animate={!initialIds.has(m.id)}
-          />
-        ))}
-      </div>
+    <section
+      className={cn(
+        "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
+        fresh ? "gap-8 pt-[7vh]" : "gap-6",
+      )}
+    >
+      {fresh ? (
+        <div className="flex flex-col gap-3 px-2 text-center">
+          <p className="type-label text-chart-grey">{t("chat.startTitle")}</p>
+          <h2 className="type-headline mx-auto max-w-[24ch] text-balance">{opening}</h2>
+        </div>
+      ) : (
+        <div
+          ref={logRef}
+          role="log"
+          aria-live="polite"
+          aria-label={t("chat.log")}
+          onScroll={onLogScroll}
+          className="flex max-h-[min(60vh,560px)] min-h-32 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)]"
+        >
+          {messages.map((m, i) => (
+            <MessageView
+              key={m.id}
+              message={m}
+              showLabel={m.role === "counselor" && messages[i - 1]?.role !== "counselor"}
+              animate={!initialIds.has(m.id)}
+            />
+          ))}
+        </div>
+      )}
 
       {error?.scope === "chat" && (
         <CounselorErrorNote error={error} title="errors.chatTitle" canRetry={pending !== null} />
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {intake && (
-          <p className="font-mono text-xs font-medium tabular-nums text-chart-grey">
+          <p className={cn("font-mono text-xs font-medium tabular-nums text-chart-grey", fresh && "text-center")}>
             {t("intake.progress", { n: intakeStep, total: INTAKE_TOTAL })}
           </p>
         )}
-        {/* The composer is one pill: the field has no border of its own; the pill carries the rim and focus ring. */}
-        <div className="rim flex items-end gap-2 rounded-[28px] bg-panel py-1.5 pr-1.5 pl-2 focus-within:outline-2 focus-within:outline-signal">
+        {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
+        <div className="rim flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
           <Textarea
             ref={textareaRef}
             aria-label={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
@@ -105,12 +137,27 @@ export function ChatPane() {
               resize(e.target);
             }}
             onKeyDown={onKeyDown}
-            className="min-h-10 flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 shadow-none focus-visible:outline-0"
+            className="min-h-10 flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 shadow-none focus-visible:outline-0 focus-visible:shadow-none"
           />
           <Button onClick={submit} disabled={!canSend} className="min-w-24">
             {busy ? t("chat.sending") : t("chat.send")}
           </Button>
         </div>
+        {fresh && (
+          <div className="flex flex-col items-stretch gap-1 px-2 pt-2">
+            {SUGGESTIONS.map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => chooseSuggestion(t(`chat.suggestion${n}`))}
+                className="flex items-center gap-3 rounded-pill px-4 py-2.5 text-left type-label text-foreground outline-none transition-colors hover:bg-shoal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+              >
+                <Sparkles className="size-4 shrink-0 text-chart-grey" aria-hidden="true" />
+                {t(`chat.suggestion${n}`)}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

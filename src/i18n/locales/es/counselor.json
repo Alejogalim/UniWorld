@@ -14,7 +14,11 @@
     "placeholderAnswer": "Tu respuesta",
     "placeholderReply": "Responde al orientador",
     "send": "Enviar",
-    "sending": "Enviando…"
+    "sending": "Enviando…",
+    "startTitle": "¿Por dónde empezamos?",
+    "suggestion1": "Crear pequeñas apps para problemas que encuentro",
+    "suggestion2": "Explicar cosas hasta que alguien las entiende",
+    "suggestion3": "Diseñar productos que me gustaría que existieran"
   },
   "priorities": {
     "title": "Tus prioridades",
