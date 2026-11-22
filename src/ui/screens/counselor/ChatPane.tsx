@@ -37,8 +37,6 @@ export function ChatPane() {
   // No student message yet (and the chat has loaded): nothing to scroll, so the opening question heads the screen.
   const fresh = messages.length > 0 && messages.every((m) => m.role === "counselor");
   const opening = messages.find((m) => m.role === "counselor")?.text ?? "";
-  // The hint for the step being answered; it is UI copy only and never sent to the counselor.
-  const hint = intake ? t(`intake.hint${intakeStep}`) : null;
   // Keyboard hint only where Enter sends: touch layouts have no Shift+Enter on the soft keyboard.
   const [touch] = useState(
     () => typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches === true,
@@ -86,7 +84,7 @@ export function ChatPane() {
       className={cn(
         // The start screen is centered; a running conversation fills the pane, latest message at the bottom.
         "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
-        fresh ? "min-h-[calc(100vh-8.5rem)] justify-center gap-8" : "h-[calc(100vh-8.5rem)] gap-8",
+        fresh ? "min-h-[calc(100vh-8.5rem)] justify-center gap-8" : "h-[calc(100vh-8.5rem)] gap-12",
       )}
     >
       {fresh ? (
@@ -129,7 +127,6 @@ export function ChatPane() {
         <div className="flex items-center gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-3">
             {!fresh && intake && <IntakeProgress step={intakeStep} />}
-            {hint && !fresh && <p className="text-center text-sm text-chart-grey">{hint}</p>}
             {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
             <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
               <Textarea

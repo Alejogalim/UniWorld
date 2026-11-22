@@ -6,13 +6,7 @@
     "q4": "Picture an ordinary Tuesday when you're 30. What are you doing?",
     "q5": "What matters most to you in a job: helping people, stability, creativity, money or freedom?",
     "q6": "Is anything limiting your options, like budget, staying near home or the languages you can study in?",
-    "progress": "Question {{n}} of {{total}}",
-    "hint1": "A hobby, a project, anything. There are no wrong answers.",
-    "hint2": "Homework, tech, advice, organizing, cheering them up…",
-    "hint3": "Name the subject and the part you like, even if it is just one.",
-    "hint4": "Where you are, who you are with, what you are working on.",
-    "hint5": "You can pick more than one, or put them in order.",
-    "hint6": "Rough answers are fine. \"No limits\" is a valid answer."
+    "progress": "Question {{n}} of {{total}}"
   },
   "chat": {
     "label": "Counselor",

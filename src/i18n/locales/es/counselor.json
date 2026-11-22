@@ -6,13 +6,7 @@
     "q4": "Imagina un martes cualquiera cuando tengas 30 años. ¿Qué estás haciendo?",
     "q5": "¿Qué es lo más importante para ti en un trabajo: ayudar a la gente, la estabilidad, la creatividad, el dinero o la libertad?",
     "q6": "¿Algo limita tus opciones, como el presupuesto, quedarte cerca de casa o los idiomas en los que puedes estudiar?",
-    "progress": "Pregunta {{n}} de {{total}}",
-    "hint1": "Un pasatiempo, un proyecto, lo que sea. No hay respuestas incorrectas.",
-    "hint2": "Deberes, tecnología, consejos, organizar, animar a alguien…",
-    "hint3": "Di la asignatura y la parte que te gusta, aunque sea solo una.",
-    "hint4": "Dónde estás, con quién y en qué estás trabajando.",
-    "hint5": "Puedes elegir más de una, o ponerlas en orden.",
-    "hint6": "Las respuestas aproximadas valen. «Sin límites» también es una respuesta válida."
+    "progress": "Pregunta {{n}} de {{total}}"
   },
   "chat": {
     "label": "Orientador",

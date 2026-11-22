@@ -6,13 +6,7 @@
     "q4": "Hãy hình dung một ngày thứ Ba bình thường khi bạn 30 tuổi. Bạn đang làm gì?",
     "q5": "Điều quan trọng nhất với bạn trong công việc là gì: giúp đỡ người khác, sự ổn định, sáng tạo, tiền bạc hay tự do?",
     "q6": "Có điều gì đang giới hạn lựa chọn của bạn không, như ngân sách, việc phải ở gần nhà, hoặc các ngôn ngữ bạn có thể học?",
-    "progress": "Câu hỏi {{n}} trên {{total}}",
-    "hint1": "Một sở thích, một dự án, điều gì cũng được. Không có câu trả lời sai.",
-    "hint2": "Bài tập, công nghệ, lời khuyên, sắp xếp, động viên họ…",
-    "hint3": "Nêu tên môn học và phần bạn thích, dù chỉ một phần cũng được.",
-    "hint4": "Bạn đang ở đâu, đi với ai, đang làm việc gì.",
-    "hint5": "Bạn có thể chọn nhiều mục, hoặc sắp xếp theo thứ tự.",
-    "hint6": "Câu trả lời sơ bộ cũng được. «Không có giới hạn» cũng là một câu trả lời hợp lệ."
+    "progress": "Câu hỏi {{n}} trên {{total}}"
   },
   "chat": {
     "label": "Cố vấn",
