@@ -17,10 +17,38 @@ export function aiFactSchema<T extends z.ZodTypeAny>(value: T) {
 }
 
 export const aiStringFactSchema = aiFactSchema(z.string());
-export const aiStringArrayFactSchema = aiFactSchema(z.array(z.string()));
+/**
+ * Models sometimes answer a string where the schema wants a string array
+ * (`languages`, `exams`). Coerce a lone string to a one-item array instead of
+ * rejecting the whole reply.
+ */
+const stringOrArray = z.preprocess(
+  (value) =>
+    value === null || value === undefined
+      ? value
+      : typeof value === 'string'
+        ? [value]
+        : value,
+  z.array(z.string()),
+);
+export const aiStringArrayFactSchema = aiFactSchema(stringOrArray);
 
 export type AiStringFact = z.infer<typeof aiStringFactSchema>;
 export type AiStringArrayFact = z.infer<typeof aiStringArrayFactSchema>;
+
+/**
+ * Models sometimes send the whole fact as `null` instead of
+ * `{ value: null, sourceUrl: null, quote: null }`. Treat both as "not found".
+ */
+function allowsNullFact<T extends z.ZodTypeAny>(schema: T) {
+  return z.preprocess(
+    (value) =>
+      value === null || value === undefined
+        ? { value: null, sourceUrl: null, quote: null }
+        : value,
+    schema,
+  );
+}
 
 // ---------- Counselor careers (Design §7.2) ----------
 export const careerScoresSchema = z.object({
@@ -39,22 +67,25 @@ export const careerIdeaSchema = z.object({
 });
 
 export const careerIdeasSchema = z.object({
-  careers: z.array(careerIdeaSchema).min(3).max(5),
+  careers: z.preprocess((value) => value ?? [], z.array(careerIdeaSchema).min(3).max(5)),
 });
 
 export type CareerIdeasAI = z.infer<typeof careerIdeasSchema>;
 
 // ---------- Finder: query plan (Design §7.3 step 1) ----------
 export const queryPlanSchema = z.object({
-  queries: z
-    .array(
-      z.object({
-        query: z.string().min(3).max(240),
-        purpose: z.string().max(160).optional(),
-      }),
-    )
-    .min(2)
-    .max(3),
+  queries: z.preprocess(
+    (value) => value ?? [],
+    z
+      .array(
+        z.object({
+          query: z.string().min(3).max(240),
+          purpose: z.string().max(160).optional(),
+        }),
+      )
+      .min(2)
+      .max(3),
+  ),
 });
 
 export type QueryPlanAI = z.infer<typeof queryPlanSchema>;
@@ -65,20 +96,32 @@ export const candidateSchema = z.object({
   country: z.string().max(80).nullable().optional(),
   countryCode: z.string().length(2).nullable().optional(),
   city: z.string().max(120).nullable().optional(),
-  programName: z.string().max(200),
+  programName: z.preprocess(
+    (value) => (value === null || value === undefined ? '' : value),
+    z.string().max(200),
+  ),
+  /** Filled by code from the fetched programme page, never trusted from the model. */
+  programUrl: z.string().nullable().optional(),
+  programQuote: z.string().nullable().optional(),
   /** Evidence-backed languages of instruction. */
-  languages: aiStringArrayFactSchema,
+  languages: allowsNullFact(aiStringArrayFactSchema),
   /** Flat list derived from `languages`; kept for the Design shape. */
-  instructionLanguages: z.array(z.string()).default([]),
-  tuition: aiStringFactSchema,
-  overview: aiStringFactSchema,
+  instructionLanguages: z.preprocess(
+    (value) => (value === null || value === undefined ? [] : value),
+    z.array(z.string()),
+  ),
+  tuition: allowsNullFact(aiStringFactSchema),
+  overview: allowsNullFact(aiStringFactSchema),
   /** Optional sourced requirement for the language of instruction. */
-  languageRequirement: aiStringFactSchema.optional(),
-  sourceUrls: z.array(z.string()).default([]),
+  languageRequirement: allowsNullFact(aiStringFactSchema).optional(),
+  sourceUrls: z.preprocess(
+    (value) => (value === null || value === undefined ? [] : value),
+    z.array(z.string()),
+  ),
 });
 
 export const extractionSchema = z.object({
-  candidates: z.array(candidateSchema).max(40),
+  candidates: z.preprocess((value) => value ?? [], z.array(candidateSchema).max(40)),
 });
 
 export type ExtractedCandidate = z.infer<typeof candidateSchema>;
@@ -97,7 +140,7 @@ export const rankingItemSchema = z.object({
 });
 
 export const rankingSchema = z.object({
-  items: z.array(rankingItemSchema).max(40),
+  items: z.preprocess((value) => value ?? [], z.array(rankingItemSchema).max(40)),
 });
 
 export type RankingAI = z.infer<typeof rankingSchema>;
@@ -105,15 +148,15 @@ export type RankingItemAI = z.infer<typeof rankingItemSchema>;
 
 // ---------- Finder: detail (Design §7.3) ----------
 export const uniDetailAiSchema = z.object({
-  overview: aiStringFactSchema,
-  languages: aiStringArrayFactSchema,
-  tuition: aiStringFactSchema,
-  scholarships: aiStringFactSchema,
-  deadlines: aiStringFactSchema,
-  nextDeadline: aiStringFactSchema,
-  exams: aiStringArrayFactSchema,
-  requirements: aiStringFactSchema,
-  applyUrl: aiStringFactSchema,
+  overview: allowsNullFact(aiStringFactSchema),
+  languages: allowsNullFact(aiStringArrayFactSchema),
+  tuition: allowsNullFact(aiStringFactSchema),
+  scholarships: allowsNullFact(aiStringFactSchema),
+  deadlines: allowsNullFact(aiStringFactSchema),
+  nextDeadline: allowsNullFact(aiStringFactSchema),
+  exams: allowsNullFact(aiStringArrayFactSchema),
+  requirements: allowsNullFact(aiStringFactSchema),
+  applyUrl: allowsNullFact(aiStringFactSchema),
 });
 
 export type UniDetailAi = z.infer<typeof uniDetailAiSchema>;

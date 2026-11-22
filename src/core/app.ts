@@ -9,6 +9,7 @@ import {
   tauriSecrets,
 } from './adapters/tauri';
 import { RorStore } from './grounding/rorStore';
+import { SqlPageCache } from '@/store/pageCache';
 
 let ready: Promise<CoreApi> | null = null;
 
@@ -31,6 +32,7 @@ async function initialize(): Promise<CoreApi> {
       settings: new TauriSettingsStore(),
       profile: tauriProfile,
       sql,
+      pages: new SqlPageCache(sql),
       logger: {
         warn: (message) => console.warn(message),
         error: (message) => console.error(message),
@@ -56,6 +58,7 @@ function getReady(): Promise<CoreApi> {
 export function createAppCore(): CoreApi {
   return {
     testConnection: async (provider) => (await getReady()).testConnection(provider),
+    listModels: async (provider) => (await getReady()).listModels(provider),
     counselor: {
       start: async () => (await getReady()).counselor.start(),
       send: async (sessionId, text, onToken) =>

@@ -16,10 +16,27 @@ export class AiFormatError extends Error {
 export interface CallJsonOptions<T> {
   schema: z.ZodType<T>;
   messages: ChatMessage[];
-  complete: (messages: ChatMessage[]) => Promise<string>;
+  /**
+   * Calls the model. `attempt` is 0 on the first try and increases on retries,
+   * so callers can raise `max_tokens` when the first reply was truncated.
+   */
+  complete: (messages: ChatMessage[], attempt: number) => Promise<string>;
   /** Design §8: retried once on invalid JSON. */
   retries?: number;
   logger?: Logger;
+}
+
+/** Doubles the token budget on each retry, capped so a runaway prompt can't grow forever. */
+export function nextTokenBudget(base: number, attempt: number, cap = 8000): number {
+  return Math.min(cap, Math.round(base * 2 ** attempt));
+}
+
+const RAW_LOG_CHARS = 500;
+
+function rawSnippet(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return '<empty reply>';
+  return trimmed.slice(0, RAW_LOG_CHARS);
 }
 
 function stripFences(raw: string): string {
@@ -43,14 +60,17 @@ export async function callJson<T>(options: CallJsonOptions<T>): Promise<T> {
   let lastIssues: unknown;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
-    const raw = await options.complete(messages);
+    const raw = await options.complete(messages, attempt);
     lastRaw = raw;
     try {
       const parsed: unknown = JSON.parse(stripFences(raw));
       const result = options.schema.safeParse(parsed);
       if (result.success) return result.data;
       lastIssues = result.error.issues;
-      options.logger?.warn?.(`AI JSON failed validation (attempt ${attempt + 1})`);
+      options.logger?.warn?.(
+        `AI JSON failed validation (attempt ${attempt + 1}): ${JSON.stringify(result.error.issues)}`,
+      );
+      options.logger?.error?.(`AI reply that failed validation: ${rawSnippet(raw)}`);
       messages = [
         ...messages,
         { role: 'assistant', content: raw },
@@ -63,14 +83,21 @@ export async function callJson<T>(options: CallJsonOptions<T>): Promise<T> {
       ];
     } catch (error) {
       lastIssues = error instanceof Error ? error.message : String(error);
-      options.logger?.warn?.(`AI returned invalid JSON (attempt ${attempt + 1})`);
+      const empty = raw.trim().length === 0;
+      options.logger?.warn?.(
+        `AI returned ${empty ? 'an empty reply' : 'invalid JSON'} (attempt ${attempt + 1}): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      options.logger?.error?.(`AI raw reply: ${rawSnippet(raw)}`);
       messages = [
         ...messages,
-        { role: 'assistant', content: raw },
+        { role: 'assistant', content: raw || '(empty)' },
         {
           role: 'user',
-          content:
-            'That was not valid JSON. Return only a valid JSON object matching the schema, with no markdown fences or commentary.',
+          content: empty
+            ? 'Your previous reply was empty. Return only the JSON object matching the schema, with no reasoning, markdown or commentary.'
+            : 'That was not valid JSON. Return only a valid JSON object matching the schema, with no markdown fences or commentary.',
         },
       ];
     }

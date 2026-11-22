@@ -1,5 +1,17 @@
 import type { HttpResponseLike } from '../ports';
 
+/**
+ * Adds a wall-clock cap to a provider call so a stalled request cannot hang a
+ * whole search. Falls back to the caller's signal where `AbortSignal.any` is
+ * unavailable.
+ */
+export function withTimeoutSignal(signal?: AbortSignal, ms = 90_000): AbortSignal {
+  const timeout = AbortSignal.timeout(ms);
+  if (!signal) return timeout;
+  const any = (AbortSignal as unknown as { any?: (signals: AbortSignal[]) => AbortSignal }).any;
+  return any ? any([signal, timeout]) : signal;
+}
+
 export class ProviderError extends Error {
   constructor(
     message: string,
@@ -31,21 +43,41 @@ export async function readError(response: HttpResponseLike): Promise<string> {
   }
 }
 
-export function extractContent(payload: unknown): {
+export interface ExtractedContent {
   content: string;
   annotations: unknown[];
-} {
+  /** `length` means the reply was cut off by the token budget. */
+  finishReason: string | null;
+  /** Reasoning models put their scratchpad here; never used as the answer. */
+  reasoning: string;
+}
+
+export function extractContent(payload: unknown): ExtractedContent {
   const root = payload as {
     choices?: {
-      message?: { content?: string | null; annotations?: unknown[] };
+      finish_reason?: string | null;
+      message?: {
+        content?: string | null;
+        annotations?: unknown[];
+        reasoning_content?: string | null;
+        reasoning?: string | null;
+      };
       delta?: { content?: string | null };
     }[];
   };
   const choice = root.choices?.[0];
+  const message = choice?.message;
   return {
-    content: choice?.message?.content ?? '',
-    annotations: choice?.message?.annotations ?? [],
+    content: message?.content ?? '',
+    annotations: message?.annotations ?? [],
+    finishReason: choice?.finish_reason ?? null,
+    reasoning: message?.reasoning_content ?? message?.reasoning ?? '',
   };
+}
+
+/** True when the reply is unusable: empty content or cut off by `max_tokens`. */
+export function looksTruncated(content: string, finishReason: string | null): boolean {
+  return content.trim().length === 0 || finishReason === 'length';
 }
 
 interface SseChunk {

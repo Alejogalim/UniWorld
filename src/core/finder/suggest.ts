@@ -1,14 +1,24 @@
 import { z } from 'zod';
-import type { Profile, SearchInput } from '../contracts';
-import { callJson } from '../ai/json';
+import type { Profile, RemovalReason, RemovalReasons, SearchInput } from '../contracts';
+import { callJson, nextTokenBudget } from '../ai/json';
 import { profileToText, scopeToText } from '../ai/prompts';
 import type { AiClient, ChatMessage, SearchHit } from '../ai/types';
-import { CitationIndex } from '../grounding/citationValidator';
+import {
+  PAGE_FETCH_TIMEOUT_MS,
+  SEARCH_TARGET_RESULTS,
+  SUGGEST_MAX_TOKENS,
+  UNIVERSITY_FETCH_TIMEOUT_MS,
+} from '../config';
 import type { RorStore } from '../grounding/rorStore';
 import type { UniversityRecord } from '../grounding/types';
-import type { HttpClient, Logger } from '../ports';
+import type { HttpClient, Logger, PageCache } from '../ports';
 import type { ExtractedCandidate } from '../schemas';
 import { extractCandidates } from './extract';
+import {
+  expandDegreeKeywords,
+  findProgrammeEvidence,
+  findProgrammeNameEvidence,
+} from './programme';
 import { inScope } from './verify';
 import { fetchUniversityPages } from './webFetch';
 
@@ -17,17 +27,18 @@ export const OPENCODE_MAX_UNIVERSITIES = 12;
 /** How many names we ask the model for before ROR grounding drops most of them. */
 const SUGGEST_COUNT = 24;
 /** Official-page budget per university on search (detail uses 8). */
-const SEARCH_MAX_PAGES = 4;
+const SEARCH_MAX_PAGES = 7;
 const FETCH_CONCURRENCY = 3;
-/** Universities whose pages go into one extraction call. */
-const EXTRACT_BATCH_SIZE = 3;
 
 export const suggestionSchema = z.object({
-  universities: z.array(
-    z.object({
-      name: z.string().min(2).max(200),
-      country: z.string().min(2).max(100),
-    }),
+  universities: z.preprocess(
+    (value) => value ?? [],
+    z.array(
+      z.object({
+        name: z.string().min(2).max(200),
+        country: z.string().min(2).max(100),
+      }),
+    ),
   ),
 });
 
@@ -43,7 +54,7 @@ function suggestPrompt(profile: Profile, input: SearchInput): ChatMessage[] {
         'Return names and countries only. No tuition, deadlines, rankings, URLs or other facts.',
         `Suggest up to ${SUGGEST_COUNT} real universities that offer bachelor programs related to the requested careers.`,
         'Stay inside the requested scope. Put the best matches first.',
-        'Respond in English.',
+        'Respond in English. Return the JSON object only. No reasoning, no commentary.',
         'Return only JSON matching this shape:',
         JSON.stringify(shape),
       ].join(' '),
@@ -70,7 +81,12 @@ export async function suggestUniversities(
   const parsed = await callJson({
     schema: suggestionSchema,
     messages: suggestPrompt(profile, input),
-    complete: (messages) => client.chat(messages, { json: true, temperature: 0.1, maxTokens: 1500 }),
+    complete: (messages, attempt) =>
+      client.chat(messages, {
+        json: true,
+        temperature: 0.1,
+        maxTokens: nextTokenBudget(SUGGEST_MAX_TOKENS, attempt),
+      }),
     logger,
   });
   return parsed.universities.slice(0, SUGGEST_COUNT);
@@ -80,6 +96,7 @@ export interface GroundedSuggestions {
   records: UniversityRecord[];
   /** Suggestions that were unmatched, out of scope, or over the cap. */
   removed: number;
+  reasons: RemovalReasons;
 }
 
 /** Step 2: keep only suggestions that match a ROR record in scope, deduped. */
@@ -90,24 +107,33 @@ export function groundSuggestions(
 ): GroundedSuggestions {
   const seen = new Set<string>();
   const records: UniversityRecord[] = [];
+  const reasons: RemovalReasons = {};
   let removed = 0;
+  const drop = (reason: RemovalReason) => {
+    removed++;
+    reasons[reason] = (reasons[reason] ?? 0) + 1;
+  };
 
   for (const suggestion of suggestions) {
     const match = ror.match({ name: suggestion.name, country: suggestion.country });
-    if (!match || !inScope(match.record, input.scope)) {
-      removed++;
+    if (!match) {
+      drop('not_in_registry');
+      continue;
+    }
+    if (!inScope(match.record, input.scope)) {
+      drop('out_of_scope');
       continue;
     }
     if (seen.has(match.record.ror_id)) continue;
     seen.add(match.record.ror_id);
     if (records.length >= OPENCODE_MAX_UNIVERSITIES) {
-      removed++;
+      drop('over_cap');
       continue;
     }
     records.push(match.record);
   }
 
-  return { records, removed };
+  return { records, removed, reasons };
 }
 
 async function mapWithLimit<T, R>(
@@ -127,16 +153,50 @@ async function mapWithLimit<T, R>(
   return out;
 }
 
-export interface PageCandidates {
+/** One university's official pages plus the candidates extracted from them. */
+export interface CandidateGroup {
+  record: UniversityRecord;
+  hits: SearchHit[];
   candidates: ExtractedCandidate[];
-  index: CitationIndex;
+}
+
+export interface PageCandidatesResult {
   removed: number;
+  reasons: RemovalReasons;
+}
+
+export interface PageCandidatesOptions {
+  pageCache?: PageCache;
+  /** Stop reading once this many universities produced candidates. */
+  target?: number;
+}
+
+function bump(reasons: RemovalReasons, reason: RemovalReason): void {
+  reasons[reason] = (reasons[reason] ?? 0) + 1;
+}
+
+function mergeCounts(into: RemovalReasons, from: RemovalReasons): void {
+  for (const [reason, count] of Object.entries(from) as [RemovalReason, number][]) {
+    into[reason] = (into[reason] ?? 0) + count;
+  }
+}
+
+async function resolveDegreeKeywords(
+  client: AiClient,
+  input: SearchInput,
+  logger?: Logger,
+): Promise<string[]> {
+  if (input.degreeKeywords && input.degreeKeywords.length > 0) {
+    return input.degreeKeywords.map((keyword) => keyword.trim()).filter(Boolean);
+  }
+  return expandDegreeKeywords(client, input.careers, logger);
 }
 
 /**
- * OpenCode Go path (no web search): suggest from memory, ground in ROR, read
- * each university's own pages, then extract with the same quote rules. Facts
- * still come only from fetched page text, so verification is unchanged.
+ * OpenCode Go path (no web search): suggest from memory, ground in ROR, discover
+ * each university's programme page, then extract with the same quote rules.
+ * Each grounded university is handed to `onGroup` as soon as it is ready, so
+ * the UI can show verified results while the rest are still being read.
  */
 export async function pageCandidates(
   http: HttpClient,
@@ -146,46 +206,120 @@ export async function pageCandidates(
   ror: RorStore,
   logger: Logger | undefined,
   onProgress: (message: string) => void,
-): Promise<PageCandidates> {
+  onGroup: (group: CandidateGroup) => void,
+  options: PageCandidatesOptions = {},
+): Promise<PageCandidatesResult> {
+  const reasons: RemovalReasons = {};
+  let removed = 0;
+
   onProgress('Suggesting universities…');
   const suggestions = await suggestUniversities(client, profile, input, logger);
   const grounded = groundSuggestions(suggestions, ror, input);
-  let removed = grounded.removed;
+  removed += grounded.removed;
+  mergeCounts(reasons, grounded.reasons);
   if (grounded.records.length === 0) {
-    return { candidates: [], index: CitationIndex.fromHits([]), removed };
+    return { removed, reasons };
   }
 
   const program = input.careers[0] ?? '';
+  const keywords = await resolveDegreeKeywords(client, input, logger);
+  const target = options.target ?? SEARCH_TARGET_RESULTS;
   const total = grounded.records.length;
   let done = 0;
-  const pages = await mapWithLimit(grounded.records, FETCH_CONCURRENCY, async (record) => {
-    let hits: SearchHit[] = [];
-    try {
-      hits = await fetchUniversityPages(http, record, program, logger, SEARCH_MAX_PAGES);
-    } catch (error) {
-      logger?.debug?.(
-        `Page fetch failed for ${record.name}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-    done++;
-    onProgress(`Reading official pages (${done} of ${total})…`);
-    return hits;
-  });
-
-  const withPages = pages.filter((hits) => hits.length > 0);
-  removed += pages.length - withPages.length;
-  const allHits = withPages.flat();
-  if (allHits.length === 0) {
-    return { candidates: [], index: CitationIndex.fromHits([]), removed };
-  }
+  let produced = 0;
+  let active = 0;
 
   onProgress('Reading the pages for facts…');
-  const candidates: ExtractedCandidate[] = [];
-  for (let start = 0; start < withPages.length; start += EXTRACT_BATCH_SIZE) {
-    const batch = withPages.slice(start, start + EXTRACT_BATCH_SIZE).flat();
-    const extracted = await extractCandidates(client, profile, input.careers, batch, logger);
-    candidates.push(...extracted);
-  }
+  await mapWithLimit(grounded.records, FETCH_CONCURRENCY, async (record) => {
+    done++;
+    // Stop once enough universities produced candidates. Failed groups do not
+    // hold a reservation, so the search keeps going until it truly has enough
+    // (a small overshoot of up to concurrency-1 is fine and capped later).
+    if (produced >= target) return;
+    active++;
+    try {
+      let hits: SearchHit[] = [];
+      try {
+        hits = await fetchUniversityPages(http, record, program, logger, SEARCH_MAX_PAGES, {
+          keywords,
+          pageCache: options.pageCache,
+          timeoutMs: PAGE_FETCH_TIMEOUT_MS,
+          deadline: Date.now() + UNIVERSITY_FETCH_TIMEOUT_MS,
+        });
+      } catch (error) {
+        logger?.debug?.(
+          `Page fetch failed for ${record.name}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+      onProgress(`Reading official pages (${done} of ${total})…`);
 
-  return { candidates, index: CitationIndex.fromHits(allHits), removed };
+      if (hits.length === 0) {
+        removed++;
+        bump(reasons, 'site_unreachable');
+        return;
+      }
+
+      let candidates: ExtractedCandidate[] = [];
+      try {
+        candidates = await extractCandidates(client, profile, input.careers, hits, logger);
+      } catch (error) {
+        removed++;
+        bump(reasons, 'ai_answer_rejected');
+        logger?.error?.(
+          `Extraction failed for ${record.name}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        return;
+      }
+
+      if (candidates.length === 0) {
+        removed++;
+        bump(reasons, 'programme_not_found');
+        return;
+      }
+
+      const keywordEvidence = findProgrammeEvidence(hits, keywords);
+      const withEvidence: ExtractedCandidate[] = [];
+      for (const candidate of candidates) {
+        if (keywordEvidence) {
+          // A specific requested keyword is on one of this university's pages;
+          // use it as the verified programme for the row.
+          withEvidence.push({
+            ...candidate,
+            programName: keywordEvidence.program,
+            programUrl: keywordEvidence.url,
+            programQuote: keywordEvidence.quote,
+          });
+          continue;
+        }
+        // Non-English pages: accept the model's programme name only if that
+        // exact text (any language) appears on a fetched page.
+        const nameEvidence = findProgrammeNameEvidence(hits, candidate.programName);
+        if (nameEvidence) {
+          withEvidence.push({
+            ...candidate,
+            programName: nameEvidence.program,
+            programUrl: nameEvidence.url,
+            programQuote: nameEvidence.quote,
+          });
+        }
+      }
+
+      if (withEvidence.length === 0) {
+        removed++;
+        bump(reasons, 'programme_not_found');
+        return;
+      }
+
+      produced++;
+      onGroup({ record, hits, candidates: withEvidence });
+    } finally {
+      active--;
+    }
+  });
+
+  return { removed, reasons };
 }

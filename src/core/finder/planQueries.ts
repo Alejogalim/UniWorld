@@ -1,8 +1,8 @@
 import type { Profile, SearchInput } from '../contracts';
-import { callJson } from '../ai/json';
+import { callJson, nextTokenBudget } from '../ai/json';
 import { queryPlanPrompt } from '../ai/prompts';
 import type { AiClient } from '../ai/types';
-import { MAX_SEARCH_QUERIES } from '../config';
+import { MAX_SEARCH_QUERIES, QUERY_PLAN_MAX_TOKENS } from '../config';
 import { countryName } from '../grounding/countries';
 import { languageName, studentLevel, speaksAtB2 } from '../grounding/languages';
 import type { Logger } from '../ports';
@@ -52,7 +52,12 @@ export async function planQueries(
     const plan = await callJson({
       schema: queryPlanSchema,
       messages: queryPlanPrompt(profile, input),
-      complete: (messages) => client.chat(messages, { json: true, temperature: 0.2, maxTokens: 500 }),
+      complete: (messages, attempt) =>
+        client.chat(messages, {
+          json: true,
+          temperature: 0.2,
+          maxTokens: nextTokenBudget(QUERY_PLAN_MAX_TOKENS, attempt),
+        }),
       logger,
     });
     const queries = [

@@ -1,6 +1,7 @@
 import type { Profile, SearchInput, UniResult } from '../contracts';
-import { callJson } from '../ai/json';
+import { callJson, nextTokenBudget } from '../ai/json';
 import { rankingPrompt } from '../ai/prompts';
+import { RANK_MAX_TOKENS } from '../config';
 import type { AiClient } from '../ai/types';
 import type { Logger } from '../ports';
 import { rankingSchema, type RankingItemAI } from '../schemas';
@@ -46,6 +47,15 @@ function deterministic(uni: VerifiedUniversity, profile: Profile, input: SearchI
   };
   updated.fit.overall = overallFit(updated);
   return updated;
+}
+
+/** Honest, AI-free fit so the UI can show rows before ranking finishes. */
+export function deterministicResults(
+  universities: VerifiedUniversity[],
+  profile: Profile,
+  input: SearchInput,
+): VerifiedUniversity[] {
+  return universities.map((uni) => ({ ...uni, result: deterministic(uni, profile, input) }));
 }
 
 function applyAiItem(
@@ -100,8 +110,12 @@ export async function rankVerified(
     const parsed = await callJson({
       schema: rankingSchema,
       messages: rankingPrompt(profile, rankingPayload(universities)),
-      complete: (messages) =>
-        client.chat(messages, { json: true, temperature: 0.1, maxTokens: 2500 }),
+      complete: (messages, attempt) =>
+        client.chat(messages, {
+          json: true,
+          temperature: 0.1,
+          maxTokens: nextTokenBudget(RANK_MAX_TOKENS, attempt),
+        }),
       logger,
     });
     items = parsed.items;

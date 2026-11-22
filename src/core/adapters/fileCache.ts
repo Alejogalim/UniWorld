@@ -1,7 +1,14 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { SearchInput, UniDetail } from '../contracts';
-import type { CachedDetail, CachedSearch, DetailCache, SearchCache } from '../ports';
+import type {
+  CachedDetail,
+  CachedPage,
+  CachedSearch,
+  DetailCache,
+  PageCache,
+  SearchCache,
+} from '../ports';
 import { searchKeyParts } from '../../store/search';
 import { programKey } from '../../store/detailCache';
 
@@ -40,6 +47,26 @@ export class FileSearchCache implements SearchCache {
   async put(input: SearchInput, value: CachedSearch): Promise<void> {
     const data = await readJson<Record<string, CachedSearch>>(this.file, {});
     data[searchKey(input)] = value;
+    await writeJson(this.file, data);
+  }
+}
+
+/** JSON-file raw page cache so CLI searches reuse fetched pages between runs. */
+export class FilePageCache implements PageCache {
+  private readonly file: string;
+
+  constructor(cacheDir: string) {
+    this.file = path.join(cacheDir, 'page-cache.json');
+  }
+
+  async get(url: string): Promise<CachedPage | null> {
+    const data = await readJson<Record<string, CachedPage>>(this.file, {});
+    return data[url] ?? null;
+  }
+
+  async put(url: string, page: CachedPage): Promise<void> {
+    const data = await readJson<Record<string, CachedPage>>(this.file, {});
+    data[url] = page;
     await writeJson(this.file, data);
   }
 }

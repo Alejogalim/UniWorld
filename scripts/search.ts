@@ -4,6 +4,7 @@
  *   bun run scripts/search.ts "Computer Science" DE
  *   bun run scripts/search.ts "Medicine" --continent Europe --level C1
  *   bun run scripts/search.ts "Law" FR --detail https://ror.org/002t25c44 --refresh
+ *   bun run scripts/search.ts "Robotics" US --debug   (prints raw AI replies and fetches)
  *
  * Finder search requires OPENROUTER_API_KEY (verified web search).
  * --detail works with OpenRouter, or with OPENCODE_API_KEY as a fallback that
@@ -19,10 +20,15 @@ import type {
   Profile,
   Program,
   SearchInput,
+  UniResult,
 } from '../src/core/contracts';
 import { FetchHttpClient } from '../src/core/adapters/fetchHttp';
 import { EnvSecretStore, StaticProfile, StaticSettings } from '../src/core/adapters/env';
-import { FileDetailCache, FileSearchCache } from '../src/core/adapters/fileCache';
+import {
+  FileDetailCache,
+  FilePageCache,
+  FileSearchCache,
+} from '../src/core/adapters/fileCache';
 import { InMemoryCounselorStore } from '../src/core/adapters/memory';
 import { createFinder } from '../src/core/finder/index';
 import { RorStore } from '../src/core/grounding/rorStore';
@@ -41,6 +47,7 @@ interface Args {
   programName: string | null;
   refresh: boolean;
   json: boolean;
+  debug: boolean;
 }
 
 const CONTINENTS: Continent[] = [
@@ -67,6 +74,7 @@ function parseArgs(argv: string[]): Args {
     programName: null,
     refresh: false,
     json: false,
+    debug: false,
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -95,6 +103,8 @@ function parseArgs(argv: string[]): Args {
       args.refresh = true;
     } else if (arg === '--json') {
       args.json = true;
+    } else if (arg === '--debug') {
+      args.debug = true;
     } else if (arg.startsWith('--')) {
       throw new Error(`Unknown flag: ${arg}`);
     } else {
@@ -154,33 +164,53 @@ function inputFor(args: Args): SearchInput {
   };
 }
 
-function printEvent(event: FinderEvent, json: boolean): void {
-  if (json) {
-    if (event.type === 'result' || event.type === 'done' || event.type === 'error') {
-      console.log(JSON.stringify(event));
+function printUni(uni: UniResult): void {
+  const tuition = uni.tuition.value ?? 'Not found';
+  const languages = uni.languages.value?.join('/') ?? 'Not found';
+  console.log('');
+  console.log(`• ${uni.name} — ${uni.city ?? ''} ${uni.countryCode}`);
+  console.log(`  program: ${uni.program}`);
+  console.log(`  languages: ${languages} | tuition: ${tuition}`);
+  console.log(
+    `  fit: overall ${(uni.fit.overall * 100).toFixed(0)}% (career ${(uni.fit.career * 100).toFixed(0)}%, language ${(uni.fit.language * 100).toFixed(0)}%, cost ${String(uni.fit.cost)}, admission ${uni.fit.admission})`,
+  );
+  console.log(`  why: ${uni.whyFits}`);
+  console.log(`  sources: ${uni.sourceCount}`);
+}
+
+/**
+ * Results are streamed unranked and re-emitted ranked. The CLI keeps one row
+ * per rorId and prints the final, sorted list on `done`.
+ */
+function createPrinter(json: boolean): (event: FinderEvent) => void {
+  const collected = new Map<string, UniResult>();
+  return (event) => {
+    if (event.type === 'result') collected.set(event.uni.rorId, event.uni);
+    if (json) {
+      if (event.type === 'result' || event.type === 'done' || event.type === 'error') {
+        console.log(JSON.stringify(event));
+      }
+      return;
     }
-    return;
-  }
-  if (event.type === 'progress') {
-    console.log(`… ${event.message}`);
-  } else if (event.type === 'error') {
-    console.error(`✗ ${event.message}`);
-  } else if (event.type === 'done') {
-    console.log(`\nDone: ${event.verified} verified, ${event.removed} removed.`);
-  } else {
-    const uni = event.uni;
-    const tuition = uni.tuition.value ?? 'Not found';
-    const languages = uni.languages.value?.join('/') ?? 'Not found';
-    console.log('');
-    console.log(`• ${uni.name} — ${uni.city ?? ''} ${uni.countryCode}`);
-    console.log(`  program: ${uni.program}`);
-    console.log(`  languages: ${languages} | tuition: ${tuition}`);
-    console.log(
-      `  fit: overall ${(uni.fit.overall * 100).toFixed(0)}% (career ${(uni.fit.career * 100).toFixed(0)}%, language ${(uni.fit.language * 100).toFixed(0)}%, cost ${String(uni.fit.cost)}, admission ${uni.fit.admission})`,
-    );
-    console.log(`  why: ${uni.whyFits}`);
-    console.log(`  sources: ${uni.sourceCount}`);
-  }
+    if (event.type === 'progress') {
+      console.log(`… ${event.message}`);
+      return;
+    }
+    if (event.type === 'error') {
+      console.error(`✗ ${event.message}`);
+      return;
+    }
+    if (event.type === 'result') return;
+    const sorted = [...collected.values()].sort((a, b) => b.fit.overall - a.fit.overall);
+    for (const uni of sorted) printUni(uni);
+    const reasons =
+      event.reasons && Object.keys(event.reasons).length > 0
+        ? ` (${Object.entries(event.reasons)
+            .map(([reason, count]) => `${reason}=${count}`)
+            .join(', ')})`
+        : '';
+    console.log(`\nDone: ${event.verified} verified, ${event.removed} removed.${reasons}`);
+  };
 }
 
 async function main(): Promise<void> {
@@ -198,9 +228,13 @@ async function main(): Promise<void> {
     profile: new StaticProfile(defaultProfile(args)),
     searches: new FileSearchCache(cacheDir),
     details: new FileDetailCache(cacheDir),
+    pages: new FilePageCache(cacheDir),
     counselorStore: new InMemoryCounselorStore(),
     cacheDir,
     logger: {
+      debug: args.debug
+        ? (message: string) => console.error(`[debug] ${message}`)
+        : undefined,
       info: (message: string) => console.error(`[info] ${message}`),
       warn: (message: string) => console.error(`[warn] ${message}`),
       error: (message: string) => console.error(`[error] ${message}`),
@@ -220,7 +254,7 @@ async function main(): Promise<void> {
   }
 
   const finder = createFinder({ deps, ror });
-  await finder.search(inputFor(args), (event) => printEvent(event, args.json));
+  await finder.search(inputFor(args), createPrinter(args.json));
 }
 
 main().catch((error) => {

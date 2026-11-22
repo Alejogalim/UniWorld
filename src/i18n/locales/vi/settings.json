@@ -58,9 +58,15 @@
     "saveFailed": "Không lưu được khóa: {{error}}",
     "model": {
       "label": "Mô hình",
-      "hint": "Để trống để dùng mô hình mặc định, {{model}}.",
-      "save": "Lưu mô hình",
-      "saved": "Đã lưu mô hình."
+      "hint": "Các mô hình mà nhà cung cấp đã chọn cung cấp. Mặc định là {{model}}.",
+      "defaultOption": "Mặc định ({{model}})",
+      "loading": "Đang tải danh sách mô hình…",
+      "empty": "Không có mô hình khả dụng",
+      "noMatches": "Không có mô hình phù hợp",
+      "loadFailed": "Không tải được danh sách mô hình: {{error}}",
+      "retry": "Thử lại",
+      "saved": "Đã tự động lưu mô hình.",
+      "saveFailed": "Không lưu được mô hình: {{error}}"
     },
     "counselorProvider": {
       "label": "Nhà cung cấp AI",

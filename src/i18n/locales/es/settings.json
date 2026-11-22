@@ -58,9 +58,15 @@
     "saveFailed": "No se pudo guardar la clave: {{error}}",
     "model": {
       "label": "Modelo",
-      "hint": "Déjalo vacío para usar el modelo predeterminado, {{model}}.",
-      "save": "Guardar modelo",
-      "saved": "Modelo guardado."
+      "hint": "Modelos que ofrece el proveedor seleccionado. El predeterminado es {{model}}.",
+      "defaultOption": "Predeterminado ({{model}})",
+      "loading": "Cargando modelos…",
+      "empty": "No hay modelos disponibles",
+      "noMatches": "No hay modelos coincidentes",
+      "loadFailed": "No se pudo cargar la lista de modelos: {{error}}",
+      "retry": "Reintentar",
+      "saved": "Modelo guardado automáticamente.",
+      "saveFailed": "No se pudo guardar el modelo: {{error}}"
     },
     "counselorProvider": {
       "label": "Proveedor de IA",

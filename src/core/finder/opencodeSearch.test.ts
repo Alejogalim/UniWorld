@@ -6,6 +6,7 @@ import type { HttpClient, HttpRequestInit, HttpResponseLike } from '../ports';
 import { FIXTURE_RECORDS } from '../grounding/fixtures';
 import { RorStore } from '../grounding/rorStore';
 import { finderSearch } from './index';
+import { looksNonBachelor } from './level';
 import { groundSuggestions } from './suggest';
 
 const profile: Profile = {
@@ -160,10 +161,20 @@ describe('Finder search with OpenCode Go only', () => {
     const events = await run(deps(http, { opencode: 'k' }));
 
     const results = events.filter((event) => event.type === 'result');
-    expect(results).toHaveLength(1);
-    expect(events.at(-1)).toEqual({ type: 'done', verified: 1, removed: 2 });
+    const unique = new Set(
+      results.flatMap((event) => (event.type === 'result' ? [event.uni.rorId] : [])),
+    );
+    // Results are streamed unranked and re-emitted ranked: one row per rorId.
+    expect(unique.size).toBe(1);
+    expect(events.at(-1)).toEqual({
+      type: 'done',
+      verified: 1,
+      removed: 2,
+      reasons: { not_in_registry: 1, out_of_scope: 1 },
+    });
 
-    const uni = results[0] && results[0].type === 'result' ? results[0].uni : null;
+    const last = results.at(-1);
+    const uni = last && last.type === 'result' ? last.uni : null;
     expect(uni?.name).toBe('University of Barcelona');
     expect(uni?.tuition.value).toBe('Free');
     expect(uni?.tuition.sourceKind).toBe('official');
@@ -185,15 +196,41 @@ describe('Finder search with OpenCode Go only', () => {
     // The tuition quote is not on the page, so the fact is dropped. The
     // "Free" filter then removes the university.
     expect(results).toHaveLength(0);
-    expect(events.at(-1)).toEqual({ type: 'done', verified: 0, removed: 3 });
+    expect(events.at(-1)).toEqual({
+      type: 'done',
+      verified: 0,
+      removed: 3,
+      reasons: { not_in_registry: 1, out_of_scope: 1, tuition_not_free: 1 },
+    });
   });
 
   it('uses OpenCode when both keys exist and the setting prefers it', async () => {
     const http = new FakeOpenCodeHttp();
     const events = await run(deps(http, { opencode: 'k', openrouter: 'o' }, 'opencode'));
-    expect(events.at(-1)).toEqual({ type: 'done', verified: 1, removed: 2 });
+    expect(events.at(-1)).toEqual({
+      type: 'done',
+      verified: 1,
+      removed: 2,
+      reasons: { not_in_registry: 1, out_of_scope: 1 },
+    });
     expect(http.chatCalls).toBeGreaterThan(0);
     expect(http.pageCalls.every((url) => !url.includes('openrouter.ai'))).toBe(true);
+  });
+});
+
+describe('looksNonBachelor', () => {
+  it('flags Master/MBA/diploma programmes but keeps bachelor and local names', () => {
+    expect(looksNonBachelor('AI in Biomedicine - Master of Science (M.Sc.)')).toBe(true);
+    expect(looksNonBachelor('MBA Management in der Medizin')).toBe(true);
+    expect(looksNonBachelor('Maestría en Ciencia de Datos')).toBe(true);
+    expect(looksNonBachelor('Diplomado en Big Data')).toBe(true);
+    expect(looksNonBachelor('Laurea Magistrale in Ingegneria')).toBe(true);
+    expect(looksNonBachelor('Mestrado em Informática')).toBe(true);
+    expect(looksNonBachelor('BSc Computer Science')).toBe(false);
+    expect(looksNonBachelor('Civilingenjör datateknik')).toBe(false);
+    expect(looksNonBachelor('MSci Computer Science')).toBe(false);
+    expect(looksNonBachelor('MPharm Pharmacy')).toBe(false);
+    expect(looksNonBachelor('软件工程')).toBe(false);
   });
 });
 

@@ -22,6 +22,7 @@ interface ComboboxProps {
   noMatchesLabel: string;
   autoFocus?: boolean;
   invalid?: boolean;
+  disabled?: boolean;
   "aria-describedby"?: string;
   "aria-label"?: string;
   className?: string;
@@ -51,6 +52,7 @@ export function Combobox({
   noMatchesLabel,
   autoFocus = false,
   invalid = false,
+  disabled = false,
   "aria-describedby": describedBy,
   "aria-label": ariaLabel,
   className,
@@ -77,6 +79,7 @@ export function Combobox({
   }, [open, activeIndex]);
 
   const openList = () => {
+    if (disabled) return;
     const index = selected ? options.indexOf(selected) : 0;
     setQuery("");
     setActive(Math.max(index, 0));
@@ -97,6 +100,7 @@ export function Combobox({
           role="combobox"
           autoComplete="off"
           autoFocus={autoFocus}
+          disabled={disabled}
           aria-invalid={invalid || undefined}
           aria-expanded={open}
           aria-controls={listboxId}
@@ -117,6 +121,7 @@ export function Combobox({
             setOpen(true);
           }}
           onKeyDown={(e) => {
+            if (disabled) return;
             if (e.key === "ArrowDown") {
               e.preventDefault();
               if (!open) return openList();

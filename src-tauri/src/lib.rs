@@ -57,6 +57,16 @@ pub fn run() {
         description: "tracked_detail_program",
         sql: include_str!("../../src/db/migrations/003_tracked_detail_program.sql"),
         kind: MigrationKind::Up,
+    }, Migration {
+        version: 4,
+        description: "page_cache",
+        sql: include_str!("../../src/db/migrations/004_page_cache.sql"),
+        kind: MigrationKind::Up,
+    }, Migration {
+        version: 5,
+        description: "page_cache_html",
+        sql: include_str!("../../src/db/migrations/005_page_cache_html.sql"),
+        kind: MigrationKind::Up,
     }];
 
     tauri::Builder::default()

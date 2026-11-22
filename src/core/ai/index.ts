@@ -1,6 +1,7 @@
-import type { Provider } from '../contracts';
-import { DEFAULT_MODEL } from '../config';
+import type { AiModel, Provider } from '../contracts';
+import { DEFAULT_MODEL, OPENCODE_MODEL } from '../config';
 import type { CoreDeps } from '../ports';
+import { fetchProviderModels } from './models';
 import { OpenCodeClient } from './opencode';
 import { OpenRouterClient } from './openrouter';
 import type { AiClient } from './types';
@@ -24,9 +25,21 @@ export async function hasKey(deps: CoreDeps, provider: Provider): Promise<boolea
   return Boolean(key && key.trim());
 }
 
-export async function resolveModel(deps: CoreDeps): Promise<string> {
-  const configured = await deps.settings?.getModel();
-  return configured?.trim() || DEFAULT_MODEL;
+export async function resolveModel(
+  deps: CoreDeps,
+  provider: Provider = 'openrouter',
+): Promise<string> {
+  const configured = await deps.settings?.getModel(provider);
+  return configured?.trim() || (provider === 'opencode' ? OPENCODE_MODEL : DEFAULT_MODEL);
+}
+
+/** Catalogue for the Settings model dropdown. A missing key is not a failure. */
+export async function listProviderModels(
+  provider: Provider,
+  deps: CoreDeps,
+): Promise<AiModel[]> {
+  const key = await deps.secrets.get(provider).catch(() => null);
+  return fetchProviderModels(provider, { http: deps.http, apiKey: key });
 }
 
 export interface CreateClientOptions {
@@ -42,11 +55,12 @@ export async function createAiClient(
   const key = await deps.secrets.get(provider);
   if (!key || !key.trim()) throw new MissingKeyError(provider);
   if (provider === 'opencode') {
-    // OpenCode Go uses its own model id; do not inherit OpenRouter's slug.
+    // OpenCode Go has its own model ids; use the OpenCode setting, not OpenRouter's slug.
+    const model = options.model ?? (await resolveModel(deps, 'opencode'));
     return new OpenCodeClient({
       http: deps.http,
       apiKey: key.trim(),
-      model: options.model,
+      model,
       sessionId: options.sessionId,
     });
   }
