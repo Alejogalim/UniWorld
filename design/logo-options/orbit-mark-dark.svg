@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d12" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b13" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#ffffff" stroke-width="2.6" mask="url(#b13)"/>
+<circle r="14.6" fill="#ffffff" mask="url(#d12)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#ffffff" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#ff6a2b"/>
+</g></svg>

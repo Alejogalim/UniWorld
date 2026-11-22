@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniWorld Logo Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#efefef; --panel:#ffffff; --ink:#0a0a0a; --grey:#636366; --hair:#c2c2c2; --ember:#c53805; }
+@media (prefers-color-scheme: dark) { :root { --bg:#000; --panel:#0c0c0d; --ink:#fff; --grey:#8e8e93; --hair:#39393c; --ember:#ff6a2b; } }
+* { box-sizing:border-box; margin:0; }
+body { background:var(--bg); color:var(--ink); font-family:Inter, system-ui, sans-serif; font-size:15px; line-height:1.5; padding:48px 16px 96px; }
+main { max-width:1120px; margin:0 auto; }
+.intro h1 { font-size:28px; font-weight:600; letter-spacing:-0.02em; }
+.intro p { color:var(--grey); max-width:640px; margin-top:8px; }
+.opt { background:var(--panel); border:1px solid var(--hair); border-radius:28px; padding:28px; margin-top:32px; }
+.opt header { display:flex; align-items:baseline; gap:12px; }
+.num { color:var(--ember); font-weight:600; font-variant-numeric:tabular-nums; }
+.opt h2 { font-size:22px; font-weight:600; letter-spacing:-0.01em; }
+.idea { color:var(--grey); margin-top:6px; max-width:720px; }
+.grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:20px; }
+.tile { border-radius:14px; display:flex; align-items:center; justify-content:center; min-height:120px; padding:20px; }
+.tile.light { background:#efefef; }
+.tile.dark { background:#000; }
+.tile.hero { min-height:240px; }
+.tile.icons { background:repeating-conic-gradient(var(--bg) 0 25%, var(--panel) 0 50%) 0 0/16px 16px; gap:24px; }
+.icon svg { display:block; filter:drop-shadow(0 6px 14px rgba(0,0,0,.22)); }
+.ladder { gap:28px; align-items:flex-end; }
+.ladder figure { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.ladder figcaption { font-size:12px; color:#636366; font-variant-numeric:tabular-nums; }
+.lockup { display:flex; align-items:center; gap:14px; }
+.lk-mark svg { display:block; }
+.lk-word { font-weight:600; letter-spacing:-0.025em; line-height:1; }
+.lockup.light .lk-word { color:#0a0a0a; }
+.lockup.dark .lk-word { color:#fff; }
+@media (max-width:640px) { .grid { grid-template-columns:1fr; } .opt { padding:20px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="intro">
+    <h1>UniWorld logo options</h1>
+    <p>Five directions built on DESIGN.md: monochrome first, one ember accent, Inter 600 wordmark. Each shows the mark on light and dark grounds, the lockup, the app icon, and a size ladder down to 16px.</p>
+  </div>
+  
+<section class="opt">
+  <header><span class="num">01</span><h2>Meridian</h2></header>
+  <p class="idea">A globe outline holding a heavy U, the initial and a meridian line in one stroke. The ember star on the rim is the place you are aiming for.</p>
+  <div class="grid">
+    <div class="tile light hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m39" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m39)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></svg></div>
+    <div class="tile dark hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m40" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-width="3" mask="url(#m40)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#ff6a2b"/></svg></div>
+    <div class="tile light"><div class="lockup light"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m41" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m41)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile dark"><div class="lockup dark"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m42" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-width="3" mask="url(#m42)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#ff6a2b"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile icons">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><defs><linearGradient id="g43" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151517"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient></defs><rect width="64" height="64" rx="14.3" fill="url(#g43)"/><g transform="translate(12.2 12.2) scale(0.62)"><defs><mask id="m44" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-width="3" mask="url(#m44)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#ff6a2b"/></g></svg></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.3" fill="#efefef"/><g transform="translate(12.2 12.2) scale(0.62)"><defs><mask id="m46" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m46)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></g></svg></div>
+    </div>
+    <div class="tile light ladder">
+      <figure><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m47" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m47)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></svg><figcaption>48</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m48" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m48)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></svg><figcaption>32</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m49" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m49)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></svg><figcaption>24</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="m50" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="51.9" cy="15.3" r="6.6" fill="#000"/></mask></defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3" mask="url(#m50)"/>
+<path d="M22.5 16V37a9.5 9.5 0 0 0 19 0V16" fill="none" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="51.9" cy="15.3" r="4" fill="#c53805"/></svg><figcaption>16</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="opt">
+  <header><span class="num">02</span><h2>Orbit</h2></header>
+  <p class="idea">A solid world with one tilted orbit passing in front of it. The ember point is the student on their path, moving outward.</p>
+  <div class="grid">
+    <div class="tile light hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d51" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b52" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b52)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d51)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg></div>
+    <div class="tile dark hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d53" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b54" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#ffffff" stroke-width="2.6" mask="url(#b54)"/>
+<circle r="14.6" fill="#ffffff" mask="url(#d53)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#ffffff" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#ff6a2b"/>
+</g></svg></div>
+    <div class="tile light"><div class="lockup light"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d55" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b56" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b56)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d55)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile dark"><div class="lockup dark"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d57" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b58" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#ffffff" stroke-width="2.6" mask="url(#b58)"/>
+<circle r="14.6" fill="#ffffff" mask="url(#d57)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#ffffff" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#ff6a2b"/>
+</g></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile icons">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><defs><linearGradient id="g59" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151517"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient></defs><rect width="64" height="64" rx="14.3" fill="url(#g59)"/><g transform="translate(12.2 12.2) scale(0.62)"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d60" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b61" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#ffffff" stroke-width="2.6" mask="url(#b61)"/>
+<circle r="14.6" fill="#ffffff" mask="url(#d60)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#ffffff" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#ff6a2b"/>
+</g></g></svg></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.3" fill="#efefef"/><g transform="translate(12.2 12.2) scale(0.62)"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d63" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b64" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b64)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d63)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></g></svg></div>
+    </div>
+    <div class="tile light ladder">
+      <figure><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d65" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b66" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b66)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d65)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg><figcaption>48</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d67" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b68" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b68)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d67)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg><figcaption>32</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d69" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b70" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b70)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d69)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg><figcaption>24</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><g transform="translate(32 32) rotate(-24)">
+<defs>
+<mask id="d71" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#000" stroke-width="7.5"/></mask>
+<mask id="b72" maskUnits="userSpaceOnUse" x="-40" y="-40" width="80" height="80"><rect x="-40" y="-40" width="80" height="80" fill="#fff"/><circle r="17.6" fill="#000"/></mask>
+</defs>
+<path d="M-27 0A27 10 0 0 1 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6" mask="url(#b72)"/>
+<circle r="14.6" fill="#0a0a0a" mask="url(#d71)"/>
+<path d="M-27 0A27 10 0 0 0 27 0" fill="none" stroke="#0a0a0a" stroke-width="2.6"/>
+<circle cx="26.08" cy="-2.59" r="3.8" fill="#c53805"/>
+</g></svg><figcaption>16</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="opt">
+  <header><span class="num">03</span><h2>Gauge</h2></header>
+  <p class="idea">An evolution of the current ring-and-arc mark. The heavy lower arc becomes a progress track, like the status track in My universities, and the ember segment is the step you are on now.</p>
+  <div class="grid">
+    <div class="tile light hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></svg></div>
+    <div class="tile dark hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#8e8e93" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#ff6a2b" stroke-width="7.5" stroke-linecap="round"/></svg></div>
+    <div class="tile light"><div class="lockup light"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile dark"><div class="lockup dark"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#8e8e93" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#ff6a2b" stroke-width="7.5" stroke-linecap="round"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile icons">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><defs><linearGradient id="g73" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151517"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient></defs><rect width="64" height="64" rx="14.3" fill="url(#g73)"/><g transform="translate(12.2 12.2) scale(0.62)"><circle cx="32" cy="32" r="25" fill="none" stroke="#8e8e93" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#ff6a2b" stroke-width="7.5" stroke-linecap="round"/></g></svg></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.3" fill="#efefef"/><g transform="translate(12.2 12.2) scale(0.62)"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></g></svg></div>
+    </div>
+    <div class="tile light ladder">
+      <figure><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></svg><figcaption>48</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></svg><figcaption>32</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></svg><figcaption>24</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><circle cx="32" cy="32" r="25" fill="none" stroke="#636366" stroke-opacity="0.55" stroke-width="2"/>
+<path d="M7.00 32.00A25 25 0 0 0 52.23 46.69" fill="none" stroke="#0a0a0a" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M56.36 37.62A25 25 0 0 0 56.98 31.13" fill="none" stroke="#c53805" stroke-width="7.5" stroke-linecap="round"/></svg><figcaption>16</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="opt">
+  <header><span class="num">04</span><h2>Horizon</h2></header>
+  <p class="idea">An ember sun rising over a banded globe. Monochrome ground, one warm shape, and the bands echo chart latitude lines.</p>
+  <div class="grid">
+    <div class="tile light hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c75"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s76"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h77" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h77)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c75)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s76)"/></svg></div>
+    <div class="tile dark hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c78"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s79"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h80" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-width="3"/>
+<g mask="url(#h80)"><rect x="0" y="38" width="64" height="30" fill="#ffffff" clip-path="url(#c78)"/></g>
+<circle cx="32" cy="38" r="11" fill="#ff6a2b" clip-path="url(#s79)"/></svg></div>
+    <div class="tile light"><div class="lockup light"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c81"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s82"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h83" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h83)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c81)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s82)"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile dark"><div class="lockup dark"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c84"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s85"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h86" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-width="3"/>
+<g mask="url(#h86)"><rect x="0" y="38" width="64" height="30" fill="#ffffff" clip-path="url(#c84)"/></g>
+<circle cx="32" cy="38" r="11" fill="#ff6a2b" clip-path="url(#s85)"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile icons">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><defs><linearGradient id="g87" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151517"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient></defs><rect width="64" height="64" rx="14.3" fill="url(#g87)"/><g transform="translate(12.2 12.2) scale(0.62)"><defs>
+<clipPath id="c88"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s89"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h90" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-width="3"/>
+<g mask="url(#h90)"><rect x="0" y="38" width="64" height="30" fill="#ffffff" clip-path="url(#c88)"/></g>
+<circle cx="32" cy="38" r="11" fill="#ff6a2b" clip-path="url(#s89)"/></g></svg></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.3" fill="#efefef"/><g transform="translate(12.2 12.2) scale(0.62)"><defs>
+<clipPath id="c92"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s93"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h94" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h94)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c92)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s93)"/></g></svg></div>
+    </div>
+    <div class="tile light ladder">
+      <figure><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c95"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s96"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h97" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h97)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c95)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s96)"/></svg><figcaption>48</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c98"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s99"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h100" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h100)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c98)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s99)"/></svg><figcaption>32</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c101"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s102"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h103" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h103)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c101)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s102)"/></svg><figcaption>24</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs>
+<clipPath id="c104"><circle cx="32" cy="32" r="26"/></clipPath>
+<clipPath id="s105"><rect x="0" y="0" width="64" height="34.6"/></clipPath>
+<mask id="h106" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="0" y="44.6" width="64" height="2.6" fill="#000"/><rect x="0" y="51.2" width="64" height="2.6" fill="#000"/></mask>
+</defs>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#0a0a0a" stroke-width="3"/>
+<g mask="url(#h106)"><rect x="0" y="38" width="64" height="30" fill="#0a0a0a" clip-path="url(#c104)"/></g>
+<circle cx="32" cy="38" r="11" fill="#c53805" clip-path="url(#s105)"/></svg><figcaption>16</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="opt">
+  <header><span class="num">05</span><h2>Constellation</h2></header>
+  <p class="idea">Five stars that trace a U, drawn under the night sky of the dark theme. The last star burns ember: the university you end up choosing.</p>
+  <div class="grid">
+    <div class="tile light hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k107" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k107)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></svg></div>
+    <div class="tile dark hero"><svg xmlns="http://www.w3.org/2000/svg" width="168" height="168" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k108" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k108)"/>
+<circle cx="11" cy="14" r="3.2" fill="#ffffff"/><circle cx="15.5" cy="37" r="3.6" fill="#ffffff"/><circle cx="31" cy="51" r="4.2" fill="#ffffff"/><circle cx="46" cy="39" r="3.6" fill="#ffffff"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#ff6a2b"/></svg></div>
+    <div class="tile light"><div class="lockup light"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k109" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k109)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile dark"><div class="lockup dark"><span class="lk-mark"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k110" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k110)"/>
+<circle cx="11" cy="14" r="3.2" fill="#ffffff"/><circle cx="15.5" cy="37" r="3.6" fill="#ffffff"/><circle cx="31" cy="51" r="4.2" fill="#ffffff"/><circle cx="46" cy="39" r="3.6" fill="#ffffff"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#ff6a2b"/></svg></span><span class="lk-word" style="font-size:27px">UniWorld</span></div></div>
+    <div class="tile icons">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><defs><linearGradient id="g111" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151517"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient></defs><rect width="64" height="64" rx="14.3" fill="url(#g111)"/><g transform="translate(12.2 12.2) scale(0.62)"><defs><mask id="k112" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k112)"/>
+<circle cx="11" cy="14" r="3.2" fill="#ffffff"/><circle cx="15.5" cy="37" r="3.6" fill="#ffffff"/><circle cx="31" cy="51" r="4.2" fill="#ffffff"/><circle cx="46" cy="39" r="3.6" fill="#ffffff"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#ff6a2b"/></g></svg></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.3" fill="#efefef"/><g transform="translate(12.2 12.2) scale(0.62)"><defs><mask id="k114" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k114)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></g></svg></div>
+    </div>
+    <div class="tile light ladder">
+      <figure><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k115" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k115)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></svg><figcaption>48</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k116" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k116)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></svg><figcaption>32</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k117" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k117)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></svg><figcaption>24</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 64 64" role="img" aria-label="UniWorld"><defs><mask id="k118" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="11" cy="14" r="5.2" fill="#000"/><circle cx="15.5" cy="37" r="5.6" fill="#000"/><circle cx="31" cy="51" r="6.2" fill="#000"/><circle cx="46" cy="39" r="5.6" fill="#000"/><circle cx="51.5" cy="13.5" r="5.4" fill="#000"/></mask></defs>
+<polyline points="11,14 15.5,37 31,51 46,39 51.5,13.5" fill="none" stroke="#0a0a0a" stroke-opacity="0.5" stroke-width="2.2" stroke-linejoin="round" mask="url(#k118)"/>
+<circle cx="11" cy="14" r="3.2" fill="#0a0a0a"/><circle cx="15.5" cy="37" r="3.6" fill="#0a0a0a"/><circle cx="31" cy="51" r="4.2" fill="#0a0a0a"/><circle cx="46" cy="39" r="3.6" fill="#0a0a0a"/>
+<path d="M51.5 3.5Q51.5 13.5 61.5 13.5Q51.5 13.5 51.5 23.5Q51.5 13.5 41.5 13.5Q51.5 13.5 51.5 3.5Z" fill="#c53805"/></svg><figcaption>16</figcaption></figure>
+    </div>
+  </div>
+</section>
+</main>
+</body>
+</html>
