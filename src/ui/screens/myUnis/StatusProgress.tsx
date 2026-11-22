@@ -225,7 +225,7 @@ export function StatusProgress({
             const labelClass = cn(
               'text-center text-xs leading-4 break-words transition-colors duration-300 ease-[cubic-bezier(0.2,0,0,1)]',
               isCurrent
-                ? (rejected ? 'font-semibold text-foreground' : 'font-semibold text-foreground')
+                ? 'font-semibold text-foreground'
                 : done && !rejected
                   ? 'text-foreground/75'
                   : 'text-chart-grey',
