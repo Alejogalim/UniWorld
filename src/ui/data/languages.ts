@@ -49,3 +49,37 @@ export function languageName(code: string, uiLang: string): string {
     return code;
   }
 }
+
+let englishNames: Map<string, string> | null = null;
+
+/** ISO 639-1 code for an English language name in any case ("english" -> "en"), or null. */
+function codeForEnglishName(name: string): string | null {
+  if (!englishNames) {
+    englishNames = new Map();
+    const en = namesFor('en');
+    if (en) {
+      for (const code of LANGUAGE_CODES) {
+        try {
+          const label = en.of(code);
+          if (label && label !== code) englishNames.set(label.toLowerCase(), code);
+        } catch {
+          // Unknown to this engine's Intl data: skip it.
+        }
+      }
+    }
+  }
+  return englishNames.get(name.toLowerCase()) ?? null;
+}
+
+/**
+ * A language as the core returned it (an ISO code like "en" or a name like "english"), shown in the
+ * UI language. Unknown names are trimmed and capitalised, never shown raw.
+ */
+export function languageLabel(raw: string, uiLang: string): string {
+  const value = raw.trim();
+  const lower = value.toLowerCase();
+  if (LANGUAGE_CODES.includes(lower)) return languageName(lower, uiLang);
+  const code = codeForEnglishName(value);
+  if (code) return languageName(code, uiLang);
+  return value.charAt(0).toLocaleUpperCase(uiLang) + value.slice(1);
+}

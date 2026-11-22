@@ -294,7 +294,7 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 
 The rail is its own full-height column on the left: 284px expanded, 72px collapsed to an icon dock, with transparent ground over the stars. It sits above the content layer (position relative, z-index 10). On Atlas the globe runs under it and the rail takes `.app-rail--over-globe`: no hairline, and a static wash of the ground colour, 70% at its left edge fading to transparent at its right edge, so the rail and the map read as one scene. Never a backdrop blur there: the globe redraws every frame. Its top row holds the logo: expanded, the logo, the wordmark and a 36px collapse button (`PanelLeftClose`) on the right; collapsed, the logo alone with a 36px expand button (`PanelLeftOpen`) directly below it, which expands the rail. Nav rows follow, then the language and theme buttons at the foot. The width change animates over 200ms (none under reduced motion).
 
-The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet. Settings is a single centred 640px column of grouped lists.
+The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet. Settings is a single centred 640px column of grouped lists. The university detail page is a single centred 800px column: Back aligned to its left edge, the header card, then the fact list.
 
 Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
 
@@ -351,8 +351,13 @@ Implemented in `src/ui/screens/MyUnis.tsx` and `src/ui/screens/myUnis/` (`Tracke
 - **API keys:** one row per provider with a status dot and text: ember dot for "Connected" (a test passed this session) or "Saved", hairline dot for "Not set". "Manage" is a quiet disclosure button (`aria-expanded`) that reveals the key field, Save, Test connection and Remove inline under the row.
 - **Buttons:** quiet everywhere, except Edit profile (primary), Save key and the delete confirm (secondary). The destructive Delete text and the delete confirm use signal text, not a fill.
 
+### University detail
+- **Header:** a plain `Panel` (no `.panel-ember`; the page's one ember element is the Add to my list button). Flag disc and university name in Headline, the program in Title, then one muted meta line: place · Last checked date (tabular). Everything is left-aligned.
+- **Actions:** one row of 36px pills under the meta line. Not in the list: Add to my list (primary). In the list: a check with "In your list" in Chart Grey and Open my list (secondary). Refresh is quiet, at the far right of the row; the row wraps on narrow widths.
+- **Embedded in the Atlas dock:** the same layout, name in Title and program at body size.
+
 ### Fact line (signature)
-Unchanged in behaviour. A 14px label in Chart Grey, the value in body text, and a Data-style source superscript. The popover is a rimmed 20px surface. The missing fact reads "Not found, check official site" in Chart Grey, with a dashed underline, and keeps its row height.
+Unchanged in behaviour. A 14px label in Chart Grey, the value in body text at weight 500, and a Data-style source superscript joined to the last word by a no-break space, so it never wraps onto a line of its own. The popover is a rimmed 20px surface. The missing fact reads "Not found, check official site" in Chart Grey, with a dashed underline, and keeps its row height. Found facts come first and missing facts after, each group in its original order; the source numbers count down the page. The label sits in an 11rem column beside the value with 12px row padding, and stacks above the value when its container is narrower than 36rem. Language values are names in the UI language (never codes or raw lowercase).
 
 ### The Globe
 Ocean `#fbfaf8` in light and `#060607` in dark, so the sphere glows against the stars. Land `#d9d9d9` in light and `#26262a` in dark. Graticule faint. Selected countries are filled with ember. Idle rotation at 0.35 degrees per second. The globe is a circle.

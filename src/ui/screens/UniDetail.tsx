@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Check, RefreshCw } from 'lucide-react';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { MissingKeyError } from '@/core';
 import type { Fact, UiLang, UniDetail as UniDetailData, UniResult } from '@/core/contracts';
 import { useCore } from '@/app/useCore';
 import { useTracked, type TrackedUni } from '@/store/tracked';
 import { countryName } from '@/ui/data/countries';
-import { languageName } from '@/ui/data/languages';
+import { languageLabel } from '@/ui/data/languages';
 import { Flag } from '@/ui/components/Flag';
 import { FactLine } from '@/ui/components/FactLine';
 import { ErrorNote } from '@/ui/components/ErrorNote';
@@ -162,7 +162,7 @@ export function UniDetailView({
   };
 
   const back = (
-    <Button variant="quiet" size="sm" onClick={onBack}>
+    <Button variant="quiet" size="sm" className="-ml-4 self-start" onClick={onBack}>
       <ArrowLeft aria-hidden="true" />
       {t('detail.back')}
     </Button>
@@ -179,8 +179,8 @@ export function UniDetailView({
       );
     }
     return (
-      <div className="max-w-[1120px] px-12 py-8">
-        <div className="flex flex-col gap-6">
+      <div className="@container mx-auto w-full max-w-[800px] px-6 pt-2 pb-12">
+        <div className="flex flex-col gap-3">
           {back}
           {content}
         </div>
@@ -219,52 +219,157 @@ export function UniDetailView({
     );
   }
 
-  const primaryAction = existing ? (
-    <div className="flex flex-wrap items-center gap-3">
-      <span className="text-sm text-chart-grey">{t('detail.inList')}</span>
-      <Button variant="quiet" size="sm" onClick={() => navigate('/my-unis')}>
+  // Found facts first, then the missing ones, each group in its original order. The source markers are
+  // numbered as the rows render, so they still count down the page.
+  const factRows: { fact: Fact<unknown>; render: (index: number) => ReactNode }[] = detail
+    ? [
+        {
+          fact: detail.overview,
+          render: (i) => <FactLine key="overview" label={t('detail.sections.overview')} fact={detail.overview} index={i} />,
+        },
+        {
+          fact: detail.languages,
+          render: (i) => (
+            <FactLine
+              key="languages"
+              label={t('detail.sections.language')}
+              fact={detail.languages}
+              index={i}
+              format={(codes) => {
+                const text = codes.map((c) => languageLabel(c, uiLang)).filter(Boolean).join(', ');
+                return text.charAt(0).toLocaleUpperCase(uiLang) + text.slice(1);
+              }}
+            />
+          ),
+        },
+        {
+          fact: detail.tuition,
+          render: (i) => <FactLine key="tuition" label={t('detail.sections.tuition')} fact={detail.tuition} index={i} />,
+        },
+        {
+          fact: detail.scholarships,
+          render: (i) => (
+            <FactLine key="scholarships" label={t('detail.sections.scholarships')} fact={detail.scholarships} index={i} />
+          ),
+        },
+        {
+          fact: detail.deadlines,
+          render: (i) => <FactLine key="deadlines" label={t('detail.sections.deadlines')} fact={detail.deadlines} index={i} />,
+        },
+        {
+          fact: detail.nextDeadline,
+          render: (i) => (
+            <FactLine key="nextDeadline" label={t('detail.sections.nextDeadline')} fact={detail.nextDeadline} index={i} />
+          ),
+        },
+        {
+          fact: detail.exams,
+          render: (i) => <FactLine key="exams" label={t('detail.sections.exams')} fact={detail.exams} index={i} />,
+        },
+        {
+          fact: detail.requirements,
+          render: (i) => (
+            <FactLine key="requirements" label={t('detail.sections.requirements')} fact={detail.requirements} index={i} />
+          ),
+        },
+        {
+          fact: detail.applyUrl,
+          render: (i) => (
+            <FactLine
+              key="applyUrl"
+              label={t('detail.sections.apply')}
+              fact={detail.applyUrl}
+              index={i}
+              format={(url) =>
+                isWebUrl(url) ? (
+                  <a
+                    href={url}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openUrl(url).catch((err: unknown) => console.error('Could not open the application link', err));
+                    }}
+                    className="break-all underline decoration-hairline underline-offset-2 hover:text-signal"
+                  >
+                    {url}
+                  </a>
+                ) : (
+                  url
+                )
+              }
+            />
+          ),
+        },
+      ]
+    : [];
+  const orderedFacts = [
+    ...factRows.filter((row) => factValue(row.fact) !== null),
+    ...factRows.filter((row) => factValue(row.fact) === null),
+  ];
+
+  // One row of 36px pills under the title: the list action, then a quiet Refresh at the far end.
+  const listAction = existing ? (
+    <>
+      <span className="inline-flex items-center gap-1.5 text-sm text-chart-grey">
+        <Check className="size-4" aria-hidden="true" />
+        {t('detail.inList')}
+      </span>
+      <Button variant="secondary" size="sm" onClick={() => navigate('/my-unis')}>
         {t('detail.openList')}
       </Button>
-    </div>
+    </>
   ) : (
-    <div className="flex flex-col items-end gap-2">
-      <Button onClick={addToList} disabled={!detail || !nameKnown || busy || adding}>
-        {t('detail.addToList')}
-      </Button>
-      {!nameKnown && trackedLoaded && <p className="max-w-[40ch] text-right text-xs text-chart-grey">{t('detail.addNeedsName')}</p>}
-    </div>
+    <Button size="sm" onClick={addToList} disabled={!detail || !nameKnown || busy || adding}>
+      {t('detail.addToList')}
+    </Button>
   );
 
   const body = (
     <div className={embedded ? 'flex flex-col gap-4' : 'flex flex-col gap-6'}>
-      <Panel variant="ember" className={embedded ? 'p-4' : undefined}>
-        <header className="flex flex-wrap items-start justify-between gap-4">
+      <Panel className={embedded ? 'p-4' : 'p-6 @min-[36rem]:p-8'}>
+        <header className="flex flex-col gap-5">
           <div className="flex min-w-0 flex-col gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <Flag code={countryCode} />
-              <h2 className="min-w-0 text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.015em] break-words text-foreground">
+            <div className="flex min-w-0 items-start gap-3">
+              <Flag code={countryCode} className={embedded ? 'mt-0.5' : 'mt-1 size-6'} />
+              <h2
+                className={`min-w-0 break-words text-foreground ${embedded ? 'type-title' : 'type-headline'}`}
+              >
                 {nameKnown ? name : t('detail.untitled')}
               </h2>
             </div>
-            {place && <p className="text-sm leading-[1.55] text-chart-grey">{place}</p>}
-            {detail && (
-              <p className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">{detail.program}</p>
-            )}
-            {!detail && <p className="text-[1.0625rem] leading-[1.35] text-foreground">{program}</p>}
-            {checked && (
-              <p className="text-sm text-chart-grey">
-                {t('detail.lastChecked')}{' '}
-                <span className="font-mono text-xs font-medium tabular-nums">{checked}</span>
+            <p
+              className={
+                embedded
+                  ? 'text-[0.9375rem] leading-[1.4] font-medium text-foreground'
+                  : 'type-title text-foreground'
+              }
+            >
+              {detail?.program ?? program}
+            </p>
+            {(place || checked) && (
+              <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm leading-[1.55] text-chart-grey">
+                {place && <span>{place}</span>}
+                {place && checked && <span aria-hidden="true">·</span>}
+                {checked && (
+                  <span>
+                    {t('detail.lastChecked')}{' '}
+                    <span className="font-mono tabular-nums">{checked}</span>
+                  </span>
+                )}
               </p>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="secondary" disabled={busy} onClick={() => load(true)}>
-              <RefreshCw aria-hidden="true" />
-              {t('detail.refresh')}
-            </Button>
-            {primaryAction}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              {listAction}
+              <Button variant="quiet" size="sm" className="-mr-4 ml-auto" disabled={busy} onClick={() => load(true)}>
+                <RefreshCw aria-hidden="true" />
+                {t('detail.refresh')}
+              </Button>
+            </div>
+            {!existing && !nameKnown && trackedLoaded && (
+              <p className="max-w-[48ch] text-xs leading-[1.5] text-chart-grey">{t('detail.addNeedsName')}</p>
+            )}
           </div>
         </header>
       </Panel>
@@ -276,40 +381,7 @@ export function UniDetailView({
 
       {detail && (
         <div className="flex flex-col border-t border-hairline">
-          <FactLine label={t('detail.sections.overview')} fact={detail.overview} index={mark(detail.overview)} />
-          <FactLine
-            label={t('detail.sections.language')}
-            fact={detail.languages}
-            index={mark(detail.languages)}
-            format={(codes) => codes.map((c) => languageName(c, uiLang)).join(', ')}
-          />
-          <FactLine label={t('detail.sections.tuition')} fact={detail.tuition} index={mark(detail.tuition)} />
-          <FactLine label={t('detail.sections.scholarships')} fact={detail.scholarships} index={mark(detail.scholarships)} />
-          <FactLine label={t('detail.sections.deadlines')} fact={detail.deadlines} index={mark(detail.deadlines)} />
-          <FactLine label={t('detail.sections.nextDeadline')} fact={detail.nextDeadline} index={mark(detail.nextDeadline)} />
-          <FactLine label={t('detail.sections.exams')} fact={detail.exams} index={mark(detail.exams)} />
-          <FactLine label={t('detail.sections.requirements')} fact={detail.requirements} index={mark(detail.requirements)} />
-          <FactLine
-            label={t('detail.sections.apply')}
-            fact={detail.applyUrl}
-            index={mark(detail.applyUrl)}
-            format={(url) =>
-              isWebUrl(url) ? (
-                <a
-                  href={url}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    openUrl(url).catch((err: unknown) => console.error('Could not open the application link', err));
-                  }}
-                  className="break-all underline decoration-hairline underline-offset-2 hover:text-signal"
-                >
-                  {url}
-                </a>
-              ) : (
-                url
-              )
-            }
-          />
+          {orderedFacts.map((row) => row.render(mark(row.fact)))}
         </div>
       )}
     </div>
@@ -325,8 +397,8 @@ export function UniDetailView({
   }
 
   return (
-    <div className="max-w-[1120px] px-12 py-8">
-      <div className="flex flex-col gap-6">
+    <div className="@container mx-auto w-full max-w-[800px] px-6 pt-2 pb-12">
+      <div className="flex flex-col gap-3">
         {back}
         {body}
       </div>

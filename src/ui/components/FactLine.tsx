@@ -22,24 +22,25 @@ function hasSourcedValue<T extends string | string[]>(fact: Fact<T>): fact is Fa
 
 /**
  * DESIGN.md "Fact Line" (signature): label, value, and a mono source marker that opens
- * the source tag, the quote and the URL. Missing facts keep the row height.
+ * the source tag, the quote and the URL. Missing facts keep the row height. Needs a `@container`
+ * ancestor: narrower than 36rem, the label stacks above the value.
  */
 export function FactLine<T extends string | string[]>({ label, fact, format, index = 1 }: FactLineProps<T>) {
   const { t } = useTranslation("common");
   const sourced = hasSourcedValue(fact);
 
   return (
-    <div className="grid min-h-11 grid-cols-[minmax(0,11rem)_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 border-b border-hairline py-2">
-      <span className="text-sm text-chart-grey">{label}</span>
+    <div className="grid min-h-11 grid-cols-1 items-baseline gap-x-6 gap-y-1 border-b border-hairline py-3 @min-[36rem]:grid-cols-[minmax(0,11rem)_minmax(0,1fr)]">
+      <span className="text-sm leading-[1.55] text-chart-grey">{label}</span>
       {sourced ? (
-        <span className="flex flex-wrap items-baseline gap-1 text-base font-medium text-foreground">
-          <span className="min-w-0 break-words">
-            {format ? format(fact.value as T) : Array.isArray(fact.value) ? fact.value.join(", ") : fact.value}
-          </span>
+        // One inline run: the no-break space glues the marker to the last word so it never wraps alone.
+        <span className="min-w-0 text-base leading-[1.55] font-medium break-words text-foreground">
+          {format ? format(fact.value as T) : Array.isArray(fact.value) ? fact.value.join(", ") : fact.value}
+          {"\u00A0"}
           <SourceMarker index={index} sourceUrl={fact.sourceUrl} sourceKind={fact.sourceKind} quote={fact.quote} />
         </span>
       ) : (
-        <span className="text-sm text-chart-grey underline decoration-dashed decoration-1 underline-offset-4">
+        <span className="text-sm leading-[1.55] text-chart-grey underline decoration-dashed decoration-1 underline-offset-4">
           {t("fact.missing")}
         </span>
       )}
