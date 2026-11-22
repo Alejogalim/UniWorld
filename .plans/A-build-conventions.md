@@ -1,7 +1,7 @@
 # A — build conventions (every builder reads this first)
 
 Context: UniWorld is a Tauri 2 desktop app. Person A owns the UI; Person B owns `src/core/**` (already implemented, real, tested).
-Source of truth: `Design.md` (product), `DESIGN.md` (visual system: "The Corrected Chart"), `src/core/contracts.ts` (API).
+Source of truth: `Design.md` (product), `DESIGN.md` (visual system: "The Ember Chart"), `src/core/contracts.ts` (API).
 
 ## Hard rules
 - Never edit: `src/core/**`, `src/store/{counselor,search,detailCache}.ts`, `scripts/build-ror.ts`, `data/universities*.json`, `Design.md`, `DESIGN.md`, `.plans/**` except the plan you're executing (checkboxes + "Builder notes").

@@ -49,12 +49,12 @@ export function Chip({ selected = false, code, onRemove, onClick, className, chi
   );
 }
 
-/** Read-only label: shoal fill, no stroke (language and tuition badges). */
+/** Read-only label: shoal fill with a hairline, so it reads as a chip on panels (language and tuition badges). */
 export function Badge({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "inline-flex min-h-6 items-center rounded-sm bg-shoal px-2 py-0.5 text-xs leading-tight text-foreground",
+        "inline-flex min-h-6 items-center rounded-sm border border-hairline bg-shoal px-2 py-0.5 text-xs leading-tight text-foreground",
         className,
       )}
       {...props}

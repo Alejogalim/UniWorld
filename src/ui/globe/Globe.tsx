@@ -24,20 +24,12 @@ interface Palette {
   hairline: string;
   ink: string;
   signal: string;
-  veil: string;
+  atmosphere: string;
 }
 
-/** Turns any CSS color (including oklch) into #rrggbb by letting the canvas normalize it. */
+/** The globe tokens are 6-digit hex in src/index.css (shade and mix depend on it), so the value passes through. */
 function cssToHex(color: string): string {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1;
-  canvas.height = 1;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return '#000000';
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, 1, 1);
-  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-  return '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('');
+  return color.trim();
 }
 
 function shade(hex: string, factor: number): string {
@@ -46,19 +38,34 @@ function shade(hex: string, factor: number): string {
   return '#' + [16, 8, 0].map((s) => channel(s).toString(16).padStart(2, '0')).join('');
 }
 
+/** Linear blend of two #rrggbb colours; t = 0 keeps a, t = 1 gives b. */
+function mix(a: string, b: string, t: number): string {
+  const na = parseInt(a.slice(1), 16);
+  const nb = parseInt(b.slice(1), 16);
+  const channel = (shift: number) => {
+    const ca = (na >> shift) & 0xff;
+    const cb = (nb >> shift) & 0xff;
+    return Math.round(ca + (cb - ca) * t);
+  };
+  return '#' + [16, 8, 0].map((s) => channel(s).toString(16).padStart(2, '0')).join('');
+}
+
 /** Reads the app tokens so the globe always matches the active theme. */
-function readPalette(): Palette {
+function readPalette(theme: 'light' | 'dark'): Palette {
   const styles = getComputedStyle(document.documentElement);
   const token = (name: string) => cssToHex(styles.getPropertyValue(name).trim());
   const land = token('--land');
+  const ocean = token('--background');
+  const ember = token('--ember-1');
   return {
-    ocean: token('--background'),
+    ocean,
     land,
     landSide: shade(land, 0.82),
     hairline: token('--hairline'),
     ink: token('--foreground'),
     signal: token('--signal'),
-    veil: shade(land, 0.9),
+    // Dark: a faint ember tint (about 25%) on black. Light: a neutral grey haze on paper.
+    atmosphere: theme === 'dark' ? mix(ocean, ember, 0.25) : mix(ocean, token('--chart-grey'), 0.5),
   };
 }
 
@@ -122,11 +129,11 @@ export default function GlobeView({
       })
       .polygonCapColor((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
-        return isOn(iso) ? p.veil : p.land;
+        return isOn(iso) ? p.signal : p.land;
       })
       .polygonSideColor((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
-        return isOn(iso) ? shade(p.veil, 0.82) : p.landSide;
+        return isOn(iso) ? shade(p.signal, 0.82) : p.landSide;
       })
       .polygonStrokeColor((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
@@ -219,7 +226,7 @@ export default function GlobeView({
   useEffect(() => {
     const globe = globeRef.current;
     if (!globe || !countries) return;
-    state.current.palette = readPalette();
+    state.current.palette = readPalette(theme);
     const p = state.current.palette;
     // A matte surface: no specular highlight on the sphere.
     const material = globe.globeMaterial() as unknown as {
@@ -230,6 +237,14 @@ export default function GlobeView({
     material.color.set(p.ocean);
     material.specular.setScalar(0);
     material.shininess = 0;
+    globe.atmosphereColor(p.atmosphere);
+    // Graticules are plain line segments in the scene; colour them with the hairline token.
+    const graticule = globe
+      .scene()
+      .children.find((child: { type?: string }) => child.type === 'LineSegments') as
+      | { material: { color: { set: (hex: string) => void } } }
+      | undefined;
+    graticule?.material.color.set(p.hairline);
     globe.polygonsData(countries);
     applyStyles();
     // eslint-disable-next-line react-hooks/exhaustive-deps

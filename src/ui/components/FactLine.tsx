@@ -111,7 +111,7 @@ export function SourceMarker({ index, sourceUrl, sourceKind, quote }: SourceMark
         <span
           id={popoverId}
           role="group"
-          className="absolute top-full left-0 z-20 mt-2 flex w-72 max-w-[calc(100vw-3rem)] flex-col gap-2 rounded-md border border-hairline bg-panel p-3 font-normal shadow-float"
+          className="absolute top-full left-0 z-20 mt-2 flex w-72 max-w-[calc(100vw-3rem)] flex-col gap-2 rounded-md border border-hairline bg-panel p-3 font-normal shadow-float inset-shadow-(--panel-rim)"
         >
           <span
             className={cn(

@@ -78,27 +78,40 @@
     --shadow-float: 0 12px 32px -16px var(--shadow-ink);
 }
 
-/* Light: "The Corrected Chart" (DESIGN.md). */
+/* Tokens below that the globe reads (--background, --land, --hairline, --foreground, --signal, --ember-1,
+   --chart-grey) must stay 6-digit hex: src/ui/globe/Globe.tsx shades and mixes them as #rrggbb. */
+
+/* Light: "The Ember Chart" (DESIGN.md). Black-and-white instrument, one ember. */
 :root {
     color-scheme: light;
-    --background: oklch(0.962 0.01 205);
-    --panel: oklch(0.995 0.003 205);
-    --shoal: oklch(0.935 0.014 210);
-    --hairline: oklch(0.88 0.013 215);
-    --foreground: oklch(0.255 0.033 250);
-    --chart-grey: oklch(0.52 0.022 245);
-    --signal: oklch(0.5 0.195 355);
-    --signal-deep: oklch(0.43 0.17 355);
-    --evidence: oklch(0.505 0.085 168);
-    --land: oklch(0.905 0.03 85);
-    --shadow-ink: oklch(0.255 0.033 250 / 0.35);
+    --background: #efefef;
+    --panel: #ffffff;
+    --shoal: #f4f4f4;
+    --hairline: #c2c2c2;
+    --foreground: #0a0a0a;
+    --chart-grey: #636366;
+    --signal: #c53805;
+    --signal-deep: #a82f03;
+    --evidence: #2f7a56;
+    --land: #d9d9d9;
+    --shadow-ink: rgb(0 0 0 / 0.35);
+
+    /* Ember: the only colour in the app. Spent in the places listed in DESIGN.md. */
+    --ember-0: #b3210a;
+    --ember-1: #ff5a1f;
+    --ember-2: #f7b267;
+    --ember-gradient: linear-gradient(to top, var(--ember-0), var(--ember-1) 55%, var(--ember-2));
+    /* No glow on light paper: a transparent shadow, because `none` breaks Tailwind's box-shadow list. */
+    --ember-glow: 0 0 #0000;
+    /* Panel rim: a lighter top edge only on dark panels. */
+    --panel-rim: inset 0 0 #0000;
 
     --card: var(--panel);
     --card-foreground: var(--foreground);
     --popover: var(--panel);
     --popover-foreground: var(--foreground);
     --primary: var(--signal);
-    --primary-foreground: oklch(0.995 0.003 205);
+    --primary-foreground: #ffffff;
     --secondary: var(--panel);
     --secondary-foreground: var(--foreground);
     --muted: var(--shoal);
@@ -125,24 +138,25 @@
     --sidebar-ring: var(--signal);
 }
 
-/* Dark: "Night Watch" (DESIGN.md). Same chart with the lamp off.
-   Applied by the `.dark` class, which src/app/theme.ts sets from the
-   user's choice (system follows prefers-color-scheme in JS). */
+/* Dark: the ember on black (DESIGN.md). Applied by the `.dark` class, which
+   src/app/theme.ts sets from the user's choice (system follows prefers-color-scheme in JS). */
 .dark {
     color-scheme: dark;
-    --background: oklch(0.205 0.024 245);
-    --panel: oklch(0.245 0.026 245);
-    --shoal: oklch(0.225 0.025 245);
-    --hairline: oklch(0.6 0.025 240);
-    --foreground: oklch(0.94 0.01 220);
-    --chart-grey: oklch(0.78 0.02 230);
-    --signal: oklch(0.7 0.19 355);
-    /* Lighter than --signal: on Night Watch the hover needs to lift the label contrast. */
-    --signal-deep: oklch(0.75 0.16 355);
-    --evidence: oklch(0.76 0.11 168);
-    --land: oklch(0.42 0.03 85);
-    --shadow-ink: oklch(0 0 0 / 0.5);
-    --primary-foreground: oklch(0.205 0.024 245);
+    --background: #000000;
+    --panel: #0c0c0d;
+    --shoal: #161617;
+    --hairline: #39393c;
+    --foreground: #ffffff;
+    --chart-grey: #8e8e93;
+    --signal: #ff6a2b;
+    /* Lighter than --signal: the hover lifts the label contrast on black. */
+    --signal-deep: #ff8a4d;
+    --evidence: #5fbf8f;
+    --land: #262628;
+    --shadow-ink: rgb(0 0 0 / 0.5);
+    --primary-foreground: #000000;
+    --ember-glow: 0 0 32px -8px color-mix(in oklch, var(--ember-1) 55%, transparent);
+    --panel-rim: inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 
 @layer base {
@@ -265,15 +279,14 @@
   appearance: none;
 }
 
-/* Rail: shallow water that dissolves into the page — no dividing line. */
+/* Rail: flat page colour. A 1px hairline separates it in light mode only;
+   black on black reads clean without one. */
 .app-rail {
-  border-right: 0;
-  background: linear-gradient(
-    to right,
-    color-mix(in oklch, var(--background), var(--shoal) 30%) 0%,
-    color-mix(in oklch, var(--background), var(--shoal) 30%) 50%,
-    var(--background) 100%
-  );
+  background: var(--background);
+  border-right: 1px solid var(--hairline);
+}
+.dark .app-rail {
+  border-right-color: transparent;
 }
 .app-rail a:hover {
   background: color-mix(in oklch, var(--panel) 60%, transparent);
@@ -316,4 +329,13 @@
   .nav-item:hover .nav-item__icon,
   .nav-item:active { transform: none; }
   .nav-item__fix { animation: none; }
+}
+
+/* Ember fill: the search progress dot (DESIGN.md "Where the ember is allowed").
+   Light: flat signal. Dark: the ember gradient. */
+.ember-fill {
+  background: var(--signal);
+}
+.dark .ember-fill {
+  background-image: var(--ember-gradient);
 }

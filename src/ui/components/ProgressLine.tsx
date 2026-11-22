@@ -7,7 +7,7 @@ interface ProgressLineProps {
 export function ProgressLine({ message }: ProgressLineProps) {
   return (
     <p role="status" aria-live="polite" className="flex items-center gap-2 text-sm text-chart-grey">
-      <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-signal motion-safe:animate-pulse" />
+      <span aria-hidden="true" className="ember-fill size-2 shrink-0 rounded-full motion-safe:animate-pulse" />
       <span className="min-w-0 break-words">{message}</span>
     </p>
   );

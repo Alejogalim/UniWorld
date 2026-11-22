@@ -11,7 +11,7 @@ export function Panel({ inset = false, className, ...props }: PanelProps) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-hairline p-6 text-foreground",
+        "rounded-lg border border-hairline p-6 text-foreground inset-shadow-(--panel-rim)",
         inset ? "bg-shoal" : "bg-panel",
         className,
       )}

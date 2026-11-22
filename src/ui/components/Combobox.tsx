@@ -149,7 +149,7 @@ export function Combobox({
         <div
           id={listboxId}
           role="listbox"
-          className="absolute inset-x-0 top-full z-20 mt-1 max-h-64 overflow-auto rounded-md border border-hairline bg-panel py-1 shadow-float"
+          className="absolute inset-x-0 top-full z-20 mt-1 max-h-64 overflow-auto rounded-md border border-hairline bg-panel py-1 shadow-float inset-shadow-(--panel-rim)"
         >
           {filtered.length === 0 ? (
             <p className="px-3 py-2 text-sm text-chart-grey">{noMatchesLabel}</p>

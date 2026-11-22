@@ -18,7 +18,7 @@ const NAV: { to: string; key: string; titleKey: string; icon: LucideIcon }[] = [
 
 /**
  * Four quadrants: logo corner | top bar (page title), sidebar | content.
- * The two left cells carry the same rail gradient, so it reads as one column.
+ * The two left cells carry the same rail surface, so it reads as one column.
  */
 export function AppShell() {
   const { t } = useTranslation('common');
@@ -65,7 +65,7 @@ export function AppShell() {
                   {isActive && (
                     <span
                       aria-hidden="true"
-                      className="nav-item__fix absolute -left-2 top-1/2 size-[3px] -translate-y-1/2 rounded-full bg-foreground"
+                      className="nav-item__fix absolute -left-2 top-1/2 size-[3px] -translate-y-1/2 rounded-full bg-signal"
                     />
                   )}
                 </>
