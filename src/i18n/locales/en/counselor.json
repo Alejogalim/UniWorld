@@ -1,21 +1,30 @@
 {
   "intake": {
-    "q1": "{{name}}, what would you do even if nobody asked you to?",
-    "q2": "What do people usually come to you for?",
-    "q3": "Which subjects do you enjoy most, and why?",
-    "q4": "When you picture your life at 30, what are you doing each day?",
-    "q5": "What matters most to you in work: impact, stability, creativity, money, or freedom?",
-    "q6": "What are your practical limits, such as budget, distance from home, and the languages you could study in?",
-    "progress": "Question {{n}} of {{total}}"
+    "q1": "{{name}}, what do you lose track of time doing?",
+    "q2": "What do friends or classmates usually ask you for help with?",
+    "q3": "Which school subject do you actually enjoy, and what do you like about it?",
+    "q4": "Picture an ordinary Tuesday when you're 30. What are you doing?",
+    "q5": "What matters most to you in a job: helping people, stability, creativity, money or freedom?",
+    "q6": "Is anything limiting your options, like budget, staying near home or the languages you can study in?",
+    "progress": "Question {{n}} of {{total}}",
+    "hint1": "A hobby, a project, anything. There are no wrong answers.",
+    "hint2": "Homework, tech, advice, organizing, cheering them up…",
+    "hint3": "Name the subject and the part you like, even if it is just one.",
+    "hint4": "Where you are, who you are with, what you are working on.",
+    "hint5": "You can pick more than one, or put them in order.",
+    "hint6": "Rough answers are fine. \"No limits\" is a valid answer."
   },
   "chat": {
     "label": "Counselor",
     "log": "Conversation with the counselor",
-    "placeholderAnswer": "Your answer",
+    "placeholderAnswer": "Type your answer…",
     "placeholderReply": "Reply to the counselor",
     "send": "Send",
     "sending": "Sending…",
-    "startTitle": "Where should we start?"
+    "startTitle": "Where should we start?",
+    "notSure": "I'm not sure yet.",
+    "notSureButton": "Not sure yet",
+    "enterHint": "Enter to send · Shift+Enter for a new line"
   },
   "priorities": {
     "title": "Your priorities",

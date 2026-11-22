@@ -36,6 +36,12 @@ export function ChatPane() {
   // No student message yet (and the chat has loaded): nothing to scroll, so the opening question heads the screen.
   const fresh = messages.length > 0 && messages.every((m) => m.role === "counselor");
   const opening = messages.find((m) => m.role === "counselor")?.text ?? "";
+  // The hint for the step being answered; it is UI copy only and never sent to the counselor.
+  const hint = intake ? t(`intake.hint${intakeStep}`) : null;
+  // Keyboard hint only where Enter sends: touch layouts have no Shift+Enter on the soft keyboard.
+  const [touch] = useState(
+    () => typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches === true,
+  );
 
   useLayoutEffect(() => {
     const log = logRef.current;
@@ -84,7 +90,8 @@ export function ChatPane() {
       {fresh ? (
         <div className="flex flex-col gap-3 px-2 text-center">
           <p className="type-label text-chart-grey">{t("chat.startTitle")}</p>
-          <h2 className="type-headline mx-auto max-w-[24ch] text-balance">{opening}</h2>
+          <h2 className="type-headline mx-auto max-w-[26ch] text-balance">{opening}</h2>
+          {hint && <p className="text-sm text-chart-grey">{hint}</p>}
         </div>
       ) : (
         <div
@@ -112,10 +119,33 @@ export function ChatPane() {
 
       <div className="flex flex-col gap-3">
         {intake && (
-          <p className={cn("font-mono text-xs font-medium tabular-nums text-chart-grey", fresh && "text-center")}>
-            {t("intake.progress", { n: intakeStep, total: INTAKE_TOTAL })}
-          </p>
+          <div className={cn("flex items-center gap-3", fresh ? "justify-center" : "justify-between")}>
+            <div
+              role="progressbar"
+              aria-valuemin={1}
+              aria-valuemax={INTAKE_TOTAL}
+              aria-valuenow={intakeStep}
+              aria-label={t("intake.progress", { n: intakeStep, total: INTAKE_TOTAL })}
+              className="flex w-full max-w-48 gap-1.5"
+            >
+              {Array.from({ length: INTAKE_TOTAL }, (_, i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    "h-1 flex-1 rounded-pill",
+                    i + 1 < intakeStep && "bg-foreground/60",
+                    i + 1 === intakeStep && "bg-signal",
+                    i + 1 > intakeStep && "bg-hairline",
+                  )}
+                />
+              ))}
+            </div>
+            <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
+              {t("chat.notSureButton")}
+            </Button>
+          </div>
         )}
+        {hint && !fresh && <p className="text-sm text-chart-grey">{hint}</p>}
         {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
         <div className="rim flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
           <Textarea
@@ -136,6 +166,7 @@ export function ChatPane() {
             {busy ? t("chat.sending") : t("chat.send")}
           </Button>
         </div>
+        {!touch && <p className={cn("text-xs text-chart-grey", fresh && "text-center")}>{t("chat.enterHint")}</p>}
       </div>
     </section>
   );

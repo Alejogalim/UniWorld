@@ -1,21 +1,30 @@
 {
   "intake": {
-    "q1": "{{name}}, bạn sẽ làm gì nếu không ai yêu cầu bạn?",
-    "q2": "Mọi người thường tìm đến bạn để nhờ điều gì?",
-    "q3": "Bạn thích môn học nào nhất, và vì sao?",
-    "q4": "Khi hình dung cuộc sống của bạn ở tuổi 30, bạn đang làm gì mỗi ngày?",
-    "q5": "Điều gì quan trọng nhất với bạn trong công việc: tác động, sự ổn định, sáng tạo, tiền bạc hay tự do?",
-    "q6": "Những giới hạn thực tế của bạn là gì, như ngân sách, khoảng cách từ nhà và các ngôn ngữ bạn có thể học?",
-    "progress": "Câu hỏi {{n}} trên {{total}}"
+    "q1": "{{name}}, bạn thường quên cả thời gian khi làm việc gì?",
+    "q2": "Bạn bè hay bạn cùng lớp thường nhờ bạn giúp việc gì?",
+    "q3": "Bạn thích môn học nào ở trường nhất, và bạn thích điều gì ở môn đó?",
+    "q4": "Hãy hình dung một ngày thứ Ba bình thường khi bạn 30 tuổi. Bạn đang làm gì?",
+    "q5": "Điều quan trọng nhất với bạn trong công việc là gì: giúp đỡ người khác, sự ổn định, sáng tạo, tiền bạc hay tự do?",
+    "q6": "Có điều gì đang giới hạn lựa chọn của bạn không, như ngân sách, việc phải ở gần nhà, hoặc các ngôn ngữ bạn có thể học?",
+    "progress": "Câu hỏi {{n}} trên {{total}}",
+    "hint1": "Một sở thích, một dự án, điều gì cũng được. Không có câu trả lời sai.",
+    "hint2": "Bài tập, công nghệ, lời khuyên, sắp xếp, động viên họ…",
+    "hint3": "Nêu tên môn học và phần bạn thích, dù chỉ một phần cũng được.",
+    "hint4": "Bạn đang ở đâu, đi với ai, đang làm việc gì.",
+    "hint5": "Bạn có thể chọn nhiều mục, hoặc sắp xếp theo thứ tự.",
+    "hint6": "Câu trả lời sơ bộ cũng được. «Không có giới hạn» cũng là một câu trả lời hợp lệ."
   },
   "chat": {
     "label": "Cố vấn",
     "log": "Cuộc trò chuyện với cố vấn",
-    "placeholderAnswer": "Câu trả lời của bạn",
+    "placeholderAnswer": "Nhập câu trả lời của bạn…",
     "placeholderReply": "Trả lời cố vấn",
     "send": "Gửi",
     "sending": "Đang gửi…",
-    "startTitle": "Mình bắt đầu từ đâu nhé?"
+    "startTitle": "Mình bắt đầu từ đâu nhé?",
+    "notSure": "Mình chưa biết.",
+    "notSureButton": "Chưa biết",
+    "enterHint": "Enter để gửi · Shift+Enter để xuống dòng"
   },
   "priorities": {
     "title": "Ưu tiên của bạn",
