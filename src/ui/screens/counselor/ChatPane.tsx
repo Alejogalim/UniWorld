@@ -82,9 +82,9 @@ export function ChatPane() {
   return (
     <section
       className={cn(
-        // The start screen is centered; a running conversation fills the pane, latest message at the bottom.
+        // The start screen is centered; a running conversation runs from the top, composer pinned below.
         "mx-auto flex w-full min-w-0 max-w-[44rem] flex-col",
-        fresh ? "min-h-[calc(100vh-8.5rem)] justify-center gap-8" : "h-[calc(100vh-8.5rem)] gap-12",
+        fresh ? "min-h-[calc(100vh-2.75rem)] justify-center gap-8" : "h-[calc(100vh-2.75rem)] gap-8",
       )}
     >
       {fresh ? (
@@ -100,7 +100,7 @@ export function ChatPane() {
           aria-live="polite"
           aria-label={t("chat.log")}
           onScroll={onLogScroll}
-          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-2 [mask-image:linear-gradient(to_bottom,transparent,#000_16px)]"
+          className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto pt-6 pr-2"
         >
           {messages.map((m, i) => (
             <MessageView
@@ -123,38 +123,36 @@ export function ChatPane() {
         <CounselorErrorNote error={error} title="errors.chatTitle" canRetry={pending !== null} />
       )}
 
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex min-w-0 flex-1 flex-col gap-3">
-            {!fresh && intake && <IntakeProgress step={intakeStep} />}
-            {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
-            <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
-              <Textarea
-                ref={textareaRef}
-                aria-label={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
-                placeholder={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
-                rows={1}
-                value={draft}
-                disabled={busy}
-                onChange={(e) => {
-                  setDraft(e.target.value);
-                  resize(e.target);
-                }}
-                onKeyDown={onKeyDown}
-                className="min-h-10 flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 shadow-none focus-visible:outline-0 focus-visible:shadow-none"
-              />
-              <Button onClick={submit} disabled={!canSend} className="min-w-24">
-                {busy ? t("chat.sending") : t("chat.send")}
-              </Button>
-            </div>
-            {!touch && <p className="text-center text-xs text-chart-grey">{t("chat.enterHint")}</p>}
-          </div>
-          {intake && (
+      <div className={cn("flex flex-col gap-3", !fresh && "border-t border-hairline pt-5")}>
+        {!fresh && intake && <IntakeProgress step={intakeStep} />}
+        {/* One pill carries the rim, the focus ring and the field, so the field itself stays bare. */}
+        <div className="rim lift flex items-end gap-2 rounded-pill bg-panel py-2 pr-2 pl-4 [--rim-fill:linear-gradient(var(--panel),var(--panel))] focus-within:outline-2 focus-within:outline-signal">
+          <Textarea
+            ref={textareaRef}
+            aria-label={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
+            placeholder={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
+            rows={1}
+            value={draft}
+            disabled={busy}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              resize(e.target);
+            }}
+            onKeyDown={onKeyDown}
+            className="min-h-10 flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 shadow-none focus-visible:outline-0 focus-visible:shadow-none"
+          />
+          <Button onClick={submit} disabled={!canSend} className="min-w-24">
+            {busy ? t("chat.sending") : t("chat.send")}
+          </Button>
+        </div>
+        {!touch && <p className="text-center text-xs text-chart-grey">{t("chat.enterHint")}</p>}
+        {intake && (
+          <div className="flex justify-center">
             <Button variant="quiet" onClick={() => void sendAnswer(t("chat.notSure"))} disabled={busy}>
               {t("chat.notSureButton")}
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -201,16 +199,16 @@ function MessageView({
 
   if (message.role === "student") {
     return (
-      <div className={`ml-auto max-w-[85%] rounded-popover bg-shoal px-4 py-2.5 text-sm leading-[1.55] break-words whitespace-pre-wrap text-foreground ${animation ?? ""}`}>
+      <div className={`ml-auto max-w-[85%] rim rounded-popover bg-shoal px-4 py-2.5 text-[0.9375rem] leading-[1.55] [--rim-fill:linear-gradient(var(--shoal),var(--shoal))] break-words whitespace-pre-wrap text-foreground ${animation ?? ""}`}>
         {message.text}
       </div>
     );
   }
 
   return (
-    <div className={`flex max-w-[68ch] flex-col gap-1 ${animation ?? ""}`}>
+    <div className={`flex flex-col gap-1.5 ${animation ?? ""}`}>
       {showLabel && <p className="text-xs text-chart-grey">{t("chat.label")}</p>}
-      <p className="text-base leading-[1.6] break-words whitespace-pre-wrap text-foreground">
+      <p className="max-w-[68ch] text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-foreground">
         {message.text}
         {message.streaming && (
           <span

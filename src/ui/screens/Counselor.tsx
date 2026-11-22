@@ -56,7 +56,7 @@ export function CounselorScreen() {
 
   return (
     <div className="px-8 pt-8 pb-3 min-[1100px]:px-14">
-      <div className="mx-auto flex w-full max-w-[40rem] flex-col gap-8">
+      <div className="mx-auto flex w-full max-w-[44rem] flex-col gap-8">
         <ChatPane />
         <CareerList />
       </div>
