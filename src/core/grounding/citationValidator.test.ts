@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test';
-import { CitationIndex, validateStringArrayFact, validateStringFact } from './citationValidator';
+import {
+  CitationIndex,
+  normalizeQuoteText,
+  validateStringArrayFact,
+  validateStringFact,
+} from './citationValidator';
 
 const TUM_URL = 'https://www.tum.de/en/study/tuition';
 const EXTERNAL_URL = 'https://www.daad.de/en/tuition';
@@ -251,5 +256,108 @@ describe('quote check', () => {
       { kind: 'tuition' },
     );
     expect(fact).toMatchObject({ value: null, sourceUrl: null, quote: null });
+  });
+});
+
+describe('quote normalisation (plan 39)', () => {
+  const SRC = 'https://www.example.edu/admission/deadlines';
+  const idx = CitationIndex.fromHits([
+    {
+      url: SRC,
+      title: 'Deadlines',
+      text:
+        'Regular Decision \u2014 the application deadline is January\u00A05, 2027. ' +
+        'Students\u2019 test scores: we accept the SAT and ACT. ' +
+        'Finan\u00ADcial aid is need-\u200Bbased. ' +
+        'Our \uFB01nancial aid office helps international students.',
+    },
+  ]);
+
+  it('normalises invisible characters, dashes, quotes and case but keeps digits', () => {
+    expect(normalizeQuoteText('Ad\u200Bmis\u00ADsion \u2014 \u201CFees\u201D')).toBe('admission fees');
+    expect(normalizeQuoteText('Fee: 1,234 €')).toBe('fee 1 234');
+    expect(normalizeQuoteText('\uFB01nancial')).toBe('financial');
+  });
+
+  it('accepts a quote with a plain dash and space where the page has an em dash and nbsp', () => {
+    const fact = validateStringFact(
+      {
+        value: 'January 5, 2027',
+        sourceUrl: SRC,
+        quote: 'Regular Decision - the application deadline is January 5, 2027',
+      },
+      idx,
+      { kind: 'date' },
+    );
+    expect(fact.value).toBe('January 5, 2027');
+  });
+
+  it('accepts different case and a straight apostrophe', () => {
+    const fact = validateStringArrayFact(
+      { value: ['SAT'], sourceUrl: SRC, quote: "STUDENTS' TEST SCORES: we accept the SAT and ACT" },
+      idx,
+      { kind: 'exams' },
+    );
+    expect(fact.value).toEqual(['SAT']);
+  });
+
+  it('accepts a quote across a soft hyphen and a ligature', () => {
+    const soft = validateStringFact(
+      { value: 'Need-based financial aid', sourceUrl: SRC, quote: 'Financial aid is need-based' },
+      idx,
+      { kind: 'text' },
+    );
+    expect(soft.value).toBe('Need-based financial aid');
+    const lig = validateStringFact(
+      {
+        value: 'Financial aid office for international students',
+        sourceUrl: SRC,
+        quote: 'Our financial aid office helps international students',
+      },
+      idx,
+      { kind: 'text' },
+    );
+    expect(lig.value).not.toBeNull();
+  });
+
+  it('never changes digits: a different year is rejected', () => {
+    const fact = validateStringFact(
+      {
+        value: 'January 5, 2028',
+        sourceUrl: SRC,
+        quote: 'the application deadline is January 5, 2028',
+      },
+      idx,
+      { kind: 'date' },
+    );
+    expect(fact.value).toBeNull();
+  });
+
+  it('accepts a quote shortened with an ellipsis when every piece is verbatim', () => {
+    const fact = validateStringFact(
+      {
+        value: 'January 5, 2027',
+        sourceUrl: SRC,
+        quote: 'Regular Decision … deadline is January 5, 2027',
+      },
+      idx,
+      { kind: 'date' },
+    );
+    expect(fact.value).toBe('January 5, 2027');
+  });
+
+  it('rejects ellipsis quotes with a one-word piece or an invented piece', () => {
+    const oneWord = validateStringFact(
+      { value: '2027', sourceUrl: SRC, quote: 'Regular Decision the application ... 2027' },
+      idx,
+      { kind: 'date' },
+    );
+    expect(oneWord.value).toBeNull();
+    const invented = validateStringFact(
+      { value: 'March 1', sourceUrl: SRC, quote: 'Regular Decision … deadline is March 1' },
+      idx,
+      { kind: 'date' },
+    );
+    expect(invented.value).toBeNull();
   });
 });

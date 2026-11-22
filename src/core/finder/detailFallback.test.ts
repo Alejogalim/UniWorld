@@ -5,7 +5,7 @@ import { InMemoryDetailCache } from '../adapters/memory';
 import type { HttpClient, HttpRequestInit, HttpResponseLike } from '../ports';
 import { FIXTURE_RECORDS } from '../grounding/fixtures';
 import { RorStore } from '../grounding/rorStore';
-import { loadDetail } from './detail';
+import { emptyDetail, loadDetail } from './detail';
 
 const profile: Profile = {
   name: 'Ana',
@@ -175,6 +175,28 @@ describe('loadDetail with OpenCode only', () => {
       };
     };
     const detail = await loadDetail(deps(http), ror, 'https://ror.org/000000001', 'BSc Law');
+    expect(detail.tuition.value).toBeNull();
+  });
+
+  it('refetches a sparse cached detail after a day', async () => {
+    const http = new FakeHttp();
+    const d = deps(http);
+    await d.details.put(
+      emptyDetail('https://ror.org/000000001', 'BSc Law', '2026-11-19T12:00:00.000Z'),
+    );
+    const detail = await loadDetail(d, ror, 'https://ror.org/000000001', 'BSc Law');
+    expect(http.calls).toBeGreaterThan(0);
+    expect(detail.tuition.value).toBe('Free');
+  });
+
+  it('serves a sparse cached detail within a day', async () => {
+    const http = new FakeHttp();
+    const d = deps(http);
+    await d.details.put(
+      emptyDetail('https://ror.org/000000001', 'BSc Law', '2026-11-21T06:00:00.000Z'),
+    );
+    const detail = await loadDetail(d, ror, 'https://ror.org/000000001', 'BSc Law');
+    expect(http.calls).toBe(0);
     expect(detail.tuition.value).toBeNull();
   });
 });

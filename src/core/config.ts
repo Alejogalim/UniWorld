@@ -73,3 +73,15 @@ export const OFFICIAL_SOURCE_KINDS = ['official', 'third_party'] as const;
 /** Running counselor notes (plan 30): how many recent messages the note-taker reads, and its token cap. */
 export const NOTES_RECENT_MESSAGES = 6;
 export const NOTES_MAX_TOKENS = 400;
+
+/** Detail page budgets (plan 39). Finder extraction keeps EXTRACT_MAX_*. */
+export const DETAIL_SEARCH_MAX_RESULTS = 12;
+export const DETAIL_MAX_HITS = 16;
+export const DETAIL_MAX_CHARS_PER_HIT = 9000;
+export const DETAIL_MAX_TOTAL_CHARS = 72_000;
+/** How many official-domain hits get their full page fetched, and the overall time box. */
+export const DETAIL_ENRICH_PAGES = 4;
+export const DETAIL_ENRICH_TIMEOUT_MS = 15_000;
+/** A detail with fewer found facts than this is only trusted from cache for a day. */
+export const DETAIL_SPARSE_MIN_FACTS = 3;
+export const DETAIL_SPARSE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;

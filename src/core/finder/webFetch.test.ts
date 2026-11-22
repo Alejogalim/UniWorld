@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'bun:test';
 import type { HttpClient, HttpRequestInit, HttpResponseLike } from '../ports';
 import { FIXTURE_RECORDS } from '../grounding/fixtures';
-import { discoverLinks, fetchUniversityPages, htmlToText, pageTitle } from './webFetch';
+import {
+  discoverLinks,
+  EXCERPT_SEPARATOR,
+  fetchUniversityPages,
+  focusText,
+  htmlToText,
+  keywordExcerpts,
+  pageTitle,
+  programKeywords,
+} from './webFetch';
 
 const HOME = `
 <!doctype html>
@@ -102,5 +111,64 @@ describe('fetchUniversityPages', () => {
     );
     expect(hits).toEqual([]);
     expect(http.requested).toHaveLength(0);
+  });
+});
+
+describe('keywordExcerpts (plan 39)', () => {
+  const filler = 'Home About News Events Contact '.repeat(200);
+
+  it('returns short text unchanged', () => {
+    expect(keywordExcerpts('Tuition is free.', 1000)).toBe('Tuition is free.');
+  });
+
+  it('keeps the keyword paragraph from a long page, verbatim and within budget', () => {
+    const fact = 'International students pay tuition of $65,127 per year for undergraduate study.';
+    const text = `${filler}${fact} ${filler}`;
+    const out = keywordExcerpts(text, 1500);
+    expect(out.length).toBeLessThanOrEqual(1500);
+    expect(out).toContain('tuition of $65,127 per year');
+    for (const piece of out.split(EXCERPT_SEPARATOR)) expect(text.includes(piece)).toBe(true);
+  });
+
+  it('matches whole words only (SAT is not satisfactory)', () => {
+    expect(keywordExcerpts('satisfactory progress '.repeat(300), 1000)).toBe('');
+  });
+
+  it('prefers the window with the most distinct keywords when the budget is tight', () => {
+    const text =
+      `${filler}Apply now. ${filler}` +
+      `The application deadline is 1 January; IELTS or TOEFL scores are required. ${filler}`;
+    const out = keywordExcerpts(text, 900);
+    expect(out).toContain('IELTS or TOEFL');
+    expect(out).not.toContain('Apply now');
+    expect(out.length).toBeLessThanOrEqual(900);
+  });
+
+  it('also matches programme keywords', () => {
+    const text = `${filler}The Robotics major is offered by Mechanical Engineering. ${filler}`;
+    expect(keywordExcerpts(text, 1000, programKeywords('BSc Robotics'))).toContain('Robotics major');
+  });
+});
+
+describe('programKeywords', () => {
+  it('drops generic degree words and short tokens', () => {
+    expect(programKeywords('Bachelor of Science in Robotics')).toEqual(['robotics']);
+  });
+});
+
+describe('focusText', () => {
+  it('keeps the page head and adds keyword excerpts within budget', () => {
+    const filler = 'Home About News Events Contact '.repeat(200);
+    const text =
+      'Stanford is a private research university in California. ' +
+      `${filler}Undergraduate tuition is $65,127 per year. ${filler}`;
+    const out = focusText(text, 2500);
+    expect(out.startsWith('Stanford is a private research university')).toBe(true);
+    expect(out).toContain('tuition is $65,127 per year');
+    expect(out.length).toBeLessThanOrEqual(2500);
+  });
+
+  it('returns short text unchanged', () => {
+    expect(focusText('Short page.', 2500)).toBe('Short page.');
   });
 });

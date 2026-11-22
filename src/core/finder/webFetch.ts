@@ -1,7 +1,7 @@
 import type { SearchHit } from '../ai/types';
 import { PAGE_CACHE_TTL_MS, PAGE_FETCH_TIMEOUT_MS } from '../config';
 import type { UniversityRecord } from '../grounding/types';
-import { domainCandidates, hostOf, normalizeUrl, registrableDomain } from '../normalize';
+import { domainCandidates, hostOf, normalizeUrl, registrableDomain, tokens } from '../normalize';
 import type { CachedPage, HttpClient, Logger, PageCache } from '../ports';
 
 const MAX_PAGES = 8;
@@ -545,4 +545,207 @@ export async function fetchUniversityPages(
 
   logger?.info?.(`Fetched ${hits.length} official page(s) for ${record.name}.`);
   return hits;
+}
+
+/** Words that mark the facts the detail page needs (plan 39). Regex fragments. */
+const DETAIL_KEYWORDS = [
+  'deadlines?',
+  'tuition',
+  'fees?',
+  'costs? of attendance',
+  'costs?',
+  'scholarships?',
+  'financial aid',
+  'ielts',
+  'toefl',
+  'sat',
+  'duolingo',
+  'language of instruction',
+  'taught in',
+  'requirements?',
+  'required',
+  'apply',
+  'application',
+  'admissions?',
+];
+
+export const EXCERPT_SEPARATOR = '\n[...]\n';
+
+const PROGRAM_GENERIC = new Set([
+  'bachelor',
+  'bachelors',
+  'master',
+  'masters',
+  'science',
+  'sciences',
+  'degree',
+  'programme',
+  'program',
+  'studies',
+  'honours',
+  'honors',
+]);
+
+/** Distinctive words of a programme name ("BSc Robotics" -> ["robotics"]). */
+export function programKeywords(program: string): string[] {
+  return [...new Set(tokens(program).filter((t) => t.length >= 4 && !PROGRAM_GENERIC.has(t)))];
+}
+
+/**
+ * Pure: windows of `radius` chars around detail keywords (plus `extraKeywords`),
+ * merged when they overlap, snapped to whitespace, best windows (most distinct
+ * keywords) kept until `maxChars`, returned in page order joined by
+ * EXCERPT_SEPARATOR. Every piece is a verbatim substring of `text`.
+ * Returns `text` when it already fits, '' when nothing matches.
+ */
+export function keywordExcerpts(
+  text: string,
+  maxChars: number,
+  extraKeywords: string[] = [],
+  radius = 350,
+): string {
+  if (maxChars <= 0 || !text) return '';
+  if (text.length <= maxChars) return text;
+  const extras = extraKeywords
+    .map((k) => k.trim().toLowerCase())
+    .filter((k) => k.length >= 4)
+    .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const pattern = new RegExp(
+    `(?<![\\p{L}\\p{N}])(?:${[...DETAIL_KEYWORDS, ...extras].join('|')})(?![\\p{L}\\p{N}])`,
+    'giu',
+  );
+  const windows: { start: number; end: number; keys: Set<string> }[] = [];
+  for (const match of text.matchAll(pattern)) {
+    const at = match.index ?? 0;
+    const start = Math.max(0, at - radius);
+    const end = Math.min(text.length, at + match[0].length + radius);
+    const key = match[0].toLowerCase();
+    const last = windows[windows.length - 1];
+    if (last && start <= last.end) {
+      last.end = Math.max(last.end, end);
+      last.keys.add(key);
+    } else {
+      windows.push({ start, end, keys: new Set([key]) });
+    }
+  }
+  if (windows.length === 0) return '';
+
+  const snapped = windows
+    .map((w) => {
+      let start = w.start;
+      let end = Math.min(w.end, w.start + maxChars);
+      if (start > 0) {
+        const ws = text.slice(start, end).search(/\s/);
+        if (ws >= 0) start += ws + 1;
+      }
+      if (end < text.length) {
+        const cut = text.slice(start, end);
+        const ws = Math.max(cut.lastIndexOf(' '), cut.lastIndexOf('\n'));
+        if (ws > 0) end = start + ws;
+      }
+      return { start, end, score: w.keys.size };
+    })
+    .filter((w) => w.end > w.start);
+
+  const order = snapped
+    .map((_, i) => i)
+    .sort((a, b) => snapped[b].score - snapped[a].score || a - b);
+  const chosen: number[] = [];
+  let used = 0;
+  for (const i of order) {
+    const w = snapped[i];
+    const cost = w.end - w.start + (chosen.length > 0 ? EXCERPT_SEPARATOR.length : 0);
+    if (used + cost > maxChars) continue;
+    chosen.push(i);
+    used += cost;
+  }
+  return chosen
+    .sort((a, b) => a - b)
+    .map((i) => text.slice(snapped[i].start, snapped[i].end).trim())
+    .filter(Boolean)
+    .join(EXCERPT_SEPARATOR);
+}
+
+/**
+ * Pure: the page head (intro, usually the overview) plus keyword excerpts of
+ * the rest, within `maxChars`. Falls back to a plain slice when nothing matches.
+ */
+export function focusText(
+  text: string,
+  maxChars: number,
+  extraKeywords: string[] = [],
+  headChars = 1500,
+): string {
+  if (text.length <= maxChars) return text;
+  let head = text.slice(0, Math.min(headChars, maxChars));
+  const cut = Math.max(head.lastIndexOf(' '), head.lastIndexOf('\n'));
+  if (cut > 0) head = head.slice(0, cut);
+  const rest = keywordExcerpts(
+    text.slice(head.length),
+    maxChars - head.length - EXCERPT_SEPARATOR.length,
+    extraKeywords,
+  );
+  return rest ? `${head.trim()}${EXCERPT_SEPARATOR}${rest}` : text.slice(0, maxChars);
+}
+
+export interface EnrichHitsOptions {
+  maxCharsPerHit: number;
+  maxPages?: number;
+  /** Characters of the original search snippet kept in front of the excerpts. */
+  snippetChars?: number;
+  keywords?: string[];
+  pageCache?: PageCache;
+  timeoutMs?: number;
+  deadline?: number;
+  logger?: Logger;
+}
+
+/**
+ * Detail page (plan 39): fetch the full text of the first official-domain hits
+ * (page cache, timeouts, failures ignored) and append keyword excerpts to each
+ * snippet. Enriched hits move to the front; hit URLs never change.
+ */
+export async function enrichHitsWithPages(
+  http: HttpClient,
+  record: UniversityRecord,
+  hits: SearchHit[],
+  options: EnrichHitsOptions,
+): Promise<SearchHit[]> {
+  const allowed = allowedHostSet(record);
+  if (allowed.size === 0 || hits.length === 0) return hits;
+  const maxPages = options.maxPages ?? 4;
+  const snippetChars = options.snippetChars ?? 3000;
+  const targets = hits
+    .map((hit, index) => ({ hit, index }))
+    .filter(({ hit }) => isAllowedUrl(hit.url, allowed) && !SKIP_EXTENSION.test(hit.url))
+    .slice(0, maxPages);
+  const pageOptions: FetchPagesOptions = {
+    pageCache: options.pageCache,
+    timeoutMs: options.timeoutMs,
+    deadline: options.deadline,
+    allowedHosts: allowed,
+  };
+  const pages = await Promise.all(
+    targets.map(({ hit }) =>
+      fetchPage(http, hit.url, options.logger, pageOptions).catch(() => null),
+    ),
+  );
+  const out = hits.map((hit) => ({ ...hit }));
+  const enriched = new Set<number>();
+  targets.forEach(({ index }, n) => {
+    const page = pages[n];
+    if (!page) return;
+    const snippet = out[index].text.slice(0, snippetChars).trim();
+    const budget =
+      options.maxCharsPerHit - snippet.length - (snippet ? EXCERPT_SEPARATOR.length : 0);
+    const excerpts = keywordExcerpts(page.text, budget, options.keywords ?? []);
+    if (!excerpts) return;
+    out[index].text = snippet ? `${snippet}${EXCERPT_SEPARATOR}${excerpts}` : excerpts;
+    enriched.add(index);
+  });
+  options.logger?.info?.(`Detail: read ${enriched.size} full official page(s) for ${record.name}.`);
+  return [
+    ...out.filter((_, i) => enriched.has(i)),
+    ...out.filter((_, i) => !enriched.has(i)),
+  ];
 }

@@ -10,6 +10,38 @@ import {
 } from '../normalize';
 import { languageName, languagesInText } from './languages';
 
+/** Invisible characters some sites put inside words: zero-width space/joiners, word joiner, BOM, soft hyphen. */
+const INVISIBLE = /[\u200B-\u200D\u2060\uFEFF\u00AD]/g;
+/** Typographic ligatures (U+FB00..U+FB06, e.g. the fi ligature) become plain letters. Digits are never touched. */
+const LIGATURES = /[\uFB00-\uFB06]/g;
+/** A quote shortened by the model with "..." or "…" (optionally in brackets). */
+const ELLIPSIS = /\s*\[?(?:\.\.\.|…)\]?\s*/;
+
+/**
+ * Quote/source normalisation: `normalizeText` (case, diacritics, quotes,
+ * apostrophes, dashes, punctuation, whitespace) plus invisible characters
+ * removed and ligatures expanded. Applied to both sides of every quote check.
+ */
+export function normalizeQuoteText(input: string): string {
+  return normalizeText(
+    input.replace(INVISIBLE, '').replace(LIGATURES, (char) => char.normalize('NFKC')),
+  );
+}
+
+/**
+ * Exact match after normalisation. A quote the model shortened with "..." /
+ * "…" passes only when every piece (2+ words each) appears verbatim.
+ */
+function quoteInText(quote: string, normalizedText: string): boolean {
+  const whole = normalizeQuoteText(quote);
+  if (!whole) return false;
+  if (normalizedText.includes(whole)) return true;
+  if (!ELLIPSIS.test(quote)) return false;
+  const pieces = quote.split(ELLIPSIS).map(normalizeQuoteText).filter(Boolean);
+  if (pieces.length < 2) return false;
+  return pieces.every((piece) => piece.split(' ').length >= 2 && normalizedText.includes(piece));
+}
+
 export type FactKind = 'text' | 'tuition' | 'languages' | 'exams' | 'date' | 'url' | 'any';
 
 export interface SourceQuote {
@@ -43,7 +75,7 @@ export class CitationIndex {
       if (existing) existing.text = `${existing.text}\n${hit.text}`;
       else index.entries.set(key, { url: hit.url, text: hit.text, normalized: '' });
     }
-    for (const entry of index.entries.values()) entry.normalized = normalizeText(entry.text);
+    for (const entry of index.entries.values()) entry.normalized = normalizeQuoteText(entry.text);
     return index;
   }
 
@@ -298,8 +330,7 @@ export function validateFact<T extends string | string[]>(
     return nullFact<T>(checkedAt, sourceKind);
   }
 
-  const normalizedQuote = normalizeText(quote);
-  if (!normalizedQuote || !normalizedText.includes(normalizedQuote)) {
+  if (!quoteInText(quote, normalizedText)) {
     return nullFact<T>(checkedAt, sourceKind);
   }
 
