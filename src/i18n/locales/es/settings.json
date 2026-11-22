@@ -1,49 +1,50 @@
 {
   "sections": {
     "profile": "Perfil",
-    "profileLine": "Lo que el orientador y el Buscador saben de ti.",
-    "interface": "Interfaz",
-    "interfaceLine": "Idioma y tema de color. Ambos se aplican de inmediato.",
-    "ai": "Proveedores de IA",
-    "aiLine": "Las claves se guardan en el llavero de tu sistema, nunca en la base de datos ni como texto plano. El Buscador necesita OpenRouter. El orientador funciona con cualquiera de los dos.",
-    "data": "Tus datos",
-    "dataLine": "Todo lo que UniWorld ha guardado en esta computadora.",
-    "about": "Acerca de",
-    "aboutLine": "De dónde vienen los datos y qué no hace UniWorld."
+    "appearance": "Apariencia",
+    "ai": "IA",
+    "keys": "Claves de API",
+    "data": "Datos",
+    "about": "Acerca de"
   },
   "profile": {
-    "empty": "Todavía no tienes un perfil. Crea uno para usar el orientador y el Buscador.",
+    "empty": "Todavía no tienes perfil",
     "create": "Crear perfil",
     "edit": "Editar perfil",
-    "name": "Nombre",
-    "primaryLanguage": "Idioma principal",
-    "otherLanguages": "Otros idiomas",
-    "none": "Ninguno",
-    "program": "Programa",
-    "citizenship": "Ciudadanía",
-    "residence": "País de residencia",
     "languageLevel": "{{language}} ({{level}})"
   },
-  "interface": {
-    "language": "Idioma de la interfaz",
-    "theme": "Tema de color"
+  "appearance": {
+    "language": "Idioma",
+    "theme": "Tema"
   },
   "ai": {
+    "provider": {
+      "label": "Proveedor",
+      "openrouter": "OpenRouter",
+      "opencode": "OpenCode Go",
+      "needsKey": "Primero añade una clave de OpenCode Go en Claves de API."
+    },
+    "keys": {
+      "footer": "Las claves se guardan en el llavero de tu sistema, nunca en la base de datos."
+    },
     "openrouter": {
       "title": "OpenRouter",
-      "badge": "Obligatorio para el Buscador",
-      "hint": "Búsqueda web verificada para el Buscador. El orientador y las páginas de universidades también la usan."
+      "finderNeedsKey": "El Buscador necesita una clave de OpenRouter."
     },
     "opencode": {
-      "title": "OpenCode Go",
-      "badge": "Experimental",
-      "hint": "Solo para el chat del orientador. No tiene búsqueda web. Es opcional."
+      "title": "OpenCode Go"
     },
-    "saved": "Guardada en tu llavero",
-    "missing": "No configurada",
+    "status": {
+      "connected": "Conectada",
+      "saved": "Guardada",
+      "missing": "No configurada"
+    },
+    "manage": "Gestionar",
+    "manageLabel": "Gestionar la clave de {{provider}}",
     "keyInput": "Clave nueva",
     "keyPlaceholder": "Pega una clave para reemplazar la guardada",
     "saveKey": "Guardar clave",
+    "keySaving": "Guardando…",
     "testConnection": "Probar conexión",
     "testing": "Probando…",
     "connected": "La conexión funciona",
@@ -56,9 +57,9 @@
     "keySaved": "Clave guardada en tu llavero.",
     "noDetail": "El proveedor no dijo por qué. Revisa la clave e inténtalo de nuevo.",
     "saveFailed": "No se pudo guardar la clave: {{error}}",
+    "loadFailed": "No se pudo leer la configuración de IA: {{error}}",
     "model": {
       "label": "Modelo",
-      "hint": "Modelos que ofrece el proveedor seleccionado. El predeterminado es {{model}}.",
       "defaultOption": "Predeterminado ({{model}})",
       "loading": "Cargando modelos…",
       "empty": "No hay modelos disponibles",
@@ -67,19 +68,11 @@
       "retry": "Reintentar",
       "saved": "Modelo guardado automáticamente.",
       "saveFailed": "No se pudo guardar el modelo: {{error}}"
-    },
-    "counselorProvider": {
-      "label": "Proveedor de IA",
-      "openrouter": "OpenRouter",
-      "opencode": "OpenCode Go",
-      "needsKey": "OpenCode Go (añade primero su clave arriba)",
-      "hint": "Lo usan el orientador, el buscador y las páginas de universidades. OpenRouter ofrece búsqueda web verificada; OpenCode Go lee en su lugar el sitio de cada universidad."
-    },
-    "keySaving": "Guardando…",
-    "loadFailed": "No se pudo leer la configuración de IA: {{error}}"
+    }
   },
   "data": {
-    "clear": "Borrar todos mis datos",
+    "clear": "Borrar todos los datos",
+    "delete": "Borrar…",
     "clearConfirm": "Esto elimina de esta computadora tu perfil, tus chats, carreras, búsquedas, detalles guardados, tu lista de universidades y las dos claves de IA.",
     "deleteEverything": "Borrar todo",
     "deleting": "Borrando…",
@@ -87,12 +80,14 @@
     "cancel": "Cancelar"
   },
   "about": {
-    "paragraph": "UniWorld muestra universidades reales y datos reales. Cada dato trae su fuente y la cita de donde salió. Cuando un dato no se encuentra, la app lo dice y no lo adivina.",
-    "sourcesTitle": "Fuentes de datos y mapas",
+    "paragraph": "Cada dato muestra su fuente. Si falta alguno, UniWorld lo dice.",
+    "version": "Versión",
+    "sources": "Fuentes",
+    "rorName": "ROR",
+    "domainsName": "university-domains-list",
+    "naturalEarthName": "Natural Earth",
     "ror": "ROR, el registro de universidades. CC0.",
     "domains": "Hipo university-domains-list. MIT.",
-    "naturalEarth": "Natural Earth, para el globo. Dominio público.",
-    "version": "Versión",
-    "open": "Abrir {{site}}"
+    "naturalEarth": "Natural Earth, para el globo. Dominio público."
   }
 }

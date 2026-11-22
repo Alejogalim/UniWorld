@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Button } from '@/ui/components/ui/button';
 import { deleteAllLocalData } from './deleteAllData';
-import { messageOf, SettingsSection } from './SettingsSection';
+import { messageOf, SettingsGroup, SettingsRow } from './SettingsGroup';
 
 /** Deletes everything stored on this computer, behind an inline confirmation. */
 export function DataSection() {
@@ -27,27 +27,40 @@ export function DataSection() {
   };
 
   return (
-    <SettingsSection id="settings-data" title={t('sections.data')} line={t('sections.dataLine')}>
-      {!confirming ? (
-        <div>
-          <Button variant="secondary" onClick={() => setConfirming(true)}>
-            {t('data.clear')}
-          </Button>
-        </div>
-      ) : (
-        <div className="flex max-w-[68ch] flex-col gap-4 border-l-2 border-hairline pl-4">
-          <p className="text-sm text-foreground">{t('data.clearConfirm')}</p>
-          <div className="flex flex-wrap gap-2">
-            <Button disabled={busy} onClick={() => void erase()}>
-              {busy ? t('data.deleting') : t('data.deleteEverything')}
+    <div className="flex flex-col gap-3">
+      <SettingsGroup id="settings-data" title={t('sections.data')}>
+        <SettingsRow
+          label={t('data.clear')}
+          below={
+            confirming ? (
+              <div className="flex flex-col gap-3 border-l-2 border-hairline pl-4">
+                <p className="text-sm text-foreground">{t('data.clearConfirm')}</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="secondary" size="sm" className="text-signal" disabled={busy} onClick={() => void erase()}>
+                    {busy ? t('data.deleting') : t('data.deleteEverything')}
+                  </Button>
+                  <Button variant="quiet" size="sm" disabled={busy} onClick={() => setConfirming(false)}>
+                    {t('data.cancel')}
+                  </Button>
+                </div>
+              </div>
+            ) : undefined
+          }
+        >
+          {!confirming && (
+            <Button
+              variant="quiet"
+              size="sm"
+              aria-label={t('data.clear')}
+              className="text-signal hover:text-signal-deep"
+              onClick={() => setConfirming(true)}
+            >
+              {t('data.delete')}
             </Button>
-            <Button variant="quiet" disabled={busy} onClick={() => setConfirming(false)}>
-              {t('data.cancel')}
-            </Button>
-          </div>
-        </div>
-      )}
+          )}
+        </SettingsRow>
+      </SettingsGroup>
       {error && <ErrorNote message={error} />}
-    </SettingsSection>
+    </div>
   );
 }

@@ -1,23 +1,18 @@
 import { AboutSection } from './settings/AboutSection';
 import { AiSection } from './settings/AiSection';
+import { AppearanceSection } from './settings/AppearanceSection';
 import { DataSection } from './settings/DataSection';
-import { InterfaceSection } from './settings/InterfaceSection';
 import { ProfileSection } from './settings/ProfileSection';
-import { Rule } from '@/ui/components/Panel';
 
-/** Design §7.5: one page, sections separated by hairlines. */
+/** Design §7.5 / plan 31: one centred 640px column of grouped lists. */
 export function SettingsScreen() {
   return (
-    <div className="max-w-[1120px] px-12 py-8">
+    <div className="mx-auto w-full max-w-[640px] px-6 pt-2 pb-12">
       <div className="flex flex-col gap-8">
         <ProfileSection />
-        <Rule />
-        <InterfaceSection />
-        <Rule />
+        <AppearanceSection />
         <AiSection />
-        <Rule />
         <DataSection />
-        <Rule />
         <AboutSection />
       </div>
     </div>

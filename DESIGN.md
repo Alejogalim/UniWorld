@@ -234,10 +234,10 @@ Four radii and nothing else, defined as tokens in `src/index.css`:
 |---|---|---|
 | `--radius-pill` | 999px | action buttons, chips, badges, toggles, sliders, the ember dot, the rail's round footer buttons |
 | `--radius-card` | 28px | cards and panels (`Panel`, `.surface`, `.panel-ember`) |
-| `--radius-control` | 14px | inputs, selects, textareas, comboboxes, rail nav rows, the chat composer's inner field |
+| `--radius-control` | 14px | inputs, selects, textareas, comboboxes, rail nav rows, the chat composer's inner field, settings groups |
 | `--radius-popover` | 20px | popovers, menus, the fact popover, chat bubbles, result rows on hover |
 
-Circles are allowed for the globe, flag discs and dots. Nothing else: no 2px, 4px, 6px or 16px radius, and no other value. The legacy `rounded-sm/md/lg/xl` utilities map onto the four values.
+Circles are allowed for the globe, flag discs, dots and the profile initial in Settings. Nothing else: no 2px, 4px, 6px or 16px radius, and no other value. The legacy `rounded-sm/md/lg/xl` utilities map onto the four values.
 
 ## Surfaces & Depth
 
@@ -290,7 +290,7 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 
 The rail is its own full-height column on the left: 284px expanded, 72px collapsed to an icon dock, with transparent ground over the stars. Its top row holds the logo: expanded, the logo, the wordmark, the beta pill and a 36px collapse button (`PanelLeftClose`) on the right; collapsed, the logo alone with a 36px expand button (`PanelLeftOpen`) directly below it, which expands the rail. Nav rows follow, then the language and theme buttons at the foot. The width change animates over 200ms (none under reduced motion).
 
-The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet.
+The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet. Settings is a single centred 640px column of grouped lists.
 
 Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
 
@@ -334,6 +334,15 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 - **Status dots, not selects:** admitted in evidence green; waiting and waitlisted in ember-2; applied in ink; considering and preparing in hairline; rejected in chart grey with muted label. The dot is decorative and the label carries the meaning.
 - **Side panel for edits:** a right drawer on the panel fill with a hairline left edge, 26rem wide, over a 30% black scrim. Escape, the scrim, or the close button dismisses it. Focus moves in on open, cycles inside while open, and returns to the row on close. Fields save on blur or Enter (selects and dates at once). Remove sits at the foot behind a two-step confirm. The fade and slide take 180ms and drop to nothing under reduced motion.
 - **No KPI strip** and no global screen-title change.
+
+### Settings
+- **One centred 640px column** under the page title. Sections are 32px apart.
+- **Grouped lists.** Each section is a small heading (14px, weight 500, Chart Grey, sentence case, aligned with the row text) over one group: panel fill with `rim` and the soft light-mode shadow (`rim surface`), 14px corners (`--radius-control`), rows split by 1px hairlines (`divide-hairline`). No section description lines. A group may carry one short muted footer line (13px, Chart Grey).
+- **Rows** are 48px minimum (52px with a 40px combobox): label in ink at 14px on the left, the control or value on the right; an optional one-line muted hint under the label, only where a control needs it. Rows wrap on narrow windows.
+- **Profile** is one identity row: the initial in a 36px shoal circle, the name at weight 500, a muted line "program · residence (or citizenship) · languages", and Edit profile, the page's only primary button.
+- **Segmented control** (`SegmentedControl`): a pill track on shoal with a hairline stroke; the chosen segment is a raised pill on the panel fill with a rim. A radiogroup: arrow keys move and select, Home/End jump, disabled options are skipped and explain themselves in a tooltip. Used for Theme and AI provider.
+- **API keys:** one row per provider with a status dot and text: ember dot for "Connected" (a test passed this session) or "Saved", hairline dot for "Not set". "Manage" is a quiet disclosure button (`aria-expanded`) that reveals the key field, Save, Test connection and Remove inline under the row.
+- **Buttons:** quiet everywhere, except Edit profile (primary), Save key and the delete confirm (secondary). The destructive Delete text and the delete confirm use signal text, not a fill.
 
 ### Fact line (signature)
 Unchanged in behaviour. A 14px label in Chart Grey, the value in body text, and a Data-style source superscript. The popover is a rimmed 20px surface. The missing fact reads "Not found, check official site" in Chart Grey, with a dashed underline, and keeps its row height.

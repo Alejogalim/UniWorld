@@ -1,49 +1,50 @@
 {
   "sections": {
     "profile": "Profile",
-    "profileLine": "What the counselor and the Finder know about you.",
-    "interface": "Interface",
-    "interfaceLine": "Language and color theme. Both apply at once.",
-    "ai": "AI providers",
-    "aiLine": "Keys are stored in your system keychain, never in the database or as plain text. Finder needs OpenRouter. The counselor works with either provider.",
-    "data": "Your data",
-    "dataLine": "Everything UniWorld has saved on this computer.",
-    "about": "About",
-    "aboutLine": "Where the facts come from, and what UniWorld does not do."
+    "appearance": "Appearance",
+    "ai": "AI",
+    "keys": "API keys",
+    "data": "Data",
+    "about": "About"
   },
   "profile": {
-    "empty": "You have no profile yet. Create one to start the counselor and the Finder.",
+    "empty": "No profile yet",
     "create": "Create profile",
     "edit": "Edit profile",
-    "name": "Name",
-    "primaryLanguage": "Primary language",
-    "otherLanguages": "Other languages",
-    "none": "None",
-    "program": "Program",
-    "citizenship": "Citizenship",
-    "residence": "Country of residence",
     "languageLevel": "{{language}} ({{level}})"
   },
-  "interface": {
-    "language": "Interface language",
-    "theme": "Color theme"
+  "appearance": {
+    "language": "Language",
+    "theme": "Theme"
   },
   "ai": {
+    "provider": {
+      "label": "Provider",
+      "openrouter": "OpenRouter",
+      "opencode": "OpenCode Go",
+      "needsKey": "Add an OpenCode Go key under API keys first."
+    },
+    "keys": {
+      "footer": "Keys are stored in your system keychain, never in the database."
+    },
     "openrouter": {
       "title": "OpenRouter",
-      "badge": "Required for Finder",
-      "hint": "Verified web search for the Finder. The counselor and university pages use it too."
+      "finderNeedsKey": "Finder needs an OpenRouter key."
     },
     "opencode": {
-      "title": "OpenCode Go",
-      "badge": "Experimental",
-      "hint": "Counselor chat only. It has no web search. Optional."
+      "title": "OpenCode Go"
     },
-    "saved": "Saved in your keychain",
-    "missing": "Not set",
+    "status": {
+      "connected": "Connected",
+      "saved": "Saved",
+      "missing": "Not set"
+    },
+    "manage": "Manage",
+    "manageLabel": "Manage {{provider}} key",
     "keyInput": "New key",
     "keyPlaceholder": "Paste a key to replace the saved one",
     "saveKey": "Save key",
+    "keySaving": "Saving…",
     "testConnection": "Test connection",
     "testing": "Testing…",
     "connected": "Connection works",
@@ -56,9 +57,9 @@
     "keySaved": "Key saved in your keychain.",
     "noDetail": "The provider did not say why. Check the key and try again.",
     "saveFailed": "The key could not be saved: {{error}}",
+    "loadFailed": "The AI settings could not be read: {{error}}",
     "model": {
       "label": "Model",
-      "hint": "Models offered by the selected provider. The default is {{model}}.",
       "defaultOption": "Default ({{model}})",
       "loading": "Loading models…",
       "empty": "No models available",
@@ -67,19 +68,11 @@
       "retry": "Try again",
       "saved": "Model saved automatically.",
       "saveFailed": "The model could not be saved: {{error}}"
-    },
-    "counselorProvider": {
-      "label": "AI provider",
-      "openrouter": "OpenRouter",
-      "opencode": "OpenCode Go",
-      "needsKey": "OpenCode Go (add its key above first)",
-      "hint": "Used by the Counselor, the Finder and university pages. OpenRouter gives verified web search; OpenCode Go reads each university's own site instead."
-    },
-    "keySaving": "Saving…",
-    "loadFailed": "The AI settings could not be read: {{error}}"
+    }
   },
   "data": {
-    "clear": "Clear all my data",
+    "clear": "Delete all data",
+    "delete": "Delete…",
     "clearConfirm": "This deletes your profile, chats, careers, searches, cached details, your university list and both AI keys from this computer.",
     "deleteEverything": "Delete everything",
     "deleting": "Deleting…",
@@ -87,12 +80,14 @@
     "cancel": "Cancel"
   },
   "about": {
-    "paragraph": "UniWorld shows real universities and real facts. Every fact carries its source and the quote it came from. When a fact cannot be found, the app says so and does not guess.",
-    "sourcesTitle": "Data and map sources",
+    "paragraph": "Every fact shows its source. When one is missing, UniWorld says so.",
+    "version": "Version",
+    "sources": "Sources",
+    "rorName": "ROR",
+    "domainsName": "university-domains-list",
+    "naturalEarthName": "Natural Earth",
     "ror": "ROR, the university registry. CC0.",
     "domains": "Hipo university-domains-list. MIT.",
-    "naturalEarth": "Natural Earth, for the globe. Public domain.",
-    "version": "Version",
-    "open": "Open {{site}}"
+    "naturalEarth": "Natural Earth, for the globe. Public domain."
   }
 }

@@ -1,49 +1,50 @@
 {
   "sections": {
     "profile": "Hồ sơ",
-    "profileLine": "Những gì Tư vấn và Tìm trường biết về bạn.",
-    "interface": "Giao diện",
-    "interfaceLine": "Ngôn ngữ và chủ đề màu. Cả hai được áp dụng ngay.",
-    "ai": "Nhà cung cấp AI",
-    "aiLine": "Khóa được lưu trong chuỗi khóa của hệ điều hành, không bao giờ lưu trong cơ sở dữ liệu hay dưới dạng văn bản thường. Tìm trường cần OpenRouter. Tư vấn hoạt động với một trong hai nhà cung cấp.",
-    "data": "Dữ liệu của bạn",
-    "dataLine": "Mọi thứ UniWorld đã lưu trên máy tính này.",
-    "about": "Giới thiệu",
-    "aboutLine": "Thông tin lấy từ đâu và UniWorld không làm gì."
+    "appearance": "Giao diện",
+    "ai": "AI",
+    "keys": "Khóa API",
+    "data": "Dữ liệu",
+    "about": "Giới thiệu"
   },
   "profile": {
-    "empty": "Bạn chưa có hồ sơ. Hãy tạo hồ sơ để dùng Tư vấn và Tìm trường.",
+    "empty": "Bạn chưa có hồ sơ",
     "create": "Tạo hồ sơ",
     "edit": "Sửa hồ sơ",
-    "name": "Tên",
-    "primaryLanguage": "Ngôn ngữ chính",
-    "otherLanguages": "Ngôn ngữ khác",
-    "none": "Không có",
-    "program": "Chương trình",
-    "citizenship": "Quốc tịch",
-    "residence": "Quốc gia cư trú",
     "languageLevel": "{{language}} ({{level}})"
   },
-  "interface": {
-    "language": "Ngôn ngữ giao diện",
-    "theme": "Chủ đề màu"
+  "appearance": {
+    "language": "Ngôn ngữ",
+    "theme": "Chủ đề"
   },
   "ai": {
+    "provider": {
+      "label": "Nhà cung cấp",
+      "openrouter": "OpenRouter",
+      "opencode": "OpenCode Go",
+      "needsKey": "Hãy thêm khóa OpenCode Go trong mục Khóa API trước."
+    },
+    "keys": {
+      "footer": "Khóa được lưu trong chuỗi khóa của hệ điều hành, không bao giờ lưu trong cơ sở dữ liệu."
+    },
     "openrouter": {
       "title": "OpenRouter",
-      "badge": "Bắt buộc cho Tìm trường",
-      "hint": "Tìm kiếm web đã xác minh cho Tìm trường. Tư vấn và trang của trường cũng dùng khóa này."
+      "finderNeedsKey": "Tìm trường cần khóa OpenRouter."
     },
     "opencode": {
-      "title": "OpenCode Go",
-      "badge": "Thử nghiệm",
-      "hint": "Chỉ dùng cho trò chuyện với Tư vấn. Không có tìm kiếm web. Không bắt buộc."
+      "title": "OpenCode Go"
     },
-    "saved": "Đã lưu trong chuỗi khóa",
-    "missing": "Chưa thiết lập",
+    "status": {
+      "connected": "Đã kết nối",
+      "saved": "Đã lưu",
+      "missing": "Chưa thiết lập"
+    },
+    "manage": "Quản lý",
+    "manageLabel": "Quản lý khóa {{provider}}",
     "keyInput": "Khóa mới",
     "keyPlaceholder": "Dán khóa để thay khóa đã lưu",
     "saveKey": "Lưu khóa",
+    "keySaving": "Đang lưu…",
     "testConnection": "Kiểm tra kết nối",
     "testing": "Đang kiểm tra…",
     "connected": "Kết nối hoạt động",
@@ -56,9 +57,9 @@
     "keySaved": "Đã lưu khóa vào chuỗi khóa của máy.",
     "noDetail": "Nhà cung cấp không nói rõ lý do. Hãy kiểm tra khóa và thử lại.",
     "saveFailed": "Không lưu được khóa: {{error}}",
+    "loadFailed": "Không đọc được cài đặt AI: {{error}}",
     "model": {
       "label": "Mô hình",
-      "hint": "Các mô hình mà nhà cung cấp đã chọn cung cấp. Mặc định là {{model}}.",
       "defaultOption": "Mặc định ({{model}})",
       "loading": "Đang tải danh sách mô hình…",
       "empty": "Không có mô hình khả dụng",
@@ -67,19 +68,11 @@
       "retry": "Thử lại",
       "saved": "Đã tự động lưu mô hình.",
       "saveFailed": "Không lưu được mô hình: {{error}}"
-    },
-    "counselorProvider": {
-      "label": "Nhà cung cấp AI",
-      "openrouter": "OpenRouter",
-      "opencode": "OpenCode Go",
-      "needsKey": "OpenCode Go (hãy thêm khóa ở trên trước)",
-      "hint": "Dùng cho Cố vấn, Tìm trường và trang từng trường. OpenRouter có tìm kiếm web đã xác minh; OpenCode Go thay vào đó đọc trang chính thức của từng trường."
-    },
-    "keySaving": "Đang lưu…",
-    "loadFailed": "Không đọc được cài đặt AI: {{error}}"
+    }
   },
   "data": {
-    "clear": "Xóa toàn bộ dữ liệu của tôi",
+    "clear": "Xóa toàn bộ dữ liệu",
+    "delete": "Xóa…",
     "clearConfirm": "Thao tác này xóa khỏi máy tính này: hồ sơ, các cuộc trò chuyện, nghề nghiệp, tìm kiếm, chi tiết đã lưu, danh sách trường và cả hai khóa AI.",
     "deleteEverything": "Xóa tất cả",
     "deleting": "Đang xóa…",
@@ -87,12 +80,14 @@
     "cancel": "Hủy"
   },
   "about": {
-    "paragraph": "UniWorld hiển thị các trường đại học thật và thông tin thật. Mỗi thông tin đều có nguồn và đoạn trích gốc. Khi không tìm thấy thông tin, ứng dụng nói rõ và không đoán.",
-    "sourcesTitle": "Nguồn dữ liệu và bản đồ",
+    "paragraph": "Mỗi thông tin đều ghi nguồn. Khi thiếu, UniWorld sẽ nói rõ.",
+    "version": "Phiên bản",
+    "sources": "Nguồn",
+    "rorName": "ROR",
+    "domainsName": "university-domains-list",
+    "naturalEarthName": "Natural Earth",
     "ror": "ROR, cơ sở dữ liệu trường đại học. CC0.",
     "domains": "Hipo university-domains-list. MIT.",
-    "naturalEarth": "Natural Earth, cho quả địa cầu. Thuộc phạm vi công cộng.",
-    "version": "Phiên bản",
-    "open": "Mở {{site}}"
+    "naturalEarth": "Natural Earth, cho quả địa cầu. Thuộc phạm vi công cộng."
   }
 }

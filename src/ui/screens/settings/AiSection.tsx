@@ -1,46 +1,49 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ChevronDown } from 'lucide-react';
 import { useCore } from '@/app/useCore';
 import { DEFAULT_MODEL, OPENCODE_MODEL } from '@/core';
 import type { AiModel, Provider } from '@/core/contracts';
 import { deleteSetting, getSetting, setSetting } from '@/store/settings';
 import { deleteSecret, getSecret, setSecret } from '@/store/secrets';
-import { Badge } from '@/ui/components/Chip';
+import { cn } from '@/lib/utils';
 import { Combobox, type ComboboxOption } from '@/ui/components/Combobox';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Field } from '@/ui/components/Field';
-import { Input, Select } from '@/ui/components/Input';
+import { Input } from '@/ui/components/Input';
+import { SegmentedControl } from '@/ui/components/SegmentedControl';
 import { Button } from '@/ui/components/ui/button';
-import { messageOf, SettingsSection } from './SettingsSection';
+import { messageOf, SettingsGroup, SettingsRow } from './SettingsGroup';
 
 type Presence = Record<Provider, boolean | null>;
 
 /** The result of the last action on one key. Keys themselves are never shown. */
 type Note = { tone: 'saved' } | { tone: 'ok' } | { tone: 'fail'; title?: string; text: string };
 
-interface KeyBlockProps {
+interface KeyRowProps {
   provider: Provider;
   present: boolean | null;
-  primary: boolean;
   title: string;
-  badge?: string;
-  hint: string;
+  /** Muted line under the name; only passed when it matters (missing OpenRouter key). */
+  description?: string;
   removeConfirm: string;
   onChanged: () => Promise<void>;
   onRemoved: () => Promise<void>;
 }
 
 /**
- * One provider's key: status, replace, test and remove. The key is only ever written to the
- * OS keychain (via `@/store/secrets`); the field is cleared as soon as it is saved.
+ * One provider's key: a status dot and text on the row, with replace, test and remove behind "Manage".
+ * The key is only ever written to the OS keychain (via `@/store/secrets`); the field is cleared as soon as it is saved.
  */
-function KeyBlock({ provider, present, primary, title, badge, hint, removeConfirm, onChanged, onRemoved }: KeyBlockProps) {
+function KeyRow({ provider, present, title, description, removeConfirm, onChanged, onRemoved }: KeyRowProps) {
   const { t } = useTranslation('settings');
   const core = useCore();
   const [value, setValue] = useState('');
   const [busy, setBusy] = useState<'save' | 'test' | 'remove' | null>(null);
   const [note, setNote] = useState<Note | null>(null);
   const [confirming, setConfirming] = useState(false);
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
   const idle = busy === null;
 
   const save = async () => {
@@ -88,64 +91,84 @@ function KeyBlock({ provider, present, primary, title, badge, hint, removeConfir
     }
   };
 
+  const status: 'connected' | 'saved' | 'missing' | null =
+    present === null ? null : present === false ? 'missing' : note?.tone === 'ok' ? 'connected' : 'saved';
+
   return (
-    <div className="flex flex-col gap-3 border-t border-hairline pt-5 first:border-t-0 first:pt-0">
-      <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-[1.0625rem] leading-[1.35] font-semibold text-foreground">{title}</h3>
-        {badge && <Badge>{badge}</Badge>}
-      </div>
-      <p className="max-w-[68ch] text-sm text-chart-grey">{hint}</p>
-      <p className={present ? 'text-sm text-evidence' : 'text-sm text-chart-grey'}>
-        {present === null ? '' : present ? t('ai.saved') : t('ai.missing')}
-      </p>
+    <SettingsRow
+      label={title}
+      description={description}
+      below={
+        open ? (
+          <div id={panelId} className="flex flex-col gap-3">
+            <Field label={t('ai.keyInput')}>
+              {(c) => (
+                <Input
+                  {...c}
+                  type="password"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={value}
+                  placeholder={t('ai.keyPlaceholder')}
+                  onChange={(e) => setValue(e.target.value)}
+                  className="font-mono"
+                />
+              )}
+            </Field>
 
-      <Field label={t('ai.keyInput')}>
-        {(c) => (
-          <Input
-            {...c}
-            type="password"
-            autoComplete="off"
-            spellCheck={false}
-            value={value}
-            placeholder={t('ai.keyPlaceholder')}
-            onChange={(e) => setValue(e.target.value)}
-            className="max-w-md font-mono"
-          />
-        )}
-      </Field>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="secondary" size="sm" disabled={!idle || value.trim() === ''} onClick={() => void save()}>
+                {busy === 'save' ? t('ai.keySaving') : t('ai.saveKey')}
+              </Button>
+              <Button variant="quiet" size="sm" disabled={!idle || present !== true} onClick={() => void test()}>
+                {busy === 'test' ? t('ai.testing') : t('ai.testConnection')}
+              </Button>
+              {present === true && !confirming && (
+                <Button variant="quiet" size="sm" disabled={!idle} onClick={() => setConfirming(true)}>
+                  {t('ai.removeKey')}
+                </Button>
+              )}
+            </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Button variant={primary ? 'primary' : 'secondary'} disabled={!idle || value.trim() === ''} onClick={() => void save()}>
-          {busy === 'save' ? t('ai.keySaving') : t('ai.saveKey')}
-        </Button>
-        <Button variant="secondary" disabled={!idle || present !== true} onClick={() => void test()}>
-          {busy === 'test' ? t('ai.testing') : t('ai.testConnection')}
-        </Button>
-        {present === true && !confirming && (
-          <Button variant="quiet" disabled={!idle} onClick={() => setConfirming(true)}>
-            {t('ai.removeKey')}
-          </Button>
-        )}
-      </div>
+            {confirming && (
+              <div className="flex flex-col gap-3 border-l-2 border-hairline pl-4">
+                <p className="text-sm text-foreground">{removeConfirm}</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="secondary" size="sm" disabled={!idle} onClick={() => void remove()}>
+                    {t('ai.removeYes')}
+                  </Button>
+                  <Button variant="quiet" size="sm" disabled={!idle} onClick={() => setConfirming(false)}>
+                    {t('ai.cancel')}
+                  </Button>
+                </div>
+              </div>
+            )}
 
-      {confirming && (
-        <div className="flex flex-col gap-3 border-l-2 border-hairline pl-4">
-          <p className="text-sm text-foreground">{removeConfirm}</p>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" disabled={!idle} onClick={() => void remove()}>
-              {t('ai.removeYes')}
-            </Button>
-            <Button variant="quiet" disabled={!idle} onClick={() => setConfirming(false)}>
-              {t('ai.cancel')}
-            </Button>
+            {note?.tone === 'saved' && <p className="text-sm text-chart-grey">{t('ai.keySaved')}</p>}
+            {note?.tone === 'ok' && <p className="text-sm text-evidence">{t('ai.connected')}</p>}
+            {note?.tone === 'fail' && <ErrorNote title={note.title} message={note.text} />}
           </div>
-        </div>
+        ) : undefined
+      }
+    >
+      {status && (
+        <span className="inline-flex items-center gap-1.5 text-[0.8125rem] text-chart-grey">
+          <span aria-hidden="true" className={cn('size-1.5 rounded-full', status === 'missing' ? 'bg-hairline' : 'bg-signal')} />
+          {t(`ai.status.${status}`)}
+        </span>
       )}
-
-      {note?.tone === 'saved' && <p className="text-sm text-chart-grey">{t('ai.keySaved')}</p>}
-      {note?.tone === 'ok' && <p className="text-sm text-evidence">{t('ai.connected')}</p>}
-      {note?.tone === 'fail' && <ErrorNote title={note.title} message={note.text} />}
-    </div>
+      <Button
+        variant="quiet"
+        size="sm"
+        aria-expanded={open}
+        aria-controls={open ? panelId : undefined}
+        aria-label={t('ai.manageLabel', { provider: title })}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {t('ai.manage')}
+        <ChevronDown aria-hidden="true" className={cn('size-3.5 transition-transform duration-[180ms] motion-reduce:transition-none', open && 'rotate-180')} />
+      </Button>
+    </SettingsRow>
   );
 }
 
@@ -167,6 +190,8 @@ export function AiSection() {
   const [modelSaveError, setModelSaveError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [settingsReady, setSettingsReady] = useState(false);
+  const providerLabelId = useId();
+  const modelId = useId();
 
   // Presence only: the key values never leave the keychain for display.
   const refreshPresence = useCallback(async () => {
@@ -280,77 +305,81 @@ export function AiSection() {
   };
 
   return (
-    <SettingsSection id="settings-ai" title={t('sections.ai')} line={t('sections.aiLine')}>
-      <div className="flex flex-col gap-8">
-        <KeyBlock
+    <div className="flex flex-col gap-8">
+      <SettingsGroup id="settings-ai" title={t('sections.ai')}>
+        <SettingsRow label={t('ai.provider.label')} labelId={providerLabelId}>
+          <SegmentedControl
+            aria-labelledby={providerLabelId}
+            value={provider}
+            onChange={(next) => void chooseProvider(next)}
+            options={[
+              { value: 'openrouter', label: t('ai.provider.openrouter') },
+              {
+                value: 'opencode',
+                label: t('ai.provider.opencode'),
+                disabled: present.opencode !== true,
+                hint: t('ai.provider.needsKey'),
+              },
+            ]}
+          />
+        </SettingsRow>
+        <SettingsRow
+          label={t('ai.model.label')}
+          htmlFor={modelId}
+          below={
+            modelsError || modelSaved || modelSaveError ? (
+              <>
+                {modelsError && (
+                  <ErrorNote
+                    message={t('ai.model.loadFailed', { error: modelsError })}
+                    action={
+                      <Button variant="secondary" size="sm" onClick={() => setModelsReload((value) => value + 1)}>
+                        {t('ai.model.retry')}
+                      </Button>
+                    }
+                  />
+                )}
+                {modelSaved && <p className="text-sm text-chart-grey">{t('ai.model.saved')}</p>}
+                {modelSaveError && <ErrorNote message={modelSaveError} />}
+              </>
+            ) : undefined
+          }
+        >
+          <div className="w-full sm:w-72">
+            <Combobox
+              id={modelId}
+              options={options}
+              value={model}
+              onChange={(next) => void chooseModel(next)}
+              placeholder={modelsBusy ? t('ai.model.loading') : t('ai.model.empty')}
+              noMatchesLabel={t('ai.model.noMatches')}
+              disabled={modelDisabled}
+            />
+          </div>
+        </SettingsRow>
+      </SettingsGroup>
+
+      <SettingsGroup id="settings-keys" title={t('sections.keys')} footer={t('ai.keys.footer')}>
+        <KeyRow
           provider="openrouter"
           present={present.openrouter}
-          primary
           title={t('ai.openrouter.title')}
-          badge={t('ai.openrouter.badge')}
-          hint={t('ai.openrouter.hint')}
+          description={present.openrouter === false ? t('ai.openrouter.finderNeedsKey') : undefined}
           removeConfirm={t('ai.removeOpenrouterConfirm')}
           onChanged={refreshPresence}
           onRemoved={refreshPresence}
         />
-        <KeyBlock
+        <KeyRow
           provider="opencode"
           present={present.opencode}
-          primary={false}
           title={t('ai.opencode.title')}
-          badge={t('ai.opencode.badge')}
-          hint={t('ai.opencode.hint')}
           removeConfirm={t('ai.removeOpencodeConfirm')}
           onChanged={refreshPresence}
           onRemoved={removeOpencode}
         />
+      </SettingsGroup>
 
-        <div className="flex flex-col gap-5 border-t border-hairline pt-6">
-          <div className="grid max-w-[880px] gap-5 sm:grid-cols-2">
-            <Field label={t('ai.counselorProvider.label')} hint={t('ai.counselorProvider.hint')}>
-              {(c) => (
-                <Select {...c} value={provider} onChange={(e) => void chooseProvider(e.target.value as Provider)}>
-                  <option value="openrouter">{t('ai.counselorProvider.openrouter')}</option>
-                  <option value="opencode" disabled={present.opencode !== true}>
-                    {present.opencode === true ? t('ai.counselorProvider.opencode') : t('ai.counselorProvider.needsKey')}
-                  </option>
-                </Select>
-              )}
-            </Field>
-
-            <Field label={t('ai.model.label')} hint={t('ai.model.hint', { model: defaultModel })}>
-              {(c) => (
-                <Combobox
-                  id={c.id}
-                  aria-describedby={c['aria-describedby']}
-                  invalid={c['aria-invalid']}
-                  options={options}
-                  value={model}
-                  onChange={(next) => void chooseModel(next)}
-                  placeholder={modelsBusy ? t('ai.model.loading') : t('ai.model.empty')}
-                  noMatchesLabel={t('ai.model.noMatches')}
-                  disabled={modelDisabled}
-                />
-              )}
-            </Field>
-          </div>
-
-          {modelsError && (
-            <ErrorNote
-              message={t('ai.model.loadFailed', { error: modelsError })}
-              action={
-                <Button variant="secondary" size="sm" onClick={() => setModelsReload((value) => value + 1)}>
-                  {t('ai.model.retry')}
-                </Button>
-              }
-            />
-          )}
-          {modelSaved && <p className="text-sm text-chart-grey">{t('ai.model.saved')}</p>}
-          {modelSaveError && <ErrorNote message={modelSaveError} />}
-        </div>
-
-        {loadError && <ErrorNote message={t('ai.loadFailed', { error: loadError })} />}
-      </div>
-    </SettingsSection>
+      {loadError && <ErrorNote message={t('ai.loadFailed', { error: loadError })} />}
+    </div>
   );
 }

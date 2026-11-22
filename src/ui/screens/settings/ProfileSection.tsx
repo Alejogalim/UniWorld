@@ -6,9 +6,9 @@ import { countryName } from '@/ui/data/countries';
 import { languageName } from '@/ui/data/languages';
 import { useOnboardingDraft } from '@/ui/screens/onboarding/useOnboardingDraft';
 import { Button } from '@/ui/components/ui/button';
-import { SettingsRow, SettingsSection } from './SettingsSection';
+import { SettingsGroup, SettingsRow } from './SettingsGroup';
 
-/** A read-only summary of the profile. Editing reuses the onboarding sheet, which returns here on Finish. */
+/** One identity row. Editing reuses the onboarding sheet, which returns here on Finish. */
 export function ProfileSection() {
   const { t, i18n } = useTranslation(['settings', 'onboarding']);
   const navigate = useNavigate();
@@ -17,55 +17,55 @@ export function ProfileSection() {
 
   if (!profile) {
     return (
-      <SettingsSection id="settings-profile" title={t('sections.profile')} line={t('sections.profileLine')}>
-        <div className="flex flex-col items-start gap-3">
-          <p className="max-w-[68ch] text-sm text-foreground">{t('profile.empty')}</p>
-          <Button variant="secondary" onClick={() => navigate('/onboarding')}>
+      <SettingsGroup id="settings-profile" title={t('sections.profile')}>
+        <SettingsRow label={t('profile.empty')}>
+          <Button size="sm" onClick={() => navigate('/onboarding')}>
             {t('profile.create')}
           </Button>
-        </div>
-      </SettingsSection>
+        </SettingsRow>
+      </SettingsGroup>
     );
   }
 
-  const others = profile.languages.map((l) =>
-    t('profile.languageLevel', {
-      language: languageName(l.lang, uiLang),
-      level: t(`onboarding:levels.${l.level}`),
-    }),
-  );
-  const list = new Intl.ListFormat(uiLang, { style: 'long', type: 'conjunction' });
+  const initial = (Array.from(profile.name.trim())[0] ?? '').toLocaleUpperCase(uiLang);
+  const levelText = (level: string) => (level === 'native' ? t('onboarding:levels.native') : level);
+  const languages = [
+    languageName(profile.primaryLang, uiLang),
+    ...profile.languages.map((l) =>
+      t('profile.languageLevel', { language: languageName(l.lang, uiLang), level: levelText(l.level) }),
+    ),
+  ];
+  const place = profile.residence ?? profile.citizenship;
+  const summary = [
+    t(`onboarding:program.${profile.program}`),
+    place ? countryName(place, uiLang) : null,
+    new Intl.ListFormat(uiLang, { style: 'short', type: 'unit' }).format(languages),
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
-    <SettingsSection id="settings-profile" title={t('sections.profile')} line={t('sections.profileLine')}>
-      <div className="flex flex-col gap-4">
-        <dl className="flex flex-col border-t border-hairline">
-          <SettingsRow label={t('profile.name')}>{profile.name}</SettingsRow>
-          <SettingsRow label={t('profile.primaryLanguage')}>{languageName(profile.primaryLang, uiLang)}</SettingsRow>
-          <SettingsRow label={t('profile.otherLanguages')}>
-            {others.length > 0 ? list.format(others) : t('profile.none')}
-          </SettingsRow>
-          <SettingsRow label={t('profile.program')}>{t(`onboarding:program.${profile.program}`)}</SettingsRow>
-          {profile.citizenship && (
-            <SettingsRow label={t('profile.citizenship')}>{countryName(profile.citizenship, uiLang)}</SettingsRow>
-          )}
-          {profile.residence && (
-            <SettingsRow label={t('profile.residence')}>{countryName(profile.residence, uiLang)}</SettingsRow>
-          )}
-        </dl>
-        <div>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              // A draft left from an earlier visit (typed keys included) must not reappear: start from the saved profile.
-              useOnboardingDraft.getState().reset();
-              navigate('/onboarding', { state: { from: 'settings' } });
-            }}
-          >
-            {t('profile.edit')}
-          </Button>
-        </div>
-      </div>
-    </SettingsSection>
+    <SettingsGroup id="settings-profile" title={t('sections.profile')}>
+      <SettingsRow
+        leading={
+          <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-shoal text-sm font-semibold text-foreground">
+            {initial}
+          </span>
+        }
+        label={<span className="font-medium">{profile.name}</span>}
+        description={summary}
+      >
+        <Button
+          size="sm"
+          onClick={() => {
+            // A draft left from an earlier visit (typed keys included) must not reappear: start from the saved profile.
+            useOnboardingDraft.getState().reset();
+            navigate('/onboarding', { state: { from: 'settings' } });
+          }}
+        >
+          {t('profile.edit')}
+        </Button>
+      </SettingsRow>
+    </SettingsGroup>
   );
 }
