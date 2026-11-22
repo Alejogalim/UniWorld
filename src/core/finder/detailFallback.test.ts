@@ -189,6 +189,23 @@ describe('loadDetail with OpenCode only', () => {
     expect(detail.tuition.value).toBe('Free');
   });
 
+  it('drops a cached next deadline that has passed, without refetching', async () => {
+    const http = new FakeHttp();
+    const d = deps(http);
+    const cachedAt = '2026-11-21T06:00:00.000Z';
+    const base = emptyDetail('https://ror.org/000000001', 'BSc Law', cachedAt);
+    await d.details.put({
+      ...base,
+      tuition: { value: 'Free', sourceUrl: FEES, quote: 'There are no tuition fees for all students', sourceKind: 'official', checkedAt: cachedAt },
+      nextDeadline: { value: '15 July 2026', sourceUrl: ADMISSIONS, quote: 'Applications close on 15 July 2026', sourceKind: 'official', checkedAt: cachedAt },
+    });
+    const detail = await loadDetail(d, ror, 'https://ror.org/000000001', 'BSc Law');
+    expect(http.calls).toBe(0);
+    expect(detail.nextDeadline.value).toBeNull();
+    expect(detail.nextDeadline.checkedAt).toBe(cachedAt);
+    expect(detail.tuition.value).toBe('Free');
+  });
+
   it('serves a sparse cached detail within a day', async () => {
     const http = new FakeHttp();
     const d = deps(http);

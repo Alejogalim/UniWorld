@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import type { TrackedStatus, UiLang } from '@/core/contracts';
 import { useTracked, type TrackedPatch, type TrackedUni } from '@/store/tracked';
 import { countryName } from '@/ui/data/countries';
-import { languageName } from '@/ui/data/languages';
+import { languageLabel } from '@/ui/data/languages';
 import { Badge } from '@/ui/components/Chip';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { Flag } from '@/ui/components/Flag';
@@ -258,7 +258,7 @@ export function TrackedUniEditor({ uni, today, onClose }: TrackedUniEditorProps)
           {splitCsv(draft.language).length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-1">
               {splitCsv(draft.language).map((code) => (
-                <Badge key={code}>{languageName(code, uiLang)}</Badge>
+                <Badge key={code}>{languageLabel(code, uiLang)}</Badge>
               ))}
             </div>
           )}

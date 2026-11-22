@@ -83,3 +83,11 @@ export function languageLabel(raw: string, uiLang: string): string {
   if (code) return languageName(code, uiLang);
   return value.charAt(0).toLocaleUpperCase(uiLang) + value.slice(1);
 }
+
+/** ISO 639-1 code for an ISO code or an English language name in any case ("French" -> "fr"), or undefined. */
+export function languageCodeOf(nameOrCode: string): string | undefined {
+  const value = nameOrCode.trim();
+  const lower = value.toLowerCase();
+  if (LANGUAGE_CODES.includes(lower)) return lower;
+  return codeForEnglishName(value) ?? undefined;
+}

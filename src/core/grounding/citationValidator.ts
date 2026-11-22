@@ -196,6 +196,15 @@ const FREE_QUOTE_MARKERS = [
   'waived',
 ];
 
+/**
+ * Whole amounts in normalised text. Thousand separators are already spaces after
+ * `normalizeText`, so "12 000" and "12000" both yield "12000"; "12000" in "15000" does not match.
+ */
+const AMOUNT = /\d{1,3}(?: \d{3})+(?!\d)|\d+/g;
+function amountsIn(normalized: string): string[] {
+  return (normalized.match(AMOUNT) ?? []).map((amount) => amount.replace(/ /g, ''));
+}
+
 function tuitionSupport(value: string, quoteNormalized: string): boolean {
   const normalizedValue = normalizeText(value);
   const looksFree =
@@ -205,9 +214,11 @@ function tuitionSupport(value: string, quoteNormalized: string): boolean {
   if (looksFree) {
     return FREE_QUOTE_MARKERS.some((marker) => quoteNormalized.includes(marker));
   }
-  const digits = normalizedValue.match(/\d+/g) ?? [];
-  if (digits.length > 0) {
-    return digits.some((digit) => quoteNormalized.includes(digit));
+  const amounts = amountsIn(normalizedValue);
+  if (amounts.length > 0) {
+    // The main amount is the largest figure in the value; it must be a whole number in the quote.
+    const main = amounts.reduce((a, b) => (Number(b) > Number(a) ? b : a));
+    return amountsIn(quoteNormalized).includes(main);
   }
   return tokenSupport(value, quoteNormalized, 0.5);
 }
@@ -243,9 +254,22 @@ function examsSupport(value: string[], quoteNormalized: string): boolean {
 }
 
 function dateSupport(value: string, quoteNormalized: string): boolean {
-  const numbers = normalizeText(value).match(/\d{2,4}/g) ?? [];
+  const normalizedValue = normalizeText(value);
+  const numbers = normalizedValue.match(/\d+/g) ?? [];
   if (numbers.length === 0) return tokenSupport(value, quoteNormalized, 0.5);
-  return numbers.some((number) => quoteNormalized.includes(number));
+  // Compare whole numbers without leading zeros ("05" == "5"), never as substrings.
+  const plain = (n: string) => String(Number(n));
+  const quoteNumbers = new Set((quoteNormalized.match(/\d+/g) ?? []).map(plain));
+  let required = numbers;
+  // An ISO date (2027-01-15) has a numeric month that the quote may spell out ("January"): check year and day.
+  const iso = /\b(\d{4}) (\d{1,2}) (\d{1,2})\b|\b(\d{4})-(\d{1,2})-(\d{1,2})\b/.exec(value);
+  if (iso) {
+    const year = iso[1] ?? iso[4];
+    const day = iso[3] ?? iso[6];
+    required = [year, day];
+  }
+  // Every remaining number (the day and the 4-digit year) must be a whole number in the quote.
+  return required.every((number) => quoteNumbers.has(plain(number)));
 }
 
 function urlSupport(value: string, quoteNormalized: string, sourceUrl: string | null): boolean {
@@ -334,7 +358,8 @@ export function validateFact<T extends string | string[]>(
     return nullFact<T>(checkedAt, sourceKind);
   }
 
-  if (!supportsValue(source.value, normalizedText, kind, entry)) {
+  // The value must be supported by the quote itself, not by any words elsewhere on the page.
+  if (!supportsValue(source.value, normalizeQuoteText(quote), kind, entry)) {
     return nullFact<T>(checkedAt, sourceKind);
   }
 

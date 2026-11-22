@@ -197,7 +197,14 @@ export async function loadDetail(
         foundFactCount(cached.detail) < DETAIL_SPARSE_MIN_FACTS
           ? DETAIL_SPARSE_CACHE_TTL_MS
           : DETAIL_CACHE_TTL_MS;
-      if (isFresh(cached.checkedAt, now, ttl)) return cached.detail;
+      if (isFresh(cached.checkedAt, now, ttl)) {
+        // A deadline that has passed since the cache was written is no longer shown as next.
+        const stale = cached.detail.nextDeadline.value;
+        if (stale !== null && !nextDeadlineIsUpcoming(stale, now)) {
+          return { ...cached.detail, nextDeadline: emptyFact<string>(cached.checkedAt) };
+        }
+        return cached.detail;
+      }
     }
   }
 
@@ -240,6 +247,7 @@ export async function loadDetail(
       pageCache: deps.pages,
       timeoutMs: PAGE_FETCH_TIMEOUT_MS,
       deadline: Date.now() + 60_000,
+      keywords,
     });
     hits = pages.map((hit) => ({
       ...hit,

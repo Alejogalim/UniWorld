@@ -8,7 +8,7 @@ import type { Fact, UiLang, UniDetail as UniDetailData, UniResult } from '@/core
 import { useCore } from '@/app/useCore';
 import { useTracked, type TrackedUni } from '@/store/tracked';
 import { countryName } from '@/ui/data/countries';
-import { languageLabel } from '@/ui/data/languages';
+import { languageCodeOf, languageLabel } from '@/ui/data/languages';
 import { Flag } from '@/ui/components/Flag';
 import { FactLine } from '@/ui/components/FactLine';
 import { ErrorNote } from '@/ui/components/ErrorNote';
@@ -27,6 +27,10 @@ interface DetailLocationState {
 type LoadStatus = 'loading' | 'ready' | 'error';
 
 const messageOf = (err: unknown) => (err instanceof Error ? err.message : String(err));
+
+/** The first language the model named that maps to an ISO code (the tracked list stores codes). */
+const firstLanguageCode = (names: string[] | null | undefined): string | undefined =>
+  names?.map((name) => languageCodeOf(name)).find((code): code is string => Boolean(code));
 
 /** `checkedAt` is an ISO date (YYYY-MM-DD) or a full timestamp; a bare date is read as local. */
 function formatCheckedAt(value: string, lang: string): string {
@@ -153,7 +157,8 @@ export function UniDetailView({
         detailProgram: detail.program,
         deadline: parseDeadline(factValue(detail.nextDeadline)),
         requiredExams: factValue(detail.exams) ?? [],
-        language: factValue(detail.languages)?.join(', ') ?? null,
+        language:
+          firstLanguageCode(factValue(detail.languages)) ?? (factValue(detail.languages)?.join(', ') ?? null),
         status: 'considering',
         notes: '',
       })

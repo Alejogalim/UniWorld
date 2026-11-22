@@ -11,6 +11,14 @@ import { buildTranscript } from './transcript';
 
 const MAX_HISTORY = 40;
 
+/** The last `max` stored turns, minus any leading assistant turns, so the model's history starts with the student. */
+export function recentTurns<T extends { role: string }>(messages: T[], max = MAX_HISTORY): T[] {
+  const recent = messages.slice(-max);
+  let start = 0;
+  while (start < recent.length && recent[start]!.role === 'assistant') start++;
+  return recent.slice(start);
+}
+
 export class Counselor {
   constructor(
     private readonly deps: CoreDeps,
@@ -54,7 +62,7 @@ export class Counselor {
     const notes = await this.notesOrNull(sessionId);
     const messages: ChatMessage[] = [
       { role: 'system', content: counselorSystemPrompt(profile, { studentAnswers, notes }) },
-      ...stored.slice(-MAX_HISTORY).map((message) => ({ role: message.role, content: message.content })),
+      ...recentTurns(stored).map((message) => ({ role: message.role, content: message.content })),
     ];
 
     const reply = await client.stream(messages, {

@@ -361,3 +361,110 @@ describe('quote normalisation (plan 39)', () => {
     expect(invented.value).toBeNull();
   });
 });
+
+describe('support is checked against the quote, and numbers are whole tokens', () => {
+  const PAGE = 'https://www.example.edu/costs';
+  const costs = CitationIndex.fromHits([
+    {
+      url: PAGE,
+      title: 'Costs',
+      text:
+        'Tuition: EUR 12,000 per year. Tuition is charged each semester. ' +
+        'Our scholarship free programme covers living costs for some students.',
+    },
+  ]);
+
+  it('rejects "Free" when the quote only states a paid tuition amount', () => {
+    const fact = validateStringFact(
+      { value: 'Free', sourceUrl: PAGE, quote: 'Tuition: EUR 12,000 per year' },
+      costs,
+      { kind: 'tuition' },
+    );
+    expect(fact.value).toBeNull();
+  });
+
+  it('accepts the amount when the quote states it', () => {
+    const fact = validateStringFact(
+      { value: 'EUR 12,000', sourceUrl: PAGE, quote: 'Tuition: EUR 12,000 per year' },
+      costs,
+      { kind: 'tuition' },
+    );
+    expect(fact.value).toBe('EUR 12,000');
+  });
+
+  it('rejects an amount that only appears as a substring of a larger number', () => {
+    const fact = validateStringFact(
+      { value: 'EUR 1,500', sourceUrl: PAGE, quote: 'Tuition is EUR 15000 per year' },
+      CitationIndex.fromHits([{ url: PAGE, text: 'Tuition is EUR 15000 per year' }]),
+      { kind: 'tuition' },
+    );
+    expect(fact.value).toBeNull();
+  });
+
+  it('rejects an amount that is only a single digit in the quote', () => {
+    const fact = validateStringFact(
+      { value: 'EUR 1,500', sourceUrl: PAGE, quote: 'Tuition is charged in 1 installment per year' },
+      CitationIndex.fromHits([{ url: PAGE, text: 'Tuition is charged in 1 installment per year' }]),
+      { kind: 'tuition' },
+    );
+    expect(fact.value).toBeNull();
+  });
+
+  it('accepts thousand-separator variants of the same amount', () => {
+    for (const quote of ['Tuition is EUR 1500 per year', 'Tuition is EUR 1 500 per year']) {
+      const fact = validateStringFact(
+        { value: 'EUR 1,500', sourceUrl: PAGE, quote },
+        CitationIndex.fromHits([{ url: PAGE, text: quote }]),
+        { kind: 'tuition' },
+      );
+      expect(fact.value).toBe('EUR 1,500');
+    }
+  });
+
+  it('rejects a date whose year does not match the quote', () => {
+    const fact = validateStringFact(
+      {
+        value: '15 January 2027',
+        sourceUrl: PAGE,
+        quote: 'Applications close on 15 January 2015 for all programmes',
+      },
+      CitationIndex.fromHits([
+        { url: PAGE, text: 'Applications close on 15 January 2015 for all programmes' },
+      ]),
+      { kind: 'date' },
+    );
+    expect(fact.value).toBeNull();
+  });
+
+  it('accepts a date written in another format with the same day and year', () => {
+    const quote = 'Applications close on 15 January 2027 for all programmes';
+    const fact = validateStringFact(
+      { value: 'January 15, 2027', sourceUrl: PAGE, quote },
+      CitationIndex.fromHits([{ url: PAGE, text: quote }]),
+      { kind: 'date' },
+    );
+    expect(fact.value).toBe('January 15, 2027');
+  });
+});
+
+describe('dateSupport edge cases', () => {
+  const PAGE = 'https://www.example.edu/admissions';
+  const run = (value: string, quote: string) =>
+    validateStringFact(
+      { value, sourceUrl: PAGE, quote },
+      CitationIndex.fromHits([{ url: PAGE, text: quote }]),
+      { kind: 'date', officialDomains: ['example.edu'], checkedAt: '2026-11-22T00:00:00.000Z' },
+    );
+
+  it('accepts an ISO value when the quote spells the month out', () => {
+    expect(run('2027-01-15', 'Applications close on 15 January 2027 for all programmes').value).toBe('2027-01-15');
+  });
+
+  it('accepts a zero-padded day', () => {
+    expect(run('January 05, 2027', 'the application deadline is January 5, 2027').value).toBe('January 05, 2027');
+  });
+
+  it('still rejects an ISO value with the wrong year', () => {
+    expect(run('2027-01-15', 'Applications close on 15 January 2015 for all programmes').value).toBeNull();
+  });
+});

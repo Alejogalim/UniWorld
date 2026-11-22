@@ -170,19 +170,29 @@ export const useTracked = create<TrackedState>((set, get) => ({
         ],
       );
     } catch (err) {
-      replace(before);
+      // Restore only this row: other rows may have changed while the write was pending.
+      set((s) => ({ items: s.items.map((i) => (i.id === id ? before : i)) }));
       throw err;
     }
   },
 
   async remove(id) {
-    const before = get().items;
-    set({ items: before.filter((i) => i.id !== id) });
+    const index = get().items.findIndex((i) => i.id === id);
+    const removed = index >= 0 ? get().items[index] : undefined;
+    set((s) => ({ items: s.items.filter((i) => i.id !== id) }));
     try {
       const db = await getDb();
       await db.execute('DELETE FROM tracked_uni WHERE id = $1', [id]);
     } catch (err) {
-      set({ items: before });
+      // Put back only the removed row, at its old position, unless it has already reappeared.
+      if (removed) {
+        set((s) => {
+          if (s.items.some((i) => i.id === removed.id)) return {};
+          const items = [...s.items];
+          items.splice(Math.min(index, items.length), 0, removed);
+          return { items };
+        });
+      }
       throw err;
     }
   },

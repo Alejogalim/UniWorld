@@ -102,6 +102,50 @@ describe('fetchUniversityPages', () => {
     expect(hits.find((hit) => hit.url.includes('/admissions'))?.text).toContain('15 July 2027');
   });
 
+  it('never fetches a pdf or other binary linked from an official page', async () => {
+    const admissions = page(
+      'Applications close on 15 July 2027.',
+      '<a href="/programs/brochure.pdf">Admissions and tuition fees brochure</a>',
+    );
+    const http = {
+      requested: [] as string[],
+      async fetch(url: string) {
+        this.requested.push(url);
+        const body = url === 'https://www.ub.edu/' ? HOME : url.includes('/admissions') ? admissions : '';
+        return {
+          ok: body !== '',
+          status: body ? 200 : 404,
+          text: async () => body,
+          json: async () => ({}),
+        };
+      },
+    };
+    await fetchUniversityPages(http, ub, 'Law');
+    expect(http.requested.some((url) => url.endsWith('.pdf'))).toBe(false);
+    expect(http.requested).toContain('https://www.ub.edu/admissions');
+  });
+
+  it('keeps page text beyond the first 20,000 characters for keyword excerpts', async () => {
+    const filler = 'Lorem ipsum dolor sit amet. '.repeat(1000); // about 28,000 chars
+    const longPage = page(`${filler} Tuition is EUR 1,500 per semester.`);
+    const http = {
+      requested: [] as string[],
+      async fetch(url: string) {
+        this.requested.push(url);
+        const body = url === 'https://www.ub.edu/' ? HOME : url.includes('/admissions') ? longPage : '';
+        return {
+          ok: body !== '',
+          status: body ? 200 : 404,
+          text: async () => body,
+          json: async () => ({}),
+        };
+      },
+    };
+    const hits = await fetchUniversityPages(http, ub, 'Law');
+    const admissions = hits.find((hit) => hit.url.includes('/admissions'));
+    expect(admissions?.text).toContain('EUR 1,500 per semester');
+  });
+
   it('returns nothing when the university has no domains', async () => {
     const http = new FakeHttp();
     const hits = await fetchUniversityPages(

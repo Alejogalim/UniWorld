@@ -3,7 +3,7 @@ import type { CounselorNotes, Profile, Provider } from '../contracts';
 import { StaticProfile, StaticSettings } from '../adapters/env';
 import { InMemoryCounselorStore } from '../adapters/memory';
 import type { HttpClient, HttpRequestInit, HttpResponseLike } from '../ports';
-import { Counselor } from './index';
+import { Counselor, recentTurns } from './index';
 
 const profile: Profile = {
   name: 'Ana',
@@ -208,5 +208,32 @@ describe('Counselor', () => {
     expect(request?.user).toContain('Counselor: She sounds strong. What are you good at?');
     expect(request?.user).not.toContain('[intake');
     expect(request?.user).not.toContain('<next/>');
+  });
+});
+
+describe('recentTurns', () => {
+  it('keeps the last 40 turns unchanged when they start with the student', () => {
+    const turns = Array.from({ length: 50 }, (_, i) => ({
+      role: i % 2 === 0 ? 'user' : 'assistant',
+      content: String(i),
+    }));
+    const recent = recentTurns(turns);
+    expect(recent).toHaveLength(40);
+    expect(recent[0]!.role).toBe('user');
+  });
+
+  it('drops a leading assistant turn left by the window', () => {
+    // 41 turns starting with the student: the last 40 start on an assistant reply.
+    const turns = Array.from({ length: 41 }, (_, i) => ({
+      role: i % 2 === 0 ? 'user' : 'assistant',
+      content: String(i),
+    }));
+    const recent = recentTurns(turns);
+    expect(recent).toHaveLength(39);
+    expect(recent[0]).toEqual({ role: 'user', content: '2' });
+  });
+
+  it('returns nothing when there are only assistant turns', () => {
+    expect(recentTurns([{ role: 'assistant' }, { role: 'assistant' }])).toEqual([]);
   });
 });

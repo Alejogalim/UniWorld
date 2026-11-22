@@ -5,7 +5,8 @@ import { domainCandidates, hostOf, normalizeUrl, registrableDomain, tokens } fro
 import type { CachedPage, HttpClient, Logger, PageCache } from '../ports';
 
 const MAX_PAGES = 8;
-const MAX_TEXT_CHARS = 20_000;
+/** Full page text kept per hit (same limit as the page cache), so keyword excerpts can come from later in the page. */
+const MAX_TEXT_CHARS = 60_000;
 /** Many sites 403 a bot-like UA; use a normal browser string. */
 const BROWSER_USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36';
@@ -273,6 +274,7 @@ export function discoverLinks(
   for (const anchor of anchors(html)) {
     const url = resolveUrl(anchor.href, baseUrl);
     if (!url || !isAllowedUrl(url, allowedHosts)) continue;
+    if (SKIP_EXTENSION.test(new URL(url).pathname)) continue;
     const key = normalizeUrl(url);
     if (seen.has(key)) continue;
     seen.add(key);
@@ -470,6 +472,7 @@ export async function fetchUniversityPages(
     const key = normalizeUrl(url);
     if (seenQueue.has(key)) return null;
     seenQueue.add(key);
+    if (SKIP_EXTENSION.test(new URL(url).pathname)) return null;
     logger?.debug?.(`[webFetch] GET ${url}`);
     const page = await fetchPage(http, url, logger, pageOptions);
     if (!page) return null;

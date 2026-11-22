@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import type { UiLang } from '@/core/contracts';
 import type { TrackedUni } from '@/store/tracked';
 import { countryName } from '@/ui/data/countries';
-import { languageName } from '@/ui/data/languages';
+import { languageLabel } from '@/ui/data/languages';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/ui/components/Chip';
 import { Flag } from '@/ui/components/Flag';
@@ -73,7 +73,7 @@ export function TrackedUniCard({ uni, today, onEdit, onOpen, introIndex }: Track
     .split(',')
     .map((code) => code.trim())
     .filter(Boolean)
-    .map((code) => languageName(code, uiLang));
+    .map((code) => languageLabel(code, uiLang));
   const date = uni.deadline ? formatDeadline(uni.deadline, uiLang) : null;
   const hasFacts = languages.length > 0 || uni.requiredExams.length > 0 || Boolean(uni.notes);
 
