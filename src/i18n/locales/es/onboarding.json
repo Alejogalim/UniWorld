@@ -1,14 +1,14 @@
 {
   "welcome": {
-    "title": "Bienvenido a UniWorld. <strong>Encuentra las universidades que encajan con tu carrera.</strong>",
-    "subtitle": "Seis preguntas breves, en alrededor de un minuto. Después, Brújula te ayuda a pensar en carreras, y Atlas encuentra universidades reales que las enseñan.",
+    "title": "Encuentra universidades que encajen con la carrera que quieres.",
+    "subtitle": "Seis preguntas breves. Después, Brújula te ayuda a elegir una carrera y Atlas encuentra universidades reales que la enseñan.",
     "switchLabel": "Idioma de la interfaz",
     "getStarted": "Empezar"
   },
   "name": {
-    "title": "¿Cómo te llamas?",
+    "title": "¿Cómo quieres que te llamemos?",
     "label": "Tu nombre",
-    "placeholder": "¿Cómo quieres que te llamemos?",
+    "placeholder": "Nombre o apodo",
     "hint": "La IA lo usa para dirigirse a ti.",
     "errorRequired": "Escribe el nombre con el que la IA debe dirigirse a ti.",
     "errorTooLong": "Usa {{max}} caracteres o menos."
@@ -50,8 +50,8 @@
     "errorRequired": "Elige el programa en el que estás o en el que planeas entrar."
   },
   "grades": {
-    "title": "Calificaciones (opcional)",
-    "note": "Ayuda a sugerir opciones realistas. Deja en blanco lo que no tengas.",
+    "title": "Tus calificaciones",
+    "note": "Opcional. Nos ayudan a sugerirte opciones realistas. Deja en blanco lo que no tengas.",
     "range": "Escribe un número de {{min}} a {{max}}.",
     "whole": "Escribe un número entero de {{min}} a {{max}}.",
     "subjectName": "Escribe el nombre de la materia.",
@@ -81,8 +81,8 @@
     }
   },
   "residence": {
-    "title": "Ciudadanía y residencia (opcional)",
-    "note": "La gratuidad de la matrícula suele depender de estos datos.",
+    "title": "Ciudadanía y residencia",
+    "note": "Opcional. La gratuidad de la matrícula suele depender de estos datos.",
     "citizenship": "Ciudadanía (país)",
     "residence": "País de residencia",
     "skip": "Omitir"
@@ -117,7 +117,8 @@
     "next": "Siguiente",
     "back": "Atrás",
     "finish": "Terminar",
-    "saving": "Guardando…"
+    "saving": "Guardando…",
+    "enterHint": "o pulsa Intro"
   },
   "steps": {
     "progress": "Paso {{current}} de {{total}}"

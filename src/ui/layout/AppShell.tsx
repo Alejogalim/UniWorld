@@ -49,8 +49,13 @@ export function AppShell() {
   // The Finder globe runs under the rail; the rail then takes a soft wash for legibility.
   const onFinder = location.pathname === '/finder';
   // The counselor, the Finder and My universities fill the working column: the Finder's globe needs the
-  // space above its bottom dock, and the university cards/editor start at the top.
-  const hideTitle = onCounselor || location.pathname === '/finder' || location.pathname === '/my-unis';
+  // space above its bottom dock, and the university cards/editor start at the top. Onboarding's step
+  // headline is its own h1.
+  const hideTitle =
+    onCounselor ||
+    location.pathname === '/finder' ||
+    location.pathname === '/my-unis' ||
+    location.pathname === '/onboarding';
 
   return (
     <div

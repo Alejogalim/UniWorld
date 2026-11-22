@@ -26,7 +26,7 @@ Source of truth: `Design.md` (product), `DESIGN.md` (visual system: "The Ember C
 - Gradients and glow only in these places: the dark `Panel` surface and rim (`.surface`, `.rim`), one `.panel-ember` per screen (outer glow only, no inner wash, both themes), the `.ember-button` primary fill, `.numeral-ember`, the static `.ambient-haze` (both themes), the toggle-on and progress dot (`.ember-fill`), and the globe atmosphere. No other gradients, and nothing that glows is ever animated.
 - Use the shared primitives in `src/ui/components/` (Button, Input, Chip, Panel, FactLine, Flag, …). Don't restyle them per screen; style a screen through the primitives and tokens.
 - One magenta (signal) action per screen region; at most one `.panel-ember` per screen. Green (evidence) only for verified/official facts.
-- Two-tone headlines (grey body, ink phrase in a `<strong>`) only on the onboarding welcome and empty-state titles.
+- Two-tone headlines (grey body, ink phrase in a `<strong>`) only on empty-state titles.
 - Starfield: both themes (white stars on the night sky, warm specks and ember sparks on paper; colours from the `--star-*` tokens), one static canvas behind everything plus ten CSS twinkles and a rare shooting star (plans 21, 26). No per-frame JS; `prefers-reduced-motion` gets the static canvas only.
 - Motion: keep the existing screen transition (AnimatePresence in `AppShell`). State changes 180ms `cubic-bezier(0.2,0,0,1)`; press feedback scales to 0.97 in 120ms. Nothing animates without a user cause except globe idle rotation, arriving search results and the stars. Respect `prefers-reduced-motion` (use Framer's `useReducedMotion`).
 - Sizes to content so es/vi strings wrap, never truncate.

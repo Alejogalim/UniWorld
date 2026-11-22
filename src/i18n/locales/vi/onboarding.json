@@ -1,14 +1,14 @@
 {
   "welcome": {
-    "title": "Chào mừng đến với UniWorld. <strong>Tìm những trường đại học phù hợp với nghề nghiệp của bạn.</strong>",
-    "subtitle": "Sáu câu hỏi ngắn, khoảng một phút. Sau đó, La bàn giúp bạn suy nghĩ về nghề nghiệp, còn Bản đồ tìm các trường đại học thật có dạy những ngành đó.",
+    "title": "Tìm trường đại học phù hợp với nghề nghiệp bạn muốn.",
+    "subtitle": "Sáu câu hỏi ngắn. Sau đó, La bàn giúp bạn chọn nghề nghiệp và Bản đồ tìm các trường đại học thật có dạy ngành đó.",
     "switchLabel": "Ngôn ngữ giao diện",
     "getStarted": "Bắt đầu"
   },
   "name": {
-    "title": "Tên bạn là gì?",
+    "title": "Chúng tôi nên gọi bạn là gì?",
     "label": "Tên của bạn",
-    "placeholder": "Chúng tôi nên gọi bạn là gì?",
+    "placeholder": "Tên hoặc biệt danh",
     "hint": "AI dùng tên này để xưng hô với bạn.",
     "errorRequired": "Nhập tên mà AI nên dùng để gọi bạn.",
     "errorTooLong": "Dùng tối đa {{max}} ký tự."
@@ -50,8 +50,8 @@
     "errorRequired": "Chọn chương trình bạn đang học hoặc dự định theo học."
   },
   "grades": {
-    "title": "Điểm số (không bắt buộc)",
-    "note": "Giúp chúng tôi gợi ý các lựa chọn phù hợp. Để trống những gì bạn không có.",
+    "title": "Điểm số của bạn",
+    "note": "Không bắt buộc. Điểm số giúp chúng tôi gợi ý các lựa chọn thực tế. Để trống những gì bạn không có.",
     "range": "Nhập số từ {{min}} đến {{max}}.",
     "whole": "Nhập số nguyên từ {{min}} đến {{max}}.",
     "subjectName": "Nhập tên môn học.",
@@ -81,8 +81,8 @@
     }
   },
   "residence": {
-    "title": "Quốc tịch và nơi cư trú (không bắt buộc)",
-    "note": "Việc miễn học phí thường phụ thuộc vào những thông tin này.",
+    "title": "Quốc tịch và nơi cư trú",
+    "note": "Không bắt buộc. Việc miễn học phí thường phụ thuộc vào những thông tin này.",
     "citizenship": "Quốc tịch (quốc gia)",
     "residence": "Quốc gia cư trú",
     "skip": "Bỏ qua"
@@ -117,7 +117,8 @@
     "next": "Tiếp",
     "back": "Quay lại",
     "finish": "Hoàn tất",
-    "saving": "Đang lưu…"
+    "saving": "Đang lưu…",
+    "enterHint": "hoặc nhấn Enter"
   },
   "steps": {
     "progress": "Bước {{current}} trên {{total}}"

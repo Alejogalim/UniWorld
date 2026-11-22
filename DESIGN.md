@@ -103,7 +103,7 @@ Three rejections still stand: a warm cream and serif editorial template, a neon 
 - One warm colour, the ember. It marks what the student must act on now, and it glows in a few fixed places.
 - Surfaces are soft: 28px cards with a 1px rim. Dark cards are a vertical gradient; light cards are white sheets with a 5% to 8% rim and a soft warm shadow.
 - One face, Google Sans, in weights 400 to 700. Numerals are always tabular.
-- Headlines are two-tone: grey body text with the key phrase in ink, used on the welcome headline and empty-state titles only.
+- Headlines are two-tone: grey body text with the key phrase in ink, used on empty-state titles only.
 - Results are still a ranked column of rows, never a grid of equal cards.
 - Every fact carries its source or says it is missing. The missing state is designed, not hidden.
 - Motion answers an action. The twinkling stars, the rare shooting star, the arrival of search results and the small light on the Shortlist status track are the only things that move without a cause.
@@ -211,16 +211,16 @@ The table above is the strict per-pixel view from plan 18, when every baked star
 **Numerals:** `.font-mono` is the measured-value style. It is Google Sans with `font-variant-numeric: tabular-nums` and no tracking. Counts, days, scores and deadlines use it. Mono is no longer a different face.
 
 ### Scale
-- **Display** (600, 56px / 1.0, tracking -0.035em): screen titles, and the large numerals on the onboarding step, the rank and the summary strip (`.type-display`).
+- **Display** (600, 56px / 1.0, tracking -0.035em): screen titles, the onboarding welcome headline (line height 1.1), and the large numerals on the rank and the summary strip (`.type-display`).
 - **Headline** (600, 28px / 1.15, tracking -0.02em): card and section headlines (`.type-headline`).
 - **Title** (600, 17px / 1.35): university names, panel titles (`.type-title`).
 - **Body** (400, 15px / 1.55): the app default, and prose at 68ch maximum (`.type-body`).
 - **Label** (500, 13px / 1.2): buttons, nav, chips, form labels, table headers (`.type-label`). Sentence case.
 
 ### Named Rules
-**The Two-Tone Rule.** A headline may be two-tone only on the onboarding welcome and on empty-state titles: body text in Chart Grey, the key phrase in ink at weight 600 (a `<strong>` in the translation). The phrase is a phrase, never one word.
+**The Two-Tone Rule.** A headline may be two-tone only on empty-state titles: body text in Chart Grey, the key phrase in ink at weight 600 (a `<strong>` in the translation). The phrase is a phrase, never one word.
 
-**The Numeral Rule.** Large numerals may take the ember gradient (`.numeral-ember`) and only where a number is the point of the line: the onboarding step, a result's rank, the summary strip, the days-left number. Numerals are always tabular.
+**The Numeral Rule.** Large numerals may take the ember gradient (`.numeral-ember`) and only where a number is the point of the line: a result's rank, the summary strip, the days-left number. Numerals are always tabular.
 
 **The Measured Value Rule.** Numbers that were measured, counted, dated or priced use tabular figures. A sentence or a button never uses them.
 
@@ -294,7 +294,7 @@ Implemented in `src/ui/layout/Starfield.tsx` (one static canvas plus a few DOM e
 
 The rail is its own full-height column on the left: 284px expanded, 72px collapsed to an icon dock, with transparent ground over the stars. It sits above the content layer (position relative, z-index 10). On Atlas the globe runs under it and the rail takes `.app-rail--over-globe`: no hairline, and a static wash of the ground colour, 70% at its left edge fading to transparent at its right edge, so the rail and the map read as one scene. Never a backdrop blur there: the globe redraws every frame. Its top row holds the logo: expanded, the logo, the wordmark and a 36px collapse button (`PanelLeftClose`) on the right; collapsed, the logo alone with a 36px expand button (`PanelLeftOpen`) directly below it, which expands the rail. Nav rows follow, then the language and theme buttons at the foot. The width change animates over 200ms (none under reduced motion).
 
-The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single 640px sheet. Settings is a single centred 640px column of grouped lists. The university detail page is a single centred 800px column: Back aligned to its left edge, the header card, then the fact list.
+The working column sits to the right: a page title centered above the content on every screen except the counselor, which has no title and gives its full height to the page. Content is capped at 1120px with a 48px page margin. Onboarding is a single centred 560px column directly on the ground, with no sheet. Settings is a single centred 640px column of grouped lists. The university detail page is a single centred 800px column: Back aligned to its left edge, the header card, then the fact list.
 
 Density is still high by default: 40px controls, 15px body, 20px-radius result rows. Space is in fours, and the section step is the largest.
 
@@ -308,6 +308,7 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 - **Primary:** pill, 40px (36px `sm`), `.ember-button` gradient, 1px inner top highlight. Black text in dark, white in light. One per screen region, naming its action. Press scales to 0.97 in 120ms.
 - **Secondary:** pill, `rim` on a panel fill, ink text.
 - **Quiet:** text only, Chart Grey, underline on hover.
+- **Ink:** pill, 40px, a solid foreground fill (white in dark, near-black in light) with ground-coloured text; no gradient, no glow, hover at 85%. Onboarding's primary action only, where the step's ember mark is the progress segment.
 - **Focus:** a 2px signal outline offset 2px, always visible.
 
 ### Chips and badges
@@ -350,6 +351,16 @@ Implemented in `src/ui/screens/MyUnis.tsx` and `src/ui/screens/myUnis/` (`Tracke
 - **Segmented control** (`SegmentedControl`): a pill track on shoal with a hairline stroke; the chosen segment is a raised pill on the panel fill with a rim. A radiogroup: arrow keys move and select, Home/End jump, disabled options are skipped and explain themselves in a tooltip. Used for Theme and AI provider.
 - **API keys:** one row per provider with a status dot and text: ember dot for "Connected" (a test passed this session) or "Saved", hairline dot for "Not set". "Manage" is a quiet disclosure button (`aria-expanded`) that reveals the key field, Save, Test connection and Remove inline under the row.
 - **Buttons:** quiet everywhere, except Edit profile (primary), Save key and the delete confirm (secondary). The destructive Delete text and the delete confirm use signal text, not a fill.
+
+### Onboarding
+Implemented in `src/ui/screens/Onboarding.tsx` and `src/ui/screens/onboarding/` (plan 38).
+- **No card.** The steps sit directly on the ground (stars and haze) in one centred 560px column with a 24px gutter (32px from 640px). The column's top is anchored at `clamp(2rem, 12vh, 7rem)` so the progress and headline keep the same position on every step. The shell hides its page title here; each step headline is the page `h1`.
+- **Progress:** steps 1 to 6 (the welcome is not a question and shows none, keeping the slot's 32px height): a "Step n of 6" label (13px, weight 500, Chart Grey, tabular, `aria-live="polite"`) over six 4px pill segments, the same as the counselor intake: done ink at 60%, current signal, upcoming hairline. The current segment is the step's one ember mark.
+- **Type:** one headline per step, one weight. The welcome headline is Display (line height 1.1), every other step Headline, both balanced. At most one supporting line in Body, Chart Grey, 52ch. "Optional" lives in that line, never in the headline.
+- **Controls:** the shared Input, Select, Combobox and Field, full column width except short number fields. The interface language on the welcome is a `SegmentedControl`. Group labels use the Field label style (13px, weight 500).
+- **Actions:** one left-aligned row under the content, 40px below it: a quiet Back (its text on the column edge), the Ink primary (Get started, Next, Finish), then a quiet "or press Enter" hint (hidden under 640px and while saving), or a quiet Skip on the residence step. Enter submits.
+- **One ember mark per step:** the current progress segment. No `.panel-ember`, no `.numeral-ember`, no ember dot on the selected program row, no ember button.
+- **Motion:** steps change with a fade and an 8px slide in the direction of travel, 180ms, `cubic-bezier(0.2, 0, 0, 1)`; opacity only under reduced motion. Segments change colour over 180ms (none under reduced motion).
 
 ### University detail
 - **Header:** a plain `Panel` (no `.panel-ember`; the page's one ember element is the Add to my list button). Flag disc and university name in Headline, the program in Title, then one muted meta line: place · Last checked date (tabular). Everything is left-aligned.

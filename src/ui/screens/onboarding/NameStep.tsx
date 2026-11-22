@@ -15,7 +15,7 @@ export function NameStep({ errors }: { errors: Errors }) {
   return (
     <StepSection>
       <StepHeading title={t("name.title")} />
-      <Field label={t("name.label")} hint={t("name.hint")} error={errorText("name")} className="max-w-md">
+      <Field label={t("name.label")} hint={t("name.hint")} error={errorText("name")}>
         {(c) => (
           <Input
             {...c}

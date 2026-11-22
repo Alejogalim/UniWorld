@@ -1,14 +1,14 @@
 {
   "welcome": {
-    "title": "Welcome to UniWorld. <strong>Find the universities that fit your career.</strong>",
-    "subtitle": "Six short questions, about a minute. Then Compass helps you think about careers, and Atlas looks for real universities that teach them.",
+    "title": "Find universities that fit the career you want.",
+    "subtitle": "Six short questions. Then Compass helps you choose a career and Atlas finds real universities that teach it.",
     "switchLabel": "Interface language",
     "getStarted": "Get started"
   },
   "name": {
-    "title": "What is your name?",
+    "title": "What should we call you?",
     "label": "Your name",
-    "placeholder": "What should we call you?",
+    "placeholder": "First name or nickname",
     "hint": "The AI uses it to address you.",
     "errorRequired": "Enter the name the AI should use for you.",
     "errorTooLong": "Use {{max}} characters or fewer."
@@ -50,8 +50,8 @@
     "errorRequired": "Choose the program you are in or plan to join."
   },
   "grades": {
-    "title": "Grades (optional)",
-    "note": "Helps us suggest realistic options. Leave anything blank that you do not have.",
+    "title": "Your grades",
+    "note": "Optional. They help us suggest realistic options. Leave blank anything you do not have.",
     "range": "Enter a number from {{min}} to {{max}}.",
     "whole": "Enter a whole number from {{min}} to {{max}}.",
     "subjectName": "Enter the subject name.",
@@ -81,8 +81,8 @@
     }
   },
   "residence": {
-    "title": "Citizenship and residence (optional)",
-    "note": "Tuition-free status often depends on these.",
+    "title": "Citizenship and residence",
+    "note": "Optional. Tuition-free status often depends on these.",
     "citizenship": "Citizenship (country)",
     "residence": "Country of residence",
     "skip": "Skip"
@@ -117,7 +117,8 @@
     "next": "Next",
     "back": "Back",
     "finish": "Finish",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "enterHint": "or press Enter"
   },
   "steps": {
     "progress": "Step {{current}} of {{total}}"

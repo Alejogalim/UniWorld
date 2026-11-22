@@ -35,7 +35,7 @@ export function GradesStep({ errors }: { errors: Errors }) {
             )}
           </Field>
           <div className="flex flex-col gap-2">
-            <span className="text-xs text-foreground">{t("grades.ib.subjects")}</span>
+            <span className="text-[0.8125rem] font-medium text-foreground">{t("grades.ib.subjects")}</span>
             <div className={`hidden gap-2 text-xs text-chart-grey sm:grid ${IB_COLS}`}>
               <span>{t("grades.ib.subjectName")}</span>
               <span>{t("grades.ib.subjectLevel")}</span>
@@ -113,7 +113,7 @@ export function GradesStep({ errors }: { errors: Errors }) {
             )}
           </Field>
           <div className="flex flex-col gap-2">
-            <span className="text-xs text-foreground">{t("grades.ap.exams")}</span>
+            <span className="text-[0.8125rem] font-medium text-foreground">{t("grades.ap.exams")}</span>
             <div className={`hidden gap-2 text-xs text-chart-grey sm:grid ${AP_COLS}`}>
               <span>{t("grades.ap.examName")}</span>
               <span>{t("grades.ap.examScore")}</span>

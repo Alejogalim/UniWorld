@@ -50,7 +50,7 @@ export function LanguagesStep({ errors }: { errors: Errors }) {
     <StepSection>
       <StepHeading id="onboarding-languages-title" title={t("languages.title")} />
 
-      <Field label={t("languages.primaryLabel")} error={errorText("primaryLang")} className="max-w-md">
+      <Field label={t("languages.primaryLabel")} error={errorText("primaryLang")}>
         {(c) => (
           <Combobox
             id={c.id}
@@ -72,7 +72,7 @@ export function LanguagesStep({ errors }: { errors: Errors }) {
             {t("languages.switchPrompt", { lang: nativeName(promptFor) })}
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={() => void i18n.changeLanguage(promptFor)}>
+            <Button type="button" variant="secondary" size="sm" onClick={() => void i18n.changeLanguage(promptFor)}>
               {t("languages.switchYes")}
             </Button>
             <Button type="button" variant="quiet" size="sm" onClick={() => setDismissedFor(promptFor)}>
@@ -83,7 +83,7 @@ export function LanguagesStep({ errors }: { errors: Errors }) {
       )}
 
       <div className="flex flex-col gap-3">
-        <span className="text-xs text-foreground">{t("languages.extraLabel")}</span>
+        <span className="text-[0.8125rem] font-medium text-foreground">{t("languages.extraLabel")}</span>
         {rows.map((row) => {
           const langError = errorText(`lang-${row.key}`);
           const levelError = errorText(`level-${row.key}`);

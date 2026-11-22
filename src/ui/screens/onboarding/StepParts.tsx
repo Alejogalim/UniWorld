@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { Errors } from "./draftRules";
 
-/** Headline for one question on the sheet, with an optional note under it. */
+/** The step's one headline (the page h1: the shell hides its title on onboarding), with an optional supporting line. */
 export function StepHeading({ id, title, note }: { id?: string; title: string; note?: string }) {
   return (
-    <header className="flex flex-col gap-2">
-      <h2 id={id} className="text-2xl leading-[1.2] font-semibold tracking-[-0.015em] text-foreground">{title}</h2>
-      {note && <p className="max-w-[68ch] text-sm leading-[1.55] text-chart-grey">{note}</p>}
+    <header className="mb-2 flex flex-col gap-3">
+      <h1 id={id} className="type-headline text-balance text-foreground">{title}</h1>
+      {note && <p className="type-body max-w-[52ch] text-chart-grey">{note}</p>}
     </header>
   );
 }

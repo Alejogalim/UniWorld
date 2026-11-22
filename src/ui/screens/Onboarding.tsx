@@ -3,10 +3,10 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import type { UiLang } from "@/core/contracts";
+import { cn } from "@/lib/utils";
 import { useProfile } from "@/store/profile";
 import { getSecret } from "@/store/secrets";
 import { ErrorNote } from "@/ui/components/ErrorNote";
-import { Panel } from "@/ui/components/Panel";
 import { Button } from "@/ui/components/ui/button";
 import { Spinner } from "@/ui/components/Spinner";
 import { AiKeyStep, saveProviderKeys } from "./onboarding/AiKeyStep";
@@ -21,6 +21,8 @@ import { WelcomeStep } from "./onboarding/WelcomeStep";
 
 const LAST = STEP_COUNT - 1;
 const RESIDENCE = 5;
+/** The welcome is not a question: progress counts the six questions after it. */
+const QUESTIONS = STEP_COUNT - 1;
 const EASE = [0.2, 0, 0, 1] as const;
 
 function uiLangOf(raw: string | undefined): UiLang {
@@ -28,7 +30,8 @@ function uiLangOf(raw: string | undefined): UiLang {
 }
 
 /**
- * First-run sheet: one question per step, 640px wide, controls bottom-left.
+ * First-run flow: one question per step in a centred 560px column on the ground (no sheet).
+ * A quiet "Step n of 6" label and segmented bar on top, the actions left-aligned below.
  * The draft (including keys) lives in memory until Finish saves it.
  */
 export function OnboardingScreen() {
@@ -150,8 +153,8 @@ export function OnboardingScreen() {
   const nextLabel = step === 0 ? t("welcome.getStarted") : step === LAST ? t("actions.finish") : t("actions.next");
 
   return (
-    <div className="isolate relative min-h-full w-full">
-      <div className="relative mx-auto flex min-h-full w-full max-w-[640px] flex-col px-12 py-8">
+    <div className="relative min-h-full w-full px-6 sm:px-8">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col pt-[clamp(2rem,12vh,7rem)] pb-16">
         <form
           noValidate
           onSubmit={(e) => {
@@ -160,23 +163,30 @@ export function OnboardingScreen() {
           }}
           className="flex flex-col"
         >
-          <Panel variant="ember" className="flex flex-col gap-8 p-8">
-          <div className="flex flex-col gap-3">
-            <p className="sr-only">{t("steps.progress", { current: step + 1, total: STEP_COUNT })}</p>
-            {/* The step number is the one large numeral on the sheet: "2/7", with the rest of the line in grey. */}
-            <p aria-hidden="true" className="flex items-baseline gap-2">
-              <span className="numeral-ember type-display">{step + 1}</span>
-              <span className="type-title text-chart-grey">/{STEP_COUNT}</span>
+          {/* Progress: a quiet label over six thin segments; the current segment is the step's one ember mark.
+              The welcome is not a question, so it shows none, but the slot keeps its height. */}
+          <div className="flex min-h-8 flex-col justify-end gap-3">
+            <p aria-live="polite" className="type-label text-chart-grey tabular-nums">
+              {step > 0 ? t("steps.progress", { current: step, total: QUESTIONS }) : ""}
             </p>
-            <div className="h-px w-full bg-hairline" aria-hidden="true">
-              <div
-                className="h-px bg-foreground transition-[width] duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
-                style={{ width: `${((step + 1) / STEP_COUNT) * 100}%` }}
-              />
-            </div>
+            {step > 0 && (
+              <div aria-hidden="true" className="flex w-full gap-1.5">
+                {Array.from({ length: QUESTIONS }, (_, i) => (
+                  <span
+                    key={i}
+                    className={cn(
+                      "h-1 flex-1 rounded-pill transition-colors duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+                      i + 1 < step && "bg-foreground/60",
+                      i + 1 === step && "bg-signal",
+                      i + 1 > step && "bg-hairline",
+                    )}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
-          <div>
+          <div className="mt-12">
             <AnimatePresence mode="wait" custom={dir} initial={false}>
               <motion.div
                 key={step}
@@ -192,35 +202,55 @@ export function OnboardingScreen() {
             </AnimatePresence>
           </div>
 
-          {finishError && <ErrorNote message={t("errors.saveFailed", { error: finishError })} />}
+          {finishError && (
+            <div className="mt-8">
+              <ErrorNote message={t("errors.saveFailed", { error: finishError })} />
+            </div>
+          )}
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
             {step > 0 && (
-              <Button type="button" variant="secondary" disabled={saving} onClick={() => goTo(step - 1, -1)}>
+              <Button
+                type="button"
+                variant="quiet"
+                size="sm"
+                className="-ml-4"
+                disabled={saving}
+                onClick={() => goTo(step - 1, -1)}
+              >
                 {t("actions.back")}
-              </Button>
-            )}
-            {step === RESIDENCE && (
-              <Button type="button" variant="quiet" disabled={saving} onClick={skipResidence}>
-                {t("residence.skip")}
               </Button>
             )}
             <Button
               type="submit"
+              variant="ink"
               autoFocus={step === 0}
               disabled={saving || (step === LAST && aiKeyMissing(draft))}
             >
               {saving ? (
                 <>
-                  <Spinner label={t("actions.saving")} className="size-3.5 border-2" />
+                  <Spinner
+                    label={t("actions.saving")}
+                    className="size-3.5 border-2 border-background/30 border-t-background"
+                  />
                   {t("actions.saving")}
                 </>
               ) : (
                 nextLabel
               )}
             </Button>
+            {step === RESIDENCE ? (
+              <Button type="button" variant="quiet" size="sm" disabled={saving} onClick={skipResidence}>
+                {t("residence.skip")}
+              </Button>
+            ) : (
+              !saving && (
+                <span aria-hidden="true" className="hidden text-[0.8125rem] text-chart-grey sm:inline">
+                  {t("actions.enterHint")}
+                </span>
+              )
+            )}
           </div>
-          </Panel>
         </form>
       </div>
     </div>

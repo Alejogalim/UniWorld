@@ -7,7 +7,7 @@ import { StepHeading, StepSection, useErrorText } from "./StepParts";
 
 const PROGRAMS: Program[] = ["IB", "AP", "US"];
 
-/** Step 4: one program, as large radio rows with a signal rule on the selected one. */
+/** Step 4: one program, as large radio rows; the selected one is raised on shoal with a rim. */
 export function ProgramStep({ errors }: { errors: Errors }) {
   const { t } = useTranslation("onboarding");
   const errorText = useErrorText(errors);
@@ -30,9 +30,6 @@ export function ProgramStep({ errors }: { errors: Errors }) {
                   checked && "rim bg-shoal [--rim-fill:linear-gradient(var(--shoal),var(--shoal))]",
                 )}
               >
-                {checked && (
-                  <span aria-hidden="true" className="absolute top-1/2 left-1.5 size-1.5 -translate-y-1/2 rounded-full bg-signal" />
-                )}
                 <input
                   type="radio"
                   name="program"
