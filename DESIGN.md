@@ -248,20 +248,20 @@ Everything else is flat. Light mode has no glow.
 
 ## Starfield
 
-Implemented in `src/ui/layout/Starfield.tsx` (baking) and `src/index.css` (`.star-field`, `.star-layer`, `.star-twinkle`, keyframes). Mounted once in `AppShell` as the first child of the shell.
+Implemented in `src/ui/layout/Starfield.tsx` (one canvas) and `src/index.css` (`.star-field`). Mounted once in `AppShell` as the first child of the shell.
 
-- **Dark theme only.** Nothing renders in light mode. The field is recomputed when the theme changes to dark.
-- **Method:** the stars are drawn once into tiles on an offscreen canvas (device pixel ratio capped at 2) and the tiles are baked to PNG data URLs. The layers move only by CSS `transform` (`@keyframes star-drift`), so there is no per-frame JavaScript, no canvas in the DOM and no resize handler. A tile repeats, so a resize needs no re-bake.
-- **Layers:** three drifting layers, each one tile oversized on every side so the loop is invisible. Tile sizes 512, 640 and 768 px, each moving exactly one tile in x and y per cycle, which gives drift speeds of about 2, 3.5 and 5 px per second toward the upper-left (durations 256 s, 183 s and 154 s).
-- **Density:** one star per 7 000 px², summed over the layers (about 300 on 1920 x 1080), split 55%, 30% and 15% across the layers. Radii 0.5, 0.8 and 1.2 px.
-- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. Warm stars use the same range as their layer. The bright stars (six per tile on the 768 px layer, radius 1.3) have a core alpha of 0.6 and a 5px soft glow baked in at 0.45 of the star's alpha (about 0.27). The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15).
+- **Why this design:** the earlier CSS-tile starfield (animated, oversized layers) measured 9 fps in the real app on software WebKitGTK, against 62 fps with the stars hidden. Every full-window animated layer cost about 20 ms per frame in that compositor. So the stars no longer animate on the compositor at all.
+- **Method:** a single `<canvas>` fixed behind everything (`pointer-events: none`, `aria-hidden`, `contain: strict`). Its backing store is the viewport at device pixel ratio 1, so the CSS size equals the backing size. Stars are drawn with `arc` and one 12 px glow sprite, which is drawn once.
+- **Idle-only motion:** the stars move only while the user is idle. Any pointer move, press, wheel, key, scroll or route change stops all star work at once, and motion resumes 600 ms after the last input. While idle the field redraws at 4 fps from a timer (not per frame). The canvas keeps its last frame during activity. Positions come from a motion clock that only advances while the stars move, so resuming never jumps.
+- **Self-protection:** the rate steps down 4 to 2 to 1 fps when the median of the last 8 redraws exceeds 25 ms, or when the timer runs more than 400 ms late three times in a row. If the lowest rate is still slow, the field freezes on its last frame until the next activation.
+- **Pauses:** `document.hidden`, window blur, `prefers-reduced-motion` (one static frame, never moves), the stars setting off, and the light theme. In each case the component renders nothing and every timer and listener is removed.
+- **Density:** one star per 7 000 px² (about 300 on 1920 x 1080), split 55%, 30% and 15% across three depth layers. Radii 0.5, 0.9 and 1.3 px.
+- **Motion:** drift toward the upper-left at 1.5, 3 and 5 px per second. Stars fade within 40 px of the window edges, so the wrap has no pop.
+- **Alpha:** random per star within its layer's range: far 0.14 to 0.22, mid 0.18 to 0.27, near 0.22 to 0.32. Six bright stars on the near layer have a core alpha of 0.6 and a 12 px glow at 0.27. Each star twinkles on a slow sine (6 to 12 s period) computed inside the same redraw. The owner chose visible stars over the strict text-contrast cap that earlier builds used (0.15).
 - **Contrast note:** the stars are decorative. A star under a text glyph may locally dip below 4.5:1 by design (see the contrast table); the owner chose visibility over a per-pixel text target.
-- **Twinkle:** two extra layers of 25 stars each (1024 px tiles, radius 0.8). Baked alpha 0.2 to 0.4 is the peak. Opacity fades between 0.35 and 1, over 7 s and 8.5 s, `ease-in-out`, `alternate`, with different delays.
-- **Colour:** pure white, and `#fff4ea` (`--star-warm`) on about 15% of stars.
-- **Pause:** the root gets `is-paused` when `document.hidden` (a visibility listener), and the layers stop their animation.
-- **Reduced motion:** the layers are static tiles (animation removed in CSS).
+- **Colour:** `--foreground` (white in dark) and `--star-warm` (`#fff4ea`) on about 15% of stars, read once per activation from the tokens.
 - **Control:** the round star button in the rail footer. It is persisted as the `stars` setting (`on` or `off`, default on) and reports `aria-pressed`.
-- **Layer:** `z-index: -1` inside the isolated shell, under the rail, header, content and the ambient haze. `contain: strict` and `overflow: hidden`.
+- **Layer:** `z-index: -2` inside the isolated shell, under the ambient haze (`-1`), the rail, the header and the content.
 
 ## Layout
 

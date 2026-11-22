@@ -386,44 +386,16 @@
   appearance: none;
 }
 
-/* Starfield (plan 18): pre-rendered tiles moved by the compositor. No per-frame JS, no canvas in the DOM.
-   Each layer is oversized by one tile on every side, so a drift of exactly one tile (in x and y) is invisible. */
+/* Starfield (plan 19): one canvas behind everything. Its backing store is the viewport at DPR 1, drawn from
+   src/ui/layout/Starfield.tsx. It has no animation of its own, so it costs nothing while the user is active. */
 .star-field {
   position: fixed;
   inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
   contain: strict;
-}
-.star-layer,
-.star-twinkle {
-  position: absolute;
-  background-repeat: repeat;
-  background-size: var(--star-tile) var(--star-tile);
-  will-change: transform;
-}
-.star-layer {
-  inset: calc(var(--star-tile) * -1);
-  transform: translate3d(0, 0, 0);
-  animation: star-drift var(--star-duration) linear infinite;
-}
-.star-twinkle {
-  inset: 0;
-  will-change: opacity;
-  animation: star-twinkle var(--star-duration) ease-in-out infinite alternate;
-}
-.star-field.is-paused .star-layer,
-.star-field.is-paused .star-twinkle {
-  animation-play-state: paused;
-}
-@keyframes star-drift {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(calc(var(--star-tile) * -1), calc(var(--star-tile) * -1), 0); }
-}
-@keyframes star-twinkle {
-  from { opacity: 0.35; }
-  to { opacity: 1; }
+  pointer-events: none;
 }
 
 /* Rail: transparent over the ground. A 1px hairline separates it in light mode only. */
@@ -467,8 +439,6 @@
   .nav-item:hover .nav-item__icon,
   .nav-item:active { transform: none; }
   .nav-item__fix { animation: none; }
-  .star-layer,
-  .star-twinkle { animation: none; }
 }
 
 /* Ember fill: the search progress dot (DESIGN.md "Where the ember is allowed").
