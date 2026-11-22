@@ -12,8 +12,8 @@ interface ChipProps extends Omit<React.ComponentProps<"button">, "type"> {
 }
 
 /**
- * DESIGN.md "Chips": 24px rectangular tickets, 2px corners. Selected inverts to ink
- * with a 2px signal tick on the leading edge. Renders a button when clickable.
+ * Chips (plan 16): pills, 28px tall. Selected inverts to ink with a small ember dot on the
+ * leading edge. Renders a button when clickable.
  */
 export function Chip({ selected = false, code, onRemove, onClick, className, children, ...props }: ChipProps) {
   const { t } = useTranslation("common");
@@ -24,9 +24,9 @@ export function Chip({ selected = false, code, onRemove, onClick, className, chi
     <Tag
       {...(onClick ? { type: "button" as const, onClick, "aria-pressed": selected } : {})}
       className={cn(
-        "relative inline-flex min-h-6 items-center gap-1.5 rounded-sm border px-2 py-0.5 text-xs leading-tight",
+        "relative inline-flex min-h-7 items-center gap-1.5 rounded-pill border px-3 py-0.5 text-[0.8125rem] leading-tight",
         selected
-          ? "border-foreground bg-foreground text-panel before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-signal"
+          ? "border-foreground bg-foreground pl-4 text-panel before:absolute before:top-1/2 before:left-2 before:size-1.5 before:-translate-y-1/2 before:rounded-full before:bg-signal"
           : "border-hairline bg-panel text-foreground",
         onClick && "transition-colors duration-[120ms] hover:bg-shoal",
         className,
@@ -40,7 +40,7 @@ export function Chip({ selected = false, code, onRemove, onClick, className, chi
           type="button"
           onClick={onRemove}
           aria-label={t("chip.remove", { label })}
-          className="-mr-1 grid size-4 place-items-center rounded-sm text-chart-grey outline-none hover:text-foreground focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-signal"
+          className="-mr-1 grid size-4 place-items-center rounded-full text-chart-grey outline-none hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-signal"
         >
           <X className="size-3" aria-hidden="true" />
         </button>
@@ -49,12 +49,12 @@ export function Chip({ selected = false, code, onRemove, onClick, className, chi
   );
 }
 
-/** Read-only label: shoal fill, no stroke (language and tuition badges). */
+/** Read-only label: shoal fill with a hairline, so it reads as a chip on panels (language and tuition badges). */
 export function Badge({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "inline-flex min-h-6 items-center rounded-sm bg-shoal px-2 py-0.5 text-xs leading-tight text-foreground",
+        "inline-flex min-h-7 items-center rounded-pill border border-hairline bg-shoal px-3 py-0.5 text-[0.8125rem] leading-tight text-foreground",
         className,
       )}
       {...props}

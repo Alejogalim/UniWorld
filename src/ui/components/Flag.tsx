@@ -21,7 +21,7 @@ export function Flag({ code, className }: FlagProps) {
   return (
     <span
       className={cn(
-        "inline-grid size-5 shrink-0 place-items-center overflow-hidden rounded-full ring-1 ring-hairline ring-inset",
+        "inline-grid size-5 shrink-0 place-items-center overflow-hidden rounded-full ring-1 ring-foreground/10 ring-inset",
         className,
       )}
       aria-hidden="true"

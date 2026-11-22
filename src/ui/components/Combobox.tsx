@@ -142,7 +142,7 @@ export function Combobox({
               setOpen(false);
             }
           }}
-          className="pr-9"
+          className="pr-10"
         />
         <ChevronDown
           aria-hidden="true"
@@ -151,42 +151,40 @@ export function Combobox({
       </div>
 
       {open && (
-        <div
-          id={listboxId}
-          role="listbox"
-          className="absolute inset-x-0 top-full z-20 mt-1 max-h-64 overflow-auto rounded-md border border-hairline bg-panel py-1 shadow-float"
-        >
-          {filtered.length === 0 ? (
-            <p className="px-3 py-2 text-sm text-chart-grey">{noMatchesLabel}</p>
-          ) : (
-            filtered.map((option, index) => {
-              const isActive = index === activeIndex;
-              const isSelected = option.value === value;
-              return (
-                <div
-                  key={option.value}
-                  id={optionId(index)}
-                  role="option"
-                  aria-selected={isSelected}
-                  // Keep focus in the input; the choice is made on click.
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => choose(option)}
-                  onMouseEnter={() => setActive(index)}
-                  className={cn(
-                    "relative flex min-h-9 cursor-pointer items-center gap-2 px-3 text-sm text-foreground",
-                    isActive && "bg-shoal",
-                    isSelected && "font-semibold before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:bg-signal",
-                  )}
-                >
-                  {option.flag && <Flag code={option.flag} />}
-                  <span className="min-w-0 flex-1 break-words">{option.label}</span>
-                  {option.code && (
-                    <span className="font-mono text-xs font-medium text-chart-grey">{option.code.toUpperCase()}</span>
-                  )}
-                </div>
-              );
-            })
-          )}
+        <div className="rim surface absolute inset-x-0 top-full z-20 mt-1 rounded-popover p-1 shadow-float">
+          <div id={listboxId} role="listbox" className="max-h-56 overflow-auto">
+            {filtered.length === 0 ? (
+              <p className="px-3 py-2 text-sm text-chart-grey">{noMatchesLabel}</p>
+            ) : (
+              filtered.map((option, index) => {
+                const isActive = index === activeIndex;
+                const isSelected = option.value === value;
+                return (
+                  <div
+                    key={option.value}
+                    id={optionId(index)}
+                    role="option"
+                    aria-selected={isSelected}
+                    // Keep focus in the input; the choice is made on click.
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => choose(option)}
+                    onMouseEnter={() => setActive(index)}
+                    className={cn(
+                      "relative flex min-h-9 cursor-pointer items-center gap-2 rounded-control px-3 text-sm text-foreground",
+                      isActive && "bg-shoal",
+                      isSelected && "font-semibold pl-5 before:absolute before:top-1/2 before:left-2 before:size-1.5 before:-translate-y-1/2 before:rounded-full before:bg-signal",
+                    )}
+                  >
+                    {option.flag && <Flag code={option.flag} />}
+                    <span className="min-w-0 flex-1 break-words">{option.label}</span>
+                    {option.code && (
+                      <span className="font-mono text-xs font-medium text-chart-grey">{option.code.toUpperCase()}</span>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       )}
     </div>

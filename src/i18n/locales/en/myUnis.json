@@ -60,5 +60,10 @@
     "save": "That change could not be saved, so it was undone. Try again.",
     "remove": "This university could not be removed. Try again.",
     "load": "Your list could not load. Try again."
+  },
+  "summary": {
+    "total_one": "university",
+    "total_other": "universities",
+    "urgent": "with a deadline in the next 30 days"
   }
 }

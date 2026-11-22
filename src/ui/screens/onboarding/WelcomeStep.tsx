@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Chip } from "@/ui/components/Chip";
 
 const UI_LANGS = ["en", "es", "vi"] as const;
@@ -11,8 +11,13 @@ export function WelcomeStep() {
 
   return (
     <section className="flex flex-col gap-8">
-      <h2 className="max-w-[92%] text-[2.75rem] leading-[1.04] font-semibold tracking-[-0.025em] text-foreground">
-        {t("welcome.title")}
+      {/* Two-tone headline: grey body, with the key phrase in ink (the phrase is set in onboarding.json). */}
+      <h2 className="max-w-[92%] text-[2.75rem] leading-[1.08] font-normal tracking-[-0.025em] text-chart-grey">
+        <Trans
+          i18nKey="welcome.title"
+          ns="onboarding"
+          components={{ strong: <strong className="font-semibold text-foreground" /> }}
+        />
       </h2>
       <p className="max-w-[68ch] text-base leading-[1.6] text-foreground">{t("welcome.subtitle")}</p>
       <div className="flex flex-col gap-2">

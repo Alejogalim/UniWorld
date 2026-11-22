@@ -13,7 +13,9 @@
     "counselor": "Orientador",
     "finder": "Buscador",
     "myUnis": "Mis universidades",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "collapse": "Contraer la barra lateral",
+    "expand": "Expandir la barra lateral"
   },
   "screens": {
     "onboarding": "Tu perfil",

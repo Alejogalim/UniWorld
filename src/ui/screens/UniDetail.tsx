@@ -12,6 +12,7 @@ import { languageName } from '@/ui/data/languages';
 import { Flag } from '@/ui/components/Flag';
 import { FactLine } from '@/ui/components/FactLine';
 import { ErrorNote } from '@/ui/components/ErrorNote';
+import { Panel } from '@/ui/components/Panel';
 import { ProgressLine } from '@/ui/components/ProgressLine';
 import { Button } from '@/ui/components/ui/button';
 import { factValue } from '@/ui/screens/finder/ResultRow';
@@ -197,6 +198,7 @@ export function UniDetailScreen() {
       <div className="flex flex-col gap-6">
         {back}
 
+        <Panel variant="ember">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-2">
             <div className="flex min-w-0 items-center gap-2">
@@ -226,6 +228,7 @@ export function UniDetailScreen() {
             {primaryAction}
           </div>
         </header>
+        </Panel>
 
         {listError ? <ErrorNote message={messageOf(listError)} /> : null}
         {addError ? <ErrorNote title={t('detail.addError')} message={messageOf(addError)} /> : null}
@@ -233,7 +236,7 @@ export function UniDetailScreen() {
         {loadNote}
 
         {detail && (
-          <div className="flex flex-col">
+          <div className="flex flex-col border-t border-hairline">
             <FactLine label={t('detail.sections.overview')} fact={detail.overview} index={mark(detail.overview)} />
             <FactLine
               label={t('detail.sections.language')}

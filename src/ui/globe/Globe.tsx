@@ -21,23 +21,19 @@ interface Palette {
   ocean: string;
   land: string;
   landSide: string;
+  /** Graticule lines: the hairline on paper, faint on black. */
+  graticule: string;
   hairline: string;
   ink: string;
   signal: string;
-  veil: string;
+  atmosphere: string;
+  /** Atmosphere shell thickness, set with the colour so the two change together with the theme. */
+  atmosphereAltitude: number;
 }
 
-/** Turns any CSS color (including oklch) into #rrggbb by letting the canvas normalize it. */
+/** The globe tokens are 6-digit hex in src/index.css (shade and mix depend on it), so the value passes through. */
 function cssToHex(color: string): string {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1;
-  canvas.height = 1;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return '#000000';
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, 1, 1);
-  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-  return '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('');
+  return color.trim();
 }
 
 function shade(hex: string, factor: number): string {
@@ -46,19 +42,37 @@ function shade(hex: string, factor: number): string {
   return '#' + [16, 8, 0].map((s) => channel(s).toString(16).padStart(2, '0')).join('');
 }
 
+/** Linear blend of two #rrggbb colours; t = 0 keeps a, t = 1 gives b. */
+function mix(a: string, b: string, t: number): string {
+  const na = parseInt(a.slice(1), 16);
+  const nb = parseInt(b.slice(1), 16);
+  const channel = (shift: number) => {
+    const ca = (na >> shift) & 0xff;
+    const cb = (nb >> shift) & 0xff;
+    return Math.round(ca + (cb - ca) * t);
+  };
+  return '#' + [16, 8, 0].map((s) => channel(s).toString(16).padStart(2, '0')).join('');
+}
+
 /** Reads the app tokens so the globe always matches the active theme. */
-function readPalette(): Palette {
+function readPalette(theme: 'light' | 'dark'): Palette {
   const styles = getComputedStyle(document.documentElement);
   const token = (name: string) => cssToHex(styles.getPropertyValue(name).trim());
   const land = token('--land');
+  const ocean = token('--globe-ocean');
+  const ember = token('--ember-1');
+  const hairline = token('--hairline');
   return {
-    ocean: token('--background'),
+    ocean,
     land,
     landSide: shade(land, 0.82),
-    hairline: token('--hairline'),
+    graticule: theme === 'dark' ? mix(ocean, hairline, 0.6) : hairline,
+    hairline,
     ink: token('--foreground'),
     signal: token('--signal'),
-    veil: shade(land, 0.9),
+    // Dark: a faint ember tint (about 25%) on black. Light: a neutral grey haze on paper.
+    atmosphere: theme === 'dark' ? mix(ocean, ember, 0.85) : mix(ocean, token('--chart-grey'), 0.5),
+    atmosphereAltitude: theme === 'dark' ? 0.2 : 0.12,
   };
 }
 
@@ -95,6 +109,13 @@ export default function GlobeView({
     uiLang: i18n.language as UiLang,
     onToggleCountry,
     reduceMotion,
+    /** Key of the styles last sent to the globe; the setters run only when it changes. */
+    appliedKey: '',
+    /** Pending requestAnimationFrame for a style update, 0 when none. */
+    frame: 0,
+    /** Set once the scene exists: re-applies styles now, and schedules them for the next frame. */
+    applyNow: (() => {}) as () => void,
+    schedule: (() => {}) as () => void,
   });
   state.current.selected = selected;
   state.current.highlightContinent = highlightContinent;
@@ -102,58 +123,70 @@ export default function GlobeView({
   state.current.reduceMotion = reduceMotion;
   state.current.uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
 
-  const isOn = (iso: string) => {
-    const s = state.current;
-    return (
-      s.selected.has(iso) ||
-      (s.highlightContinent !== null && continentOf(iso) === s.highlightContinent)
-    );
-  };
-
-  const applyStyles = () => {
-    const globe = globeRef.current;
-    const s = state.current;
-    if (!globe || !s.palette) return;
-    const p = s.palette;
-    globe
-      .polygonAltitude((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        return iso === s.hovered ? 0.03 : 0.006;
-      })
-      .polygonCapColor((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        return isOn(iso) ? p.veil : p.land;
-      })
-      .polygonSideColor((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        return isOn(iso) ? shade(p.veil, 0.82) : p.landSide;
-      })
-      .polygonStrokeColor((d: object) => {
-        const iso = (d as CountryFeature).properties.iso;
-        if (iso === s.hovered) return p.ink;
-        return isOn(iso) ? p.signal : p.hairline;
-      });
-  };
-
   // Build the scene once.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    const s = state.current;
+
+    const isOn = (iso: string) =>
+      s.selected.has(iso) || (s.highlightContinent !== null && continentOf(iso) === s.highlightContinent);
+    // Accessors are created once here and read everything from `s`, so they are never re-created on render.
+    const isoOf = (d: object) => (d as CountryFeature).properties.iso;
+    const altitude = (d: object) => (isoOf(d) === s.hovered ? 0.03 : 0.006);
+    const capColor = (d: object) => (isOn(isoOf(d)) ? s.palette?.signal : s.palette?.land) ?? 'transparent';
+    const sideColor = (d: object) =>
+      (isOn(isoOf(d)) ? (s.palette ? shade(s.palette.signal, 0.82) : undefined) : s.palette?.landSide) ??
+      'transparent';
+    const strokeColor = (d: object) => {
+      const iso = isoOf(d);
+      if (iso === s.hovered) return s.palette?.ink ?? 'transparent';
+      return (isOn(iso) ? s.palette?.signal : s.palette?.hairline) ?? 'transparent';
+    };
+
+    // Re-sends the accessors only when the hovered id, the selection or the continent highlight changed.
+    const applyNow = () => {
+      s.frame = 0;
+      const globe = globeRef.current;
+      if (!globe || !s.palette) return;
+      const key = [s.hovered ?? '', [...s.selected].sort().join(','), s.highlightContinent ?? ''].join('|');
+      if (key === s.appliedKey) return;
+      s.appliedKey = key;
+      globe
+        .polygonAltitude(altitude)
+        .polygonCapColor(capColor)
+        .polygonSideColor(sideColor)
+        .polygonStrokeColor(strokeColor);
+    };
+    // Hover and selection changes land on the next frame, so a burst of pointer moves costs one update.
+    const schedule = () => {
+      if (s.frame) return;
+      s.frame = requestAnimationFrame(applyNow);
+    };
+    s.applyNow = applyNow;
+    s.schedule = schedule;
+
     const globe = new Globe(el)
       .backgroundColor('rgba(0,0,0,0)')
       .showGraticules(true)
       .atmosphereAltitude(0.12)
+      .polygonsTransitionDuration(0)
+      .polygonCapCurvatureResolution(10)
+      .polygonAltitude(altitude)
+      .polygonCapColor(capColor)
+      .polygonSideColor(sideColor)
+      .polygonStrokeColor(strokeColor)
       .polygonLabel((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
         const style =
-          'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:2px;padding:4px 8px;font:500 12px/1.3 var(--font-sans);box-shadow:var(--shadow-float);white-space:nowrap';
+          'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:20px;padding:6px 12px;font:500 12px/1.3 "Inter Variable", system-ui, sans-serif;box-shadow:var(--shadow-float);white-space:nowrap';
         return `<div style="${style}">${escapeHtml(countryName(iso, state.current.uiLang))}</div>`;
       })
       .onPolygonHover((polygon: object | null) => {
         const iso = polygon ? (polygon as CountryFeature).properties.iso : null;
         state.current.hovered = iso;
         syncRotation();
-        applyStyles();
+        schedule();
         el.style.cursor = iso ? 'pointer' : '';
       })
       .onPolygonClick((polygon: object) => {
@@ -161,6 +194,16 @@ export default function GlobeView({
       });
 
     globe.controls().autoRotateSpeed = 0.35;
+    // The software-composited WebView gains nothing from a sharper globe; 1 keeps the WebGL fill cost down.
+    globe.renderer().setPixelRatio(1);
+
+    // No rendering while the window is hidden; the scene resumes on return.
+    const onVisibility = () => {
+      if (document.hidden) globe.pauseAnimation();
+      else globe.resumeAnimation();
+    };
+    if (document.hidden) globe.pauseAnimation();
+    document.addEventListener('visibilitychange', onVisibility);
 
     // Rotation pauses while the pointer is over the globe or a country is hovered.
     const syncRotation = () => {
@@ -182,12 +225,17 @@ export default function GlobeView({
     const resize = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
       globe.width(Math.floor(width)).height(Math.floor(height));
+      globe.renderer().setPixelRatio(1);
     });
     resize.observe(el);
 
     globeRef.current = globe;
     return () => {
       resize.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+      cancelAnimationFrame(s.frame);
+      s.frame = 0;
+      s.appliedKey = '';
       el.removeEventListener('pointerenter', onEnter);
       el.removeEventListener('pointerleave', onLeave);
       globe.controls().autoRotate = false;
@@ -219,7 +267,7 @@ export default function GlobeView({
   useEffect(() => {
     const globe = globeRef.current;
     if (!globe || !countries) return;
-    state.current.palette = readPalette();
+    state.current.palette = readPalette(theme);
     const p = state.current.palette;
     // A matte surface: no specular highlight on the sphere.
     const material = globe.globeMaterial() as unknown as {
@@ -230,15 +278,24 @@ export default function GlobeView({
     material.color.set(p.ocean);
     material.specular.setScalar(0);
     material.shininess = 0;
+    globe.atmosphereColor(p.atmosphere);
+    globe.atmosphereAltitude(p.atmosphereAltitude);
+    // Graticules are plain line segments in the scene; colour them with the hairline token.
+    const graticule = globe
+      .scene()
+      .children.find((child: { type?: string }) => child.type === 'LineSegments') as
+      | { material: { color: { set: (hex: string) => void } } }
+      | undefined;
+    graticule?.material.color.set(p.graticule);
     globe.polygonsData(countries);
-    applyStyles();
+    state.current.appliedKey = '';
+    state.current.applyNow();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countries, theme]);
 
   // Re-apply styles whenever selection or continent highlight changes.
   useEffect(() => {
-    applyStyles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    state.current.schedule();
   }, [selected, highlightContinent]);
 
   // Camera moves.

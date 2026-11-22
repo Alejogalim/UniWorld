@@ -67,7 +67,7 @@ export function LanguagesStep({ errors }: { errors: Errors }) {
       </Field>
 
       {promptFor && (
-        <div className="flex flex-col gap-3 rounded-md bg-shoal p-4">
+        <div className="flex flex-col gap-3 rounded-control bg-shoal p-4">
           <p className="text-sm text-foreground">
             {t("languages.switchPrompt", { lang: nativeName(promptFor) })}
           </p>

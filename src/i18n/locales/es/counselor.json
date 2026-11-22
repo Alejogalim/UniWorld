@@ -1,20 +1,30 @@
 {
   "intake": {
-    "q1": "{{name}}, ¿qué harías aunque nadie te lo pidiera?",
-    "q2": "¿Para qué suele acudir la gente a ti?",
-    "q3": "¿Qué asignaturas disfrutas más, y por qué?",
-    "q4": "Cuando imaginas tu vida a los 30, ¿qué haces cada día?",
-    "q5": "¿Qué es lo más importante para ti en el trabajo: impacto, estabilidad, creatividad, dinero o libertad?",
-    "q6": "¿Cuáles son tus límites prácticos, como el presupuesto, la distancia de casa y los idiomas en los que podrías estudiar?",
-    "progress": "Pregunta {{n}} de {{total}}"
+    "q1": "{{name}}, ¿en qué cosas pierdes la noción del tiempo?",
+    "q2": "¿En qué te suelen pedir ayuda tus amigos o compañeros de clase?",
+    "q3": "¿Qué asignatura del colegio te gusta de verdad, y qué te gusta de ella?",
+    "q4": "Imagina un martes cualquiera cuando tengas 30 años. ¿Qué estás haciendo?",
+    "q5": "¿Qué es lo más importante para ti en un trabajo: ayudar a la gente, la estabilidad, la creatividad, el dinero o la libertad?",
+    "q6": "¿Algo limita tus opciones, como el presupuesto, quedarte cerca de casa o los idiomas en los que puedes estudiar?",
+    "progress": "Pregunta {{n}} de {{total}}",
+    "hint1": "Un pasatiempo, un proyecto, lo que sea. No hay respuestas incorrectas.",
+    "hint2": "Deberes, tecnología, consejos, organizar, animar a alguien…",
+    "hint3": "Di la asignatura y la parte que te gusta, aunque sea solo una.",
+    "hint4": "Dónde estás, con quién y en qué estás trabajando.",
+    "hint5": "Puedes elegir más de una, o ponerlas en orden.",
+    "hint6": "Las respuestas aproximadas valen. «Sin límites» también es una respuesta válida."
   },
   "chat": {
     "label": "Orientador",
     "log": "Conversación con el orientador",
-    "placeholderAnswer": "Tu respuesta",
+    "placeholderAnswer": "Escribe tu respuesta…",
     "placeholderReply": "Responde al orientador",
     "send": "Enviar",
-    "sending": "Enviando…"
+    "sending": "Enviando…",
+    "startTitle": "¿Por dónde empezamos?",
+    "notSure": "Todavía no lo sé.",
+    "notSureButton": "Todavía no lo sé",
+    "enterHint": "Intro para enviar · Mayús+Intro para una nueva línea"
   },
   "priorities": {
     "title": "Tus prioridades",

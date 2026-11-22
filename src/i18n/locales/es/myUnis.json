@@ -60,5 +60,10 @@
     "save": "No se pudo guardar ese cambio, así que se deshizo. Inténtalo de nuevo.",
     "remove": "No se pudo quitar esta universidad. Inténtalo de nuevo.",
     "load": "No se pudo cargar tu lista. Inténtalo de nuevo."
+  },
+  "summary": {
+    "total_one": "universidad",
+    "total_other": "universidades",
+    "urgent": "con fecha límite en los próximos 30 días"
   }
 }
