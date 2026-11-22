@@ -76,5 +76,31 @@
   "empty": {
     "title": "Không có trường đại học đã xác minh nào khớp với tìm kiếm này",
     "description": "Hãy thử phạm vi rộng hơn hoặc nghề nghiệp khác."
+  },
+  "detail": {
+    "loading": "Đang đọc các trang chính thức của trường…",
+    "refresh": "Làm mới",
+    "back": "Quay lại",
+    "addToList": "Thêm vào danh sách",
+    "inList": "Đã có trong danh sách",
+    "openList": "Mở danh sách của tôi",
+    "lastChecked": "Kiểm tra lần cuối",
+    "noProgram": "Hãy mở trường này từ Tìm trường hoặc Trường của tôi. Liên kết thiếu tên chương trình.",
+    "addError": "Không thể thêm trường. Hãy thử lại.",
+    "errorTitle": "Không thể tải trang này",
+    "tryAgain": "Thử lại",
+    "missingKey": "Đọc các trang của trường cần khóa OpenRouter. Hãy thêm khóa trong Cài đặt.",
+    "openSettings": "Mở cài đặt",
+    "sections": {
+      "overview": "Tổng quan",
+      "language": "Ngôn ngữ giảng dạy",
+      "tuition": "Học phí",
+      "scholarships": "Học bổng",
+      "deadlines": "Hạn nộp hồ sơ",
+      "nextDeadline": "Hạn nộp gần nhất",
+      "exams": "Kỳ thi yêu cầu",
+      "requirements": "Yêu cầu đầu vào",
+      "apply": "Cách nộp hồ sơ"
+    }
   }
 }

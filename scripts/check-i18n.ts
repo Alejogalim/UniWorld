@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = join(import.meta.dirname, '..', 'src', 'i18n', 'locales');
-const namespaces = ['common', 'onboarding', 'counselor', 'finder'];
+const namespaces = ['common', 'onboarding', 'counselor', 'finder', 'myUnis'];
 const langs = ['es', 'vi'];
 
 function flatKeys(obj: unknown, prefix = ''): string[] {

@@ -76,5 +76,31 @@
   "empty": {
     "title": "Ninguna universidad verificada coincide con esta búsqueda",
     "description": "Prueba con un ámbito más amplio o con otras carreras."
+  },
+  "detail": {
+    "loading": "Leyendo las páginas oficiales de la universidad…",
+    "refresh": "Actualizar",
+    "back": "Volver",
+    "addToList": "Añadir a mi lista",
+    "inList": "En tu lista",
+    "openList": "Abrir mi lista",
+    "lastChecked": "Última revisión",
+    "noProgram": "Abre esta universidad desde el buscador o desde Mis universidades. Al enlace le falta el programa.",
+    "addError": "No se pudo añadir la universidad. Inténtalo de nuevo.",
+    "errorTitle": "No se pudo cargar esta página",
+    "tryAgain": "Intentar de nuevo",
+    "missingKey": "Leer las páginas de las universidades necesita una clave de OpenRouter. Añádela en Ajustes.",
+    "openSettings": "Abrir ajustes",
+    "sections": {
+      "overview": "Resumen",
+      "language": "Idioma de enseñanza",
+      "tuition": "Matrícula",
+      "scholarships": "Becas",
+      "deadlines": "Fechas límite de solicitud",
+      "nextDeadline": "Próxima fecha límite",
+      "exams": "Exámenes requeridos",
+      "requirements": "Requisitos de admisión",
+      "apply": "Cómo solicitar"
+    }
   }
 }

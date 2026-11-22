@@ -38,6 +38,11 @@ pub fn run() {
         description: "init",
         sql: include_str!("../../src/db/migrations/001_init.sql"),
         kind: MigrationKind::Up,
+    }, Migration {
+        version: 2,
+        description: "tracked_names",
+        sql: include_str!("../../src/db/migrations/002_tracked_names.sql"),
+        kind: MigrationKind::Up,
     }];
 
     tauri::Builder::default()

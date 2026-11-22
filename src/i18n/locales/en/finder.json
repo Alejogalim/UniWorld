@@ -76,5 +76,31 @@
   "empty": {
     "title": "No verified universities matched this search",
     "description": "Try a wider scope, or different careers."
+  },
+  "detail": {
+    "loading": "Reading the university's own pages…",
+    "refresh": "Refresh",
+    "back": "Back",
+    "addToList": "Add to my list",
+    "inList": "In your list",
+    "openList": "Open my list",
+    "lastChecked": "Last checked",
+    "noProgram": "Open this university from the Finder or My universities. The program is missing from the link.",
+    "addError": "Could not add this university. Try again.",
+    "errorTitle": "This page could not load",
+    "tryAgain": "Try again",
+    "missingKey": "Reading university pages needs an OpenRouter key. Add it in Settings.",
+    "openSettings": "Open settings",
+    "sections": {
+      "overview": "Overview",
+      "language": "Language of instruction",
+      "tuition": "Tuition",
+      "scholarships": "Scholarships",
+      "deadlines": "Application deadlines",
+      "nextDeadline": "Next deadline",
+      "exams": "Required exams",
+      "requirements": "Entry requirements",
+      "apply": "How to apply"
+    }
   }
 }

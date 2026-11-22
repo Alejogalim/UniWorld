@@ -32,7 +32,8 @@ export function ResultRow({ uni, rank, index }: ResultRowProps) {
   const reduceMotion = useReducedMotion();
   const uiLang = (i18n.resolvedLanguage ?? 'en') as UiLang;
 
-  const open = () => navigate(`/finder/uni/${encodeURIComponent(uni.rorId)}`, { state: { uni } });
+  const open = () =>
+    navigate(`/finder/uni/${encodeURIComponent(uni.rorId)}?program=${encodeURIComponent(uni.program)}`, { state: { uni } });
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
