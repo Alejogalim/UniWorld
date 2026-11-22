@@ -40,31 +40,31 @@ colors:
   primary-text-dark: "#000000"
 typography:
   display:
-    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontFamily: "Google Sans, Inter Variable, system-ui, sans-serif"
     fontSize: "3.5rem"
     fontWeight: 600
     lineHeight: 1
     letterSpacing: "-0.035em"
   headline:
-    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontFamily: "Google Sans, Inter Variable, system-ui, sans-serif"
     fontSize: "1.75rem"
     fontWeight: 600
     lineHeight: 1.15
     letterSpacing: "-0.02em"
   title:
-    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontFamily: "Google Sans, Inter Variable, system-ui, sans-serif"
     fontSize: "1.0625rem"
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "-0.005em"
   body:
-    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontFamily: "Google Sans, Inter Variable, system-ui, sans-serif"
     fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "0em"
   label:
-    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontFamily: "Google Sans, Inter Variable, system-ui, sans-serif"
     fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.2
@@ -100,7 +100,7 @@ Three rejections still stand: a warm cream and serif editorial template, a neon 
 - Ground: black with white stars in dark mode; soft off-white paper (`#f7f6f4`) with near-black stars (a few warm-brown) in light mode. Both carry the same static ember glow from the bottom centre.
 - One warm colour, the ember. It marks what the student must act on now, and it glows in a few fixed places.
 - Surfaces are soft: 28px cards with a 1px rim. Dark cards are a vertical gradient; light cards are white sheets with a 5% to 8% rim and a soft warm shadow.
-- One face, Inter Variable, in weights 400 to 600. Numerals are always tabular.
+- One face, Google Sans, in weights 400 to 700. Numerals are always tabular.
 - Headlines are two-tone: grey body text with the key phrase in ink, used on the welcome headline and empty-state titles only.
 - Results are still a ranked column of rows, never a grid of equal cards.
 - Every fact carries its source or says it is missing. The missing state is designed, not hidden.
@@ -203,9 +203,9 @@ The table above is the strict per-pixel view from plan 18, when every baked star
 
 ## Typography
 
-**Face:** Inter Variable, the only family. `--font-sans`, `--font-heading` and `--font-mono` all resolve to the Inter stack. Inter Variable carries Vietnamese diacritics, so no fallback face is needed.
+**Face:** Google Sans, the only family. `--font-sans`, `--font-heading` and `--font-mono` all resolve to the Google Sans stack. The latin, latin-ext and vietnamese subsets are bundled in `public/fonts/google-sans`, so Vietnamese diacritics render without a fallback face.
 
-**Numerals:** `.font-mono` is the measured-value style. It is Inter with `font-variant-numeric: tabular-nums` and no tracking. Counts, days, scores and deadlines use it. Mono is no longer a different face.
+**Numerals:** `.font-mono` is the measured-value style. It is Google Sans with `font-variant-numeric: tabular-nums` and no tracking. Counts, days, scores and deadlines use it. Mono is no longer a different face.
 
 ### Scale
 - **Display** (600, 56px / 1.0, tracking -0.035em): screen titles, and the large numerals on the onboarding step, the rank and the summary strip (`.type-display`).
@@ -319,7 +319,7 @@ Spanish and Vietnamese run up to 30% longer than English, so no control has a fi
 - **Slider:** 4px track, thumb in ink, with an ember ring in dark mode.
 
 ### Navigation
-- Rail items: 40px rows (36px wide when collapsed, on the logo's left edge), 14px corners, Inter 14px. Active: `rim` on shoal, with a 3px ember dot on the left edge. Hover: shoal.
+- Rail items: 40px rows (36px wide when collapsed, on the logo's left edge), 14px corners, Google Sans 14px. Active: `rim` on shoal, with a 3px ember dot on the left edge. Hover: shoal.
 - Footer: two round 40px buttons with a rim: language and theme.
 
 ### Result rows and lists

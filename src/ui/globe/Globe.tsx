@@ -179,7 +179,7 @@ export default function GlobeView({
       .polygonLabel((d: object) => {
         const iso = (d as CountryFeature).properties.iso;
         const style =
-          'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:20px;padding:6px 12px;font:500 12px/1.3 "Inter Variable", system-ui, sans-serif;box-shadow:var(--shadow-float);white-space:nowrap';
+          'background:var(--panel);color:var(--foreground);border:1px solid var(--hairline);border-radius:20px;padding:6px 12px;font:500 12px/1.3 "Google Sans", system-ui, sans-serif;box-shadow:var(--shadow-float);white-space:nowrap';
         return `<div style="${style}">${escapeHtml(countryName(iso, state.current.uiLang))}</div>`;
       })
       .onPolygonHover((polygon: object | null) => {
