@@ -140,6 +140,23 @@ async function countStudentMessages(sessionId: number): Promise<number> {
   return Number(rows[0]?.n ?? 0);
 }
 
+/**
+ * The core stores the student's message before the AI call, so a failed call leaves it in the DB.
+ * Resending it unchanged would store it twice. If the newest stored row is that same user message,
+ * delete it so the retry stores it once. If the failure came before the write, the newest row is
+ * an assistant reply (or another text) and nothing is deleted.
+ */
+async function dropUnsentDuplicate(sessionId: number, encoded: string): Promise<void> {
+  const db = await getDb();
+  const rows = await db.select<{ id: number; role: string; content: string }[]>(
+    'SELECT id, role, content FROM counselor_message WHERE session_id = $1 ORDER BY id DESC LIMIT 1',
+    [sessionId],
+  );
+  const last = rows[0];
+  if (!last || last.role !== 'user' || last.content !== encoded) return;
+  await db.execute('DELETE FROM counselor_message WHERE id = $1', [last.id]);
+}
+
 async function ensureSession(): Promise<number> {
   const existing = useCounselor.getState().sessionId;
   if (existing !== null) return existing;
@@ -238,10 +255,18 @@ export const useCounselor = create<CounselorState>((set, get) => ({
   },
 
   async retry() {
-    const { error, pending, status } = get();
+    const { error, pending, status, sessionId } = get();
     if (status !== 'idle' || !error) return;
     if (error.scope === 'careers') return get().generateCareers();
-    if (error.scope === 'chat' && pending) return runSend(pending);
+    if (error.scope === 'chat' && pending) {
+      try {
+        if (sessionId !== null) await dropUnsentDuplicate(sessionId, pending.encoded);
+      } catch (err) {
+        set({ error: errorFrom(err, 'chat') });
+        return;
+      }
+      return runSend(pending);
+    }
   },
 
   async generateCareers() {

@@ -8,12 +8,14 @@ import type { Fact, UiLang, UniDetail as UniDetailData, UniResult } from '@/core
 import { useCore } from '@/app/useCore';
 import { useTracked, type TrackedUni } from '@/store/tracked';
 import { countryName } from '@/ui/data/countries';
+import { languageName } from '@/ui/data/languages';
 import { Flag } from '@/ui/components/Flag';
 import { FactLine } from '@/ui/components/FactLine';
 import { ErrorNote } from '@/ui/components/ErrorNote';
 import { ProgressLine } from '@/ui/components/ProgressLine';
 import { Button } from '@/ui/components/ui/button';
 import { factValue } from '@/ui/screens/finder/ResultRow';
+import { isWebUrl } from '@/lib/url';
 import { parseDeadline } from './myUnis/deadline';
 
 interface DetailLocationState {
@@ -114,6 +116,7 @@ export function UniDetailScreen() {
         city,
         countryCode,
         programName: detail.program,
+        detailProgram: detail.program,
         deadline: parseDeadline(factValue(detail.nextDeadline)),
         requiredExams: factValue(detail.exams) ?? [],
         language: factValue(detail.languages)?.join(', ') ?? null,
@@ -232,7 +235,12 @@ export function UniDetailScreen() {
         {detail && (
           <div className="flex flex-col">
             <FactLine label={t('detail.sections.overview')} fact={detail.overview} index={mark(detail.overview)} />
-            <FactLine label={t('detail.sections.language')} fact={detail.languages} index={mark(detail.languages)} />
+            <FactLine
+              label={t('detail.sections.language')}
+              fact={detail.languages}
+              index={mark(detail.languages)}
+              format={(codes) => codes.map((c) => languageName(c, uiLang)).join(', ')}
+            />
             <FactLine label={t('detail.sections.tuition')} fact={detail.tuition} index={mark(detail.tuition)} />
             <FactLine label={t('detail.sections.scholarships')} fact={detail.scholarships} index={mark(detail.scholarships)} />
             <FactLine label={t('detail.sections.deadlines')} fact={detail.deadlines} index={mark(detail.deadlines)} />
@@ -243,18 +251,22 @@ export function UniDetailScreen() {
               label={t('detail.sections.apply')}
               fact={detail.applyUrl}
               index={mark(detail.applyUrl)}
-              format={(url) => (
-                <a
-                  href={url}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    openUrl(url).catch((err: unknown) => console.error('Could not open the application link', err));
-                  }}
-                  className="break-all underline decoration-hairline underline-offset-2 hover:text-signal"
-                >
-                  {url}
-                </a>
-              )}
+              format={(url) =>
+                isWebUrl(url) ? (
+                  <a
+                    href={url}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openUrl(url).catch((err: unknown) => console.error('Could not open the application link', err));
+                    }}
+                    className="break-all underline decoration-hairline underline-offset-2 hover:text-signal"
+                  >
+                    {url}
+                  </a>
+                ) : (
+                  url
+                )
+              }
             />
           </div>
         )}

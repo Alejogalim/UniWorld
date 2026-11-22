@@ -58,36 +58,45 @@ export const useProfile = create<ProfileState>((set) => ({
     const db = await getDb();
     const now = new Date().toISOString();
     const grades = p.grades ? JSON.stringify(p.grades) : null;
-    await db.execute(
-      `INSERT INTO profile (id, name, primary_lang, ui_lang, citizenship_country, residence_country, program, grades_json, created_at, updated_at)
-       VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $8)
-       ON CONFLICT(id) DO UPDATE SET
-         name = excluded.name,
-         primary_lang = excluded.primary_lang,
-         ui_lang = excluded.ui_lang,
-         citizenship_country = excluded.citizenship_country,
-         residence_country = excluded.residence_country,
-         program = excluded.program,
-         grades_json = excluded.grades_json,
-         updated_at = excluded.updated_at`,
-      [
-        p.name,
-        p.primaryLang,
-        p.uiLang,
-        p.citizenship ?? null,
-        p.residence ?? null,
-        p.program,
-        grades,
-        now,
-      ],
-    );
-    await db.execute('DELETE FROM profile_language');
-    for (const l of p.languages) {
-      const lang: Lang = l.lang;
+    // lang_code is the primary key: a repeated code would fail the insert and lose the list, so keep one row per code.
+    const languages = [...new Map(p.languages.map((l) => [l.lang as Lang, l.level])).entries()];
+    try {
       await db.execute(
-        'INSERT INTO profile_language (lang_code, level) VALUES ($1, $2)',
-        [lang, l.level],
+        `INSERT INTO profile (id, name, primary_lang, ui_lang, citizenship_country, residence_country, program, grades_json, created_at, updated_at)
+         VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $8)
+         ON CONFLICT(id) DO UPDATE SET
+           name = excluded.name,
+           primary_lang = excluded.primary_lang,
+           ui_lang = excluded.ui_lang,
+           citizenship_country = excluded.citizenship_country,
+           residence_country = excluded.residence_country,
+           program = excluded.program,
+           grades_json = excluded.grades_json,
+           updated_at = excluded.updated_at`,
+        [
+          p.name,
+          p.primaryLang,
+          p.uiLang,
+          p.citizenship ?? null,
+          p.residence ?? null,
+          p.program,
+          grades,
+          now,
+        ],
       );
+      await db.execute('DELETE FROM profile_language');
+      if (languages.length > 0) {
+        // One multi-row insert: a single statement, so the list is written all at once.
+        const placeholders = languages.map((_, i) => `($${2 * i + 1}, $${2 * i + 2})`).join(', ');
+        await db.execute(
+          `INSERT INTO profile_language (lang_code, level) VALUES ${placeholders}`,
+          languages.flat(),
+        );
+      }
+    } catch (err) {
+      // Some of the write may have landed: reload so the store shows what the database really holds.
+      await useProfile.getState().load().catch(() => undefined);
+      throw err;
     }
     set({ profile: p, loaded: true });
   },

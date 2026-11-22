@@ -4,6 +4,7 @@ import type { UiLang } from '@/core/contracts';
 import { useProfile } from '@/store/profile';
 import { countryName } from '@/ui/data/countries';
 import { languageName } from '@/ui/data/languages';
+import { useOnboardingDraft } from '@/ui/screens/onboarding/useOnboardingDraft';
 import { Button } from '@/ui/components/ui/button';
 import { SettingsRow, SettingsSection } from './SettingsSection';
 
@@ -53,7 +54,14 @@ export function ProfileSection() {
           )}
         </dl>
         <div>
-          <Button variant="secondary" onClick={() => navigate('/onboarding', { state: { from: 'settings' } })}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              // A draft left from an earlier visit (typed keys included) must not reappear: start from the saved profile.
+              useOnboardingDraft.getState().reset();
+              navigate('/onboarding', { state: { from: 'settings' } });
+            }}
+          >
             {t('profile.edit')}
           </Button>
         </div>

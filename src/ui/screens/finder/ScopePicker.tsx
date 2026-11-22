@@ -3,6 +3,8 @@ import { CONTINENTS, CONTINENT_VIEWS, type GeoView } from '@/ui/globe/geo';
 import { Chip } from '@/ui/components/Chip';
 import { Flag } from '@/ui/components/Flag';
 import { countryName } from '@/ui/data/countries';
+import { Combobox } from '@/ui/components/Combobox';
+import { countryOptions } from '@/ui/screens/onboarding/options';
 import { useFinder } from './useFinder';
 import type { Continent } from '@/core/contracts';
 
@@ -21,6 +23,9 @@ export function ScopePicker({ onFlyTo, compact = false }: ScopePickerProps) {
   const toggleCountry = useFinder((s) => s.toggleCountry);
   const uiLang = i18n.resolvedLanguage ?? 'en';
   const active: Continent | null = scope.kind === 'continent' ? scope.continent : null;
+  // Keyboard path for countries (the globe is pointer-only). Chosen countries are left out, so the picker only adds.
+  const chosen = scope.kind === 'countries' ? scope.codes : [];
+  const addableCountries = countryOptions(uiLang).filter((o) => !chosen.includes(o.value));
   const key = (c: Continent) => `continent.${c}`;
 
   const pickContinent = (continent: Continent) => {
@@ -40,6 +45,17 @@ export function ScopePicker({ onFlyTo, compact = false }: ScopePickerProps) {
             {t(key(continent))}
           </Chip>
         ))}
+      </div>
+      <div className="max-w-xs">
+        <Combobox
+          id="finder-scope-country"
+          aria-label={t('scope.addCountry')}
+          options={addableCountries}
+          value={null}
+          onChange={(iso) => toggleCountry(iso)}
+          placeholder={t('scope.addCountry')}
+          noMatchesLabel={t('scope.noMatches')}
+        />
       </div>
       {!compact && <p className="text-sm text-chart-grey">{t('scope.hint')}</p>}
       {scope.kind === 'countries' && (

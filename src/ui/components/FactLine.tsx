@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { Fact } from "@/core/contracts";
 import { cn } from "@/lib/utils";
+import { isWebUrl } from "@/lib/url";
 
 interface FactLineProps<T extends string | string[]> {
   label: string;
@@ -14,7 +15,7 @@ interface FactLineProps<T extends string | string[]> {
 
 /** A fact without a value or without its source link is shown as missing, never as a bare value. */
 function hasSourcedValue<T extends string | string[]>(fact: Fact<T>): fact is Fact<T> & { value: T; sourceUrl: string } {
-  if (fact.value === null || fact.sourceUrl === null) return false;
+  if (fact.value === null || fact.sourceUrl === null || !isWebUrl(fact.sourceUrl)) return false;
   if (Array.isArray(fact.value)) return fact.value.length > 0;
   return fact.value.trim().length > 0;
 }
@@ -53,7 +54,7 @@ interface SourceMarkerProps {
   quote: string | null;
 }
 
-function SourceMarker({ index, sourceUrl, sourceKind, quote }: SourceMarkerProps) {
+export function SourceMarker({ index, sourceUrl, sourceKind, quote }: SourceMarkerProps) {
   const { t } = useTranslation("common");
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -85,6 +86,7 @@ function SourceMarker({ index, sourceUrl, sourceKind, quote }: SourceMarkerProps
   }, [open]);
 
   const official = sourceKind === "official";
+  const web = isWebUrl(sourceUrl);
 
   return (
     <span
@@ -128,6 +130,7 @@ function SourceMarker({ index, sourceUrl, sourceKind, quote }: SourceMarkerProps
             href={sourceUrl}
             onClick={(e) => {
               e.preventDefault();
+              if (!web) return;
               openUrl(sourceUrl).catch((err: unknown) => console.error("Could not open source link", err));
             }}
             className="break-all text-xs text-chart-grey underline decoration-hairline underline-offset-2 hover:text-foreground"

@@ -9,6 +9,8 @@ export interface TrackedUni {
   city: string | null;
   countryCode: string;
   programName: string;
+  /** The program the detail page was opened with when it was added; null for rows saved before migration 003. */
+  detailProgram: string | null;
   status: TrackedStatus;
   /** YYYY-MM-DD */
   deadline: string | null;
@@ -25,6 +27,7 @@ export interface TrackedInput {
   city: string | null;
   countryCode: string;
   programName: string;
+  detailProgram?: string | null;
   status?: TrackedStatus;
   deadline: string | null;
   requiredExams: string[];
@@ -44,6 +47,7 @@ interface TrackedRow {
   city: string | null;
   country_code: string | null;
   program_name: string;
+  detail_program: string | null;
   status: TrackedStatus;
   deadline: string | null;
   required_exams_json: string | null;
@@ -54,7 +58,7 @@ interface TrackedRow {
 }
 
 const COLUMNS =
-  'id, ror_id, name, city, country_code, program_name, status, deadline, required_exams_json, language, notes, added_at, updated_at';
+  'id, ror_id, name, city, country_code, program_name, detail_program, status, deadline, required_exams_json, language, notes, added_at, updated_at';
 
 function fromRow(row: TrackedRow): TrackedUni {
   let requiredExams: string[] = [];
@@ -73,6 +77,7 @@ function fromRow(row: TrackedRow): TrackedUni {
     city: row.city,
     countryCode: row.country_code ?? '',
     programName: row.program_name,
+    detailProgram: row.detail_program,
     status: row.status,
     deadline: row.deadline,
     requiredExams,
@@ -114,8 +119,8 @@ export const useTracked = create<TrackedState>((set, get) => ({
     const db = await getDb();
     const now = new Date().toISOString();
     await db.execute(
-      `INSERT INTO tracked_uni (ror_id, name, city, country_code, program_name, status, deadline, required_exams_json, language, notes, added_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11)`,
+      `INSERT INTO tracked_uni (ror_id, name, city, country_code, program_name, status, deadline, required_exams_json, language, notes, added_at, updated_at, detail_program)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12)`,
       [
         input.rorId,
         input.name,
@@ -128,6 +133,7 @@ export const useTracked = create<TrackedState>((set, get) => ({
         input.language,
         input.notes ?? '',
         now,
+        input.detailProgram ?? null,
       ],
     );
     const rows = await db.select<TrackedRow[]>(
@@ -182,6 +188,11 @@ export const useTracked = create<TrackedState>((set, get) => ({
   },
 
   find(rorId, programName) {
-    return get().items.find((i) => i.rorId === rorId && sameProgram(i.programName, programName));
+    // Matches the edited program name or the one the detail page was added with.
+    return get().items.find(
+      (i) =>
+        i.rorId === rorId &&
+        (sameProgram(i.programName, programName) || (i.detailProgram !== null && sameProgram(i.detailProgram, programName))),
+    );
   },
 }));

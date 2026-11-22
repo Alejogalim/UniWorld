@@ -1,6 +1,6 @@
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { createTauriSqlClient } from '@/core/adapters/tauri';
 import { SqlCounselorStore } from '@/store/counselor';
 import { Chip } from '@/ui/components/Chip';
@@ -12,6 +12,7 @@ import { useFinder } from './useFinder';
 export function CareerPicker() {
   const { t } = useTranslation('finder');
   const location = useLocation();
+  const navigate = useNavigate();
   const careers = useFinder((s) => s.careers);
   const addCareer = useFinder((s) => s.addCareer);
   const removeCareer = useFinder((s) => s.removeCareer);
@@ -39,7 +40,10 @@ export function CareerPicker() {
   // A career sent from the Counselor is added once, on arrival.
   useEffect(() => {
     const state = location.state as { career?: unknown } | null;
-    if (state && typeof state.career === 'string') addCareer(state.career);
+    if (!state || typeof state.career !== 'string') return;
+    addCareer(state.career);
+    // Consume the hand-off so a remount (Edit, or coming back from a detail page) does not add it again.
+    navigate(location.pathname + location.search, { replace: true, state: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 

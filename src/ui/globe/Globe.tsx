@@ -191,6 +191,8 @@ export default function GlobeView({
       el.removeEventListener('pointerenter', onEnter);
       el.removeEventListener('pointerleave', onLeave);
       globe.controls().autoRotate = false;
+      // Browsers cap live WebGL contexts; the globe remounts often, so release the context explicitly.
+      globe.renderer().forceContextLoss();
       const destroy = (globe as unknown as { _destructor?: () => void })._destructor;
       destroy?.call(globe);
       el.replaceChildren();

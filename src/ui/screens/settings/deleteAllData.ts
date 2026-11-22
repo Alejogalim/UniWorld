@@ -26,20 +26,24 @@ const TABLES = [
  * the app behaves like a first launch. Keys are removed from the OS keychain as well.
  */
 export async function deleteAllLocalData(): Promise<void> {
-  // Written first so the theme row is then removed with the rest of the settings.
-  await useTheme.getState().setMode('system');
-
-  const db = await getDb();
-  for (const table of TABLES) {
-    await db.execute(`DELETE FROM ${table}`);
-  }
+  // Keys first: if the keychain refuses, nothing else has been touched yet.
   await deleteSecret('openrouter');
   await deleteSecret('opencode');
 
-  useProfile.setState({ profile: null, loaded: true });
-  useTracked.setState({ items: [], loaded: false });
-  resetFinderState();
-  resetCounselorState();
-  useOnboardingDraft.getState().reset();
-  await i18n.changeLanguage('en');
+  try {
+    // Written before the delete so the theme row is then removed with the rest of the settings.
+    await useTheme.getState().setMode('system');
+
+    // One multi-statement call, so the deletes are not split across pooled connections.
+    const db = await getDb();
+    await db.execute(TABLES.map((table) => `DELETE FROM ${table};`).join(' '));
+  } finally {
+    // Runs whether or not the deletes succeeded, so memory never keeps data the database lost.
+    useProfile.setState({ profile: null, loaded: true });
+    useTracked.setState({ items: [], loaded: false });
+    resetFinderState();
+    resetCounselorState();
+    useOnboardingDraft.getState().reset();
+    await i18n.changeLanguage('en');
+  }
 }

@@ -15,7 +15,9 @@
   "scope": {
     "world": "Whole world",
     "hint": "Click a country on the globe to add it. Click it again to remove it.",
-    "current": "Searching in"
+    "current": "Searching in",
+    "addCountry": "Add a country",
+    "noMatches": "No country matches"
   },
   "continent": {
     "Africa": "Africa",

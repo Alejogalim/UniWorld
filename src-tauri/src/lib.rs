@@ -3,7 +3,16 @@ use tauri_plugin_sql::{Migration, MigrationKind};
 
 const KEYCHAIN_SERVICE: &str = "com.uniworld.app";
 
+/// The only keychain entries the app may touch. Anything else is refused, so a script in the
+/// webview cannot read other entries under the same service.
+fn is_allowed_account(account: &str) -> bool {
+    matches!(account, "openrouter" | "opencode") || (cfg!(test) && account == "__uniworld_selftest__")
+}
+
 fn entry(account: &str) -> Result<Entry, String> {
+    if !is_allowed_account(account) {
+        return Err("Unknown key name.".into());
+    }
     Entry::new(KEYCHAIN_SERVICE, account).map_err(|e| e.to_string())
 }
 
@@ -42,6 +51,11 @@ pub fn run() {
         version: 2,
         description: "tracked_names",
         sql: include_str!("../../src/db/migrations/002_tracked_names.sql"),
+        kind: MigrationKind::Up,
+    }, Migration {
+        version: 3,
+        description: "tracked_detail_program",
+        sql: include_str!("../../src/db/migrations/003_tracked_detail_program.sql"),
         kind: MigrationKind::Up,
     }];
 

@@ -114,10 +114,10 @@ export function FinderScreen() {
         ))}
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button variant="quiet" size="sm" onClick={() => setEditing(true)}>
+        <Button variant="quiet" size="sm" disabled={phase === 'searching'} onClick={() => setEditing(true)}>
           {t('search.edit')}
         </Button>
-        <Button variant="quiet" size="sm" onClick={() => reset()}>
+        <Button variant="quiet" size="sm" disabled={phase === 'searching'} onClick={() => reset()}>
           {t('search.newSearch')}
         </Button>
       </div>

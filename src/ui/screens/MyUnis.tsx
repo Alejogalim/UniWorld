@@ -1,9 +1,10 @@
-import { useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { TrackedStatus, UiLang } from '@/core/contracts';
 import { useTracked, type TrackedPatch, type TrackedUni } from '@/store/tracked';
 import { countryName } from '@/ui/data/countries';
+import { languageName } from '@/ui/data/languages';
 import { Badge } from '@/ui/components/Chip';
 import { EmptyState } from '@/ui/components/EmptyState';
 import { ErrorNote } from '@/ui/components/ErrorNote';
@@ -83,7 +84,8 @@ export function MyUnisScreen() {
   };
 
   const openDetail = (uni: TrackedUni) =>
-    navigate(`/finder/uni/${encodeURIComponent(uni.rorId)}?program=${encodeURIComponent(uni.programName)}`, {
+    // The detail program is the one the page was added with; a renamed programName would be a cache miss.
+    navigate(`/finder/uni/${encodeURIComponent(uni.rorId)}?program=${encodeURIComponent(uni.detailProgram ?? uni.programName)}`, {
       state: { tracked: uni },
     });
 
@@ -191,6 +193,7 @@ function TrackedRow({ uni, today, onSave, onRemove, onOpen }: TrackedRowProps) {
         <InlineText
           label={t('inline.editLanguage', { name: uni.name })}
           value={uni.language ?? ''}
+          display={uni.language ? uni.language.split(',').map((c) => languageName(c.trim(), uiLang)).join(', ') : undefined}
           onSave={(v) => onSave({ language: v || null })}
         />
       </td>
@@ -233,17 +236,22 @@ function TrackedRow({ uni, today, onSave, onRemove, onOpen }: TrackedRowProps) {
 function InlineText({
   label,
   value,
+  display,
   required = false,
   onSave,
 }: {
   label: string;
   value: string;
+  /** Shown instead of the value when not editing (for example, language names instead of codes). */
+  display?: string;
   required?: boolean;
   onSave: (next: string) => void;
 }) {
   const { t } = useTranslation('myUnis');
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
+  // Escape unmounts the input, and the browser may still fire blur; that blur must not save the cancelled draft.
+  const cancelled = useRef(false);
 
   if (!editing) {
     return (
@@ -251,17 +259,22 @@ function InlineText({
         type="button"
         aria-label={label}
         onClick={() => {
+          cancelled.current = false;
           setDraft(value);
           setEditing(true);
         }}
         className="text-left break-words text-foreground underline decoration-hairline underline-offset-4 outline-none hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
       >
-        {value || t('inline.empty')}
+        {display || value || t('inline.empty')}
       </button>
     );
   }
 
   const commit = () => {
+    if (cancelled.current) {
+      cancelled.current = false;
+      return;
+    }
     const next = draft.trim();
     setEditing(false);
     if (next !== value && (next || !required)) onSave(next);
@@ -272,6 +285,7 @@ function InlineText({
       commit();
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      cancelled.current = true;
       setEditing(false);
     }
   };
@@ -332,8 +346,13 @@ function ExamsCell({ uni, onSave }: { uni: TrackedUni; onSave: (exams: string[])
   const { t } = useTranslation('myUnis');
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
+  const cancelled = useRef(false);
 
   const commit = () => {
+    if (cancelled.current) {
+      cancelled.current = false;
+      return;
+    }
     const next = draft
       .split(',')
       .map((x) => x.trim())
@@ -357,6 +376,7 @@ function ExamsCell({ uni, onSave }: { uni: TrackedUni; onSave: (exams: string[])
               commit();
             } else if (e.key === 'Escape') {
               e.preventDefault();
+              cancelled.current = true;
               setEditing(false);
             }
           }}
@@ -381,6 +401,7 @@ function ExamsCell({ uni, onSave }: { uni: TrackedUni; onSave: (exams: string[])
         className="px-0"
         aria-label={t('exams.label', { name: uni.name })}
         onClick={() => {
+          cancelled.current = false;
           setDraft(uni.requiredExams.join(', '));
           setEditing(true);
         }}

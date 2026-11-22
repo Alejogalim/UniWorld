@@ -5,6 +5,9 @@ import { FINDER_NEEDS_OPENROUTER, MissingKeyError } from '@/core';
 
 export const MAX_SHOWN_RESULTS = 12;
 
+/** Id of the latest search run. Events from older runs (cancelled by "New search" or a reset) are ignored. */
+let runId = 0;
+
 export interface FinderFilters {
   tuitionFreeOnly: boolean;
   spokenLanguagesOnly: boolean;
@@ -56,6 +59,7 @@ const INITIAL = {
 
 /** Back to the first-run state: no careers, scope or filters. Used when all local data is deleted. */
 export function resetFinderState(): void {
+  runId++;
   useFinder.setState({ ...INITIAL });
 }
 
@@ -92,9 +96,11 @@ export const useFinder = create<FinderState>((set, get) => ({
   search: async () => {
     const { careers, scope, filters } = get();
     if (careers.length === 0 || get().phase === 'searching') return;
+    const id = ++runId;
     set({ phase: 'searching', progress: [], results: [], summary: null, error: null, editing: false });
     const input: SearchInput = { careers, scope, filters };
     const onEvent = (event: FinderEvent) => {
+      if (id !== runId) return;
       switch (event.type) {
         case 'progress':
           set({ progress: [...get().progress, event.message] });
@@ -115,8 +121,10 @@ export const useFinder = create<FinderState>((set, get) => ({
     };
     try {
       await useCore().finder.search(input, onEvent);
+      if (id !== runId) return;
       if (get().phase === 'searching') set({ phase: 'done' });
     } catch (err) {
+      if (id !== runId) return;
       const missingKey = err instanceof MissingKeyError;
       set({
         phase: 'error',
@@ -124,5 +132,8 @@ export const useFinder = create<FinderState>((set, get) => ({
       });
     }
   },
-  reset: () => set({ ...INITIAL, careers: get().careers, scope: get().scope, filters: get().filters }),
+  reset: () => {
+    runId++;
+    set({ ...INITIAL, careers: get().careers, scope: get().scope, filters: get().filters });
+  },
 }));

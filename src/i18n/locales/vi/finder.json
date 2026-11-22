@@ -15,7 +15,9 @@
   "scope": {
     "world": "Toàn thế giới",
     "hint": "Nhấn vào một quốc gia trên quả địa cầu để thêm. Nhấn lại để bỏ.",
-    "current": "Đang tìm ở"
+    "current": "Đang tìm ở",
+    "addCountry": "Thêm quốc gia",
+    "noMatches": "Không có quốc gia nào khớp"
   },
   "continent": {
     "Africa": "Châu Phi",

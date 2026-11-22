@@ -7,10 +7,12 @@ import { languageName } from '@/ui/data/languages';
 import { countryName } from '@/ui/data/countries';
 import { Badge } from '@/ui/components/Chip';
 import { Flag } from '@/ui/components/Flag';
+import { SourceMarker } from '@/ui/components/FactLine';
+import { isWebUrl } from '@/lib/url';
 
 /** A value is shown only when it has a source URL; otherwise the missing treatment is used. */
 export function factValue<T>(fact: Fact<T>): T | null {
-  if (fact.value === null || fact.sourceUrl === null) return null;
+  if (fact.value === null || fact.sourceUrl === null || !isWebUrl(fact.sourceUrl)) return null;
   if (typeof fact.value === 'string' && fact.value.trim() === '') return null;
   if (Array.isArray(fact.value) && fact.value.length === 0) return null;
   return fact.value;
@@ -49,6 +51,24 @@ export function ResultRow({ uni, rank, index }: ResultRowProps) {
   const { fit } = uni;
   const cost = typeof fit.cost === 'number' ? String(Math.round(fit.cost * 100)) : '?';
 
+  // Markers are numbered in the order they appear on the row. A value without a source gets none.
+  let markerCount = 0;
+  const marker = (fact: Fact<unknown>) => {
+    if (factValue(fact) === null || fact.sourceUrl === null) return null;
+    markerCount += 1;
+    const index = markerCount;
+    // The row is a link: a click or key on the marker must open its popover, not the detail page.
+    const stop = (e: { stopPropagation(): void }) => e.stopPropagation();
+    return (
+      <span onClick={stop} onKeyDown={stop} className="inline-flex">
+        <SourceMarker index={index} sourceUrl={fact.sourceUrl} sourceKind={fact.sourceKind} quote={fact.quote} />
+      </span>
+    );
+  };
+  const overviewMarker = marker(uni.overview);
+  const languagesMarker = marker(uni.languages);
+  const tuitionMarker = marker(uni.tuition);
+
   return (
     <motion.li
       layout="position"
@@ -83,12 +103,15 @@ export function ResultRow({ uni, rank, index }: ResultRowProps) {
                 {t('row.overviewMissing')}
               </span>
             )}
+            {overviewMarker}
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             {languages?.map((code) => (
               <Badge key={code}>{languageName(code, uiLang)}</Badge>
             ))}
+            {languagesMarker}
             <Badge>{tuition ?? t('row.tuitionUnknown')}</Badge>
+            {tuitionMarker}
           </div>
           <p className="text-sm leading-[1.55] text-foreground">
             <span className="text-chart-grey">{t('row.why')}: </span>
