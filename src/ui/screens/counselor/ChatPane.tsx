@@ -78,7 +78,7 @@ export function ChatPane() {
     <section
       className={cn(
         "mx-auto flex w-full min-w-0 max-w-[40rem] flex-col",
-        fresh ? "min-h-[70vh] justify-center gap-8" : "gap-6",
+        fresh ? "min-h-[calc(100vh-10rem)] justify-center gap-8" : "gap-6",
       )}
     >
       {fresh ? (

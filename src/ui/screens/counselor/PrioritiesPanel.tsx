@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Panel } from "@/ui/components/Panel";
 import { Slider } from "@/ui/components/Slider";
 import { Button } from "@/ui/components/ui/button";
 import { CAREER_IDEAS_MIN_STUDENT_MESSAGES } from "@/core";
@@ -23,7 +22,7 @@ export function PrioritiesPanel() {
   const idle = status === "idle";
 
   return (
-    <Panel variant="bare" className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h2 className="text-[1.0625rem] leading-[1.35] font-semibold tracking-[-0.005em]">{t("priorities.title")}</h2>
         <p className="text-sm leading-[1.55] text-chart-grey">{t("priorities.hint")}</p>
@@ -77,6 +76,6 @@ export function PrioritiesPanel() {
           </div>
         )}
       </div>
-    </Panel>
+    </div>
   );
 }

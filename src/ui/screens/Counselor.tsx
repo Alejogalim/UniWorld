@@ -56,16 +56,19 @@ export function CounselorScreen() {
   }
 
   return (
-    <div className="px-12 py-8">
-      <div className="grid gap-8 min-[1600px]:grid-cols-[minmax(0,1fr)_minmax(0,40rem)_minmax(0,1fr)]">
-        <div className="mx-auto flex w-full min-w-0 max-w-[40rem] flex-col gap-8 min-[1600px]:col-start-2 min-[1600px]:row-start-1">
+    <div className="flex min-h-full">
+      <div className="flex min-w-0 flex-1 flex-col px-6 py-8 min-[1100px]:px-10">
+        <div className="mx-auto flex w-full max-w-[40rem] flex-col gap-8">
           <ChatPane />
           <CareerList />
         </div>
-        <aside className="mx-auto w-full max-w-[300px] min-[1600px]:sticky min-[1600px]:top-8 min-[1600px]:col-start-3 min-[1600px]:row-start-1 min-[1600px]:mx-0 min-[1600px]:justify-self-end min-[1600px]:self-start">
-          <PrioritiesPanel />
-        </aside>
       </div>
+      <div aria-hidden="true" className="fixed top-0 right-[240px] bottom-0 hidden w-px bg-hairline min-[900px]:block" />
+      <aside className="hidden w-[240px] shrink-0 min-[900px]:flex min-[900px]:flex-col">
+        <div className="sticky top-0 flex flex-col px-4 py-8">
+          <PrioritiesPanel />
+        </div>
+      </aside>
     </div>
   );
 }
