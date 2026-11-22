@@ -1,11 +1,17 @@
 {
   "intake": {
-    "q1": "{{name}}, bạn thường quên cả thời gian khi làm việc gì?",
-    "q2": "Bạn bè hay bạn cùng lớp thường nhờ bạn giúp việc gì?",
-    "q3": "Bạn thích môn học nào ở trường nhất, và bạn thích điều gì ở môn đó?",
-    "q4": "Hãy hình dung một ngày thứ Ba bình thường khi bạn 30 tuổi. Bạn đang làm gì?",
-    "q5": "Điều quan trọng nhất với bạn trong công việc là gì: giúp đỡ người khác, sự ổn định, sáng tạo, tiền bạc hay tự do?",
-    "q6": "Có điều gì đang giới hạn lựa chọn của bạn không, như ngân sách, việc phải ở gần nhà, hoặc các ngôn ngữ bạn có thể học?",
+    "q1": "{{name}} ơi, khi không ai bảo phải làm gì, bạn thường xem, đọc hay làm gì?",
+    "q2": "Hãy nghĩ về một người bạn ngưỡng mộ, ngoài đời thật hoặc trong sách, phim hay game. Điều gì ở họ khiến bạn ngưỡng mộ?",
+    "q3": "Có việc gì bạn làm khá tốt mà người khác lại thấy khó, ở trường hay ngoài trường?",
+    "q4": "Hãy tưởng tượng một công việc mà hầu như ngày nào bạn cũng vui khi đi làm. Công việc đó mang lại cho bạn điều gì: giúp đỡ người khác, sự ổn định, sáng tạo, tiền bạc, tự do hay điều gì khác?",
+    "q5": "Có câu nói, câu trích dẫn hay lời khuyên nào mà bạn hay nhắc lại với chính mình?",
+    "q6": "Có điều gì đang giới hạn lựa chọn của bạn không, như ngân sách, việc học xa nhà đến đâu hoặc các ngôn ngữ bạn có thể học?",
+    "hint1": "Một bộ phim, một kênh, một trò chơi, một sở thích…",
+    "hint2": "Người thân, thầy cô, vận động viên, nhân vật…",
+    "hint3": "Giảng bài, sửa đồ, vẽ…",
+    "hint4": "Chọn một hay nhiều điều, hoặc xếp theo thứ tự.",
+    "hint5": "Một câu hát, một câu nói trong nhà, gì cũng được.",
+    "hint6": "Trả lời đại khái cũng được. \"Không có\" cũng ổn.",
     "progress": "Câu hỏi {{n}} trên {{total}}"
   },
   "chat": {

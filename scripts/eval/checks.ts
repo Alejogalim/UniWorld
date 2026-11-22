@@ -8,7 +8,8 @@ export type CheckId =
   | 'length'
   | 'language'
   | 'noPrescription'
-  | 'nameSpacing';
+  | 'nameSpacing'
+  | 'tag';
 
 export interface CheckResult {
   id: CheckId;
@@ -104,6 +105,19 @@ export interface CheckInput {
   previousReplies: string[];
   /** False only for replies the app told not to ask anything (plan 28 intake answers 1-5). */
   expectQuestion: boolean;
+  /** The raw reply (with control tags) and whether it must end with one; both set from plan 29 on. */
+  raw?: string;
+  expectTag?: boolean;
+}
+
+const ANY_TAG = /<\s*(?:next|follow)\s*\/?\s*>/gi;
+
+/** Intake replies end with exactly one <next/> or <follow/>; free-chat replies carry none. */
+export function tagCheck(raw: string, expectTag: boolean): CheckResult {
+  const count = (raw.match(ANY_TAG) ?? []).length;
+  if (!expectTag) return { id: 'tag', pass: count === 0, detail: `${count} tags in a free-chat reply` };
+  const atEnd = /<(?:next|follow)\/>\s*$/.test(raw);
+  return { id: 'tag', pass: count === 1 && atEnd, detail: `${count} tags, last at end: ${atEnd}` };
 }
 
 export function runChecks(input: CheckInput): CheckResult[] {
@@ -133,5 +147,6 @@ export function runChecks(input: CheckInput): CheckResult[] {
   results.push({ id: 'noPrescription', pass: prescription === null, detail: prescription ?? undefined });
   const all = [...input.previousReplies, text];
   results.push({ id: 'nameSpacing', pass: nameSpacingOk(all, all.length - 1, input.name) });
+  if (input.raw !== undefined && input.expectTag !== undefined) results.push(tagCheck(input.raw, input.expectTag));
   return results;
 }

@@ -1,11 +1,17 @@
 {
   "intake": {
-    "q1": "{{name}}, what do you lose track of time doing?",
-    "q2": "What do friends or classmates usually ask you for help with?",
-    "q3": "Which school subject do you actually enjoy, and what do you like about it?",
-    "q4": "Picture an ordinary Tuesday when you're 30. What are you doing?",
-    "q5": "What matters most to you in a job: helping people, stability, creativity, money or freedom?",
-    "q6": "Is anything limiting your options, like budget, staying near home or the languages you can study in?",
+    "q1": "{{name}}, when nobody is telling you what to do, what do you end up watching, reading or doing?",
+    "q2": "Think of someone you admire, real or from a book, film or game. What is it about them that you admire?",
+    "q3": "What's something you're good at that other people find hard, at school or outside it?",
+    "q4": "Picture a job you'd be happy to go to most days. What does it give you: helping people, security, creativity, money, freedom or something else?",
+    "q5": "What's a saying, quote or piece of advice that you often come back to?",
+    "q6": "Is anything limiting your options, like budget, how far from home you can go or the languages you can study in?",
+    "hint1": "A show, a channel, a game, a hobby…",
+    "hint2": "Family, a teacher, an athlete, a character…",
+    "hint3": "Explaining things, fixing stuff, drawing…",
+    "hint4": "Pick one or more, or put them in order.",
+    "hint5": "A song lyric, a family saying, anything.",
+    "hint6": "Rough answers are fine. \"None\" works too.",
     "progress": "Question {{n}} of {{total}}"
   },
   "chat": {

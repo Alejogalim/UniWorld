@@ -9,6 +9,7 @@ export interface ReplyResult {
   checks: CheckResult[];
   judge: JudgeScore | null;
   judgeError?: string;
+  tag?: 'next' | 'follow' | null;
 }
 
 export interface PersonaResult {
@@ -71,7 +72,7 @@ export function renderReport(meta: ReportMeta, results: PersonaResult[]): string
     lines.push('', `## ${result.persona.id}: ${result.persona.label} (${result.persona.lang})`, '');
     if (result.error) lines.push(`**Run stopped:** ${oneLine(result.error)}`, '');
     for (const reply of result.replies) {
-      lines.push(`**${reply.turn}. Student:** ${oneLine(reply.student)}`, '', `**Counselor:** ${oneLine(reply.reply)}`, '');
+      lines.push(`**${reply.turn}. Student:** ${oneLine(reply.student)}`, '', `**Counselor:** ${oneLine(reply.reply)}${reply.tag === 'follow' ? ' _(follow-up)_' : ''}`, '');
       const failed = reply.checks.filter((c) => !c.pass);
       if (failed.length) {
         lines.push(`- Failed: ${failed.map((c) => (c.detail ? `${c.id} (${oneLine(c.detail)})` : c.id)).join('; ')}`);

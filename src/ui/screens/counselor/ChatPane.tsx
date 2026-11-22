@@ -130,7 +130,7 @@ export function ChatPane() {
           <Textarea
             ref={textareaRef}
             aria-label={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
-            placeholder={intake ? t("chat.placeholderAnswer") : t("chat.placeholderReply")}
+            placeholder={intake ? t(`intake.hint${intakeStep}`) : t("chat.placeholderReply")}
             rows={1}
             value={draft}
             disabled={busy}

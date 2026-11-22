@@ -85,6 +85,8 @@ async function runPersona(persona: Persona, provider: Provider, judge: AiClient 
         name: persona.profile.name,
         previousReplies: visibleReplies,
         expectQuestion: turn.expectQuestion,
+        raw,
+        expectTag: turn.expectTag,
       });
       let score: JudgeScore | null = null;
       let judgeError: string | undefined;
@@ -95,7 +97,7 @@ async function runPersona(persona: Persona, provider: Provider, judge: AiClient 
           judgeError = message(error);
         }
       }
-      replies.push({ turn: index + 1, student: answer, reply: outcome.visible, checks, judge: score, judgeError });
+      replies.push({ turn: index + 1, student: answer, reply: outcome.visible, checks, judge: score, judgeError, tag: outcome.tag });
       visibleReplies.push(outcome.visible);
       transcript.push(`Counselor: ${outcome.visible}`);
       if (outcome.appQuestion) transcript.push(`Counselor: ${outcome.appQuestion}`);

@@ -41,6 +41,8 @@ describe('counselorSystemPrompt', () => {
     expect(system).toContain('YOUR HIDDEN CHECKLIST');
     expect(system).toContain('SAFETY (this overrides every other rule)');
     expect(system).toContain('[intake N/6]');
+    expect(system).toContain('End the reply with <follow/>.');
+    expect(system).toContain('Next topic: none');
     expect(system).not.toContain('Address the student by name');
   });
 });

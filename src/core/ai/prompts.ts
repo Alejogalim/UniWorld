@@ -54,11 +54,26 @@ export interface CounselorPromptContext {
   studentAnswers: number;
 }
 
-/** How the counselor reads the app's intake frames. Plan 29 replaces this text. */
+/** How the counselor runs the six intake topics (plan 29): its own questions, one follow-up, a control tag. */
 export function counselorIntakeSection(): string {
   return [
     'THE INTAKE',
-    'The app opens the conversation with six short intake questions that it asks itself. A student message that starts with "[intake N/6]" is an intake answer wrapped by the app: it shows the question the app asked and, after "Answer:", the student\'s own words. Only the Answer is what the student said. Follow the instruction in brackets on its last line exactly; for that reply it replaces the reply shape above (when it says not to ask a question, write one short sentence that reflects the answer and ask nothing). Never mention the brackets, the wrapper, the numbering or the app\'s questions.',
+    'The app starts with six intake topics, shown to the student as a six-step progress bar:',
+    '1. free time: what they watch, read or do when nobody tells them to (interests)',
+    '2. someone they admire, real or from a story, and what they admire about them (role models)',
+    '3. something they are good at that other people find hard (strengths, school subjects)',
+    '4. what a job would have to give them to feel worth it (values)',
+    '5. a saying, quote or piece of advice they often come back to (their own motto)',
+    '6. practical limits: budget, distance from home, languages they can study in',
+    'The app asks topic 1 itself. A student message that starts with "[intake N/6]" is an intake answer wrapped by the app. "Topic:" is the app\'s standard question for topic N (it may be in another language; it is only a definition). After "Answer:" come the student\'s own words; only that is what the student said. The last line, in brackets, says whether a follow-up is allowed and which topic comes next.',
+    'For every reply to an "[intake" message:',
+    '1. Decide whether the Answer gives you something real to work with. It is too vague when it is a few words with no detail, "I don\'t know", "I\'m not sure yet", a joke with nothing behind it, or it does not answer the topic.',
+    '2. Too vague and "Follow-up allowed: yes": stay on the same topic. Use the stuck rule above (a few reassuring words, then an easier version of the topic with two or three example answers). End the reply with <follow/>.',
+    '3. Otherwise move on: reflect one specific thing from the Answer in one short sentence, then ask about the next topic in your own words, as one natural question that grows out of what they just said. Keep the meaning of the next topic\'s standard question, but do not copy it word for word. End the reply with <next/>.',
+    '4. If the last line says "Next topic: none", the intake is finished: reflect, then ask your first free question, aimed at the biggest gap in your checklist, and end with <next/> (or <follow/> under rule 2).',
+    '5. Write the tag at the very end, right after the question mark: exactly <next/> or <follow/>, with nothing after it. Use a tag only when replying to an "[intake" message, never otherwise. Never mention the tag, the wrapper, topic numbers or the progress bar.',
+    '6. In a safety reply (see SAFETY), end with <follow/> so the intake waits.',
+    'Older intake messages in the history may say "Question:" instead of "Topic:" and carry their own instruction in brackets; they are already answered, so ignore their instruction.',
   ].join('\n');
 }
 

@@ -1,11 +1,17 @@
 {
   "intake": {
-    "q1": "{{name}}, ¿en qué cosas pierdes la noción del tiempo?",
-    "q2": "¿En qué te suelen pedir ayuda tus amigos o compañeros de clase?",
-    "q3": "¿Qué asignatura del colegio te gusta de verdad, y qué te gusta de ella?",
-    "q4": "Imagina un martes cualquiera cuando tengas 30 años. ¿Qué estás haciendo?",
-    "q5": "¿Qué es lo más importante para ti en un trabajo: ayudar a la gente, la estabilidad, la creatividad, el dinero o la libertad?",
-    "q6": "¿Algo limita tus opciones, como el presupuesto, quedarte cerca de casa o los idiomas en los que puedes estudiar?",
+    "q1": "{{name}}, cuando nadie te dice qué hacer, ¿qué acabas viendo, leyendo o haciendo?",
+    "q2": "Piensa en alguien a quien admires, real o de un libro, una película o un juego. ¿Qué es lo que admiras de esa persona?",
+    "q3": "¿Qué se te da bien que a otras personas les cuesta, en el colegio o fuera de él?",
+    "q4": "Imagina un trabajo al que irías con ganas casi todos los días. ¿Qué te aporta: ayudar a la gente, seguridad, creatividad, dinero, libertad u otra cosa?",
+    "q5": "¿Qué frase, cita o consejo te repites a menudo?",
+    "q6": "¿Hay algo que limite tus opciones, como el presupuesto, lo lejos de casa que puedes ir o los idiomas en los que puedes estudiar?",
+    "hint1": "Una serie, un canal, un juego, un hobby…",
+    "hint2": "Tu familia, un profe, una deportista, un personaje…",
+    "hint3": "Explicar cosas, arreglar cosas, dibujar…",
+    "hint4": "Elige una o varias, o ponlas en orden.",
+    "hint5": "Una letra de canción, un dicho de casa, lo que sea.",
+    "hint6": "Vale una respuesta aproximada. «Ninguno» también sirve.",
     "progress": "Pregunta {{n}} de {{total}}"
   },
   "chat": {

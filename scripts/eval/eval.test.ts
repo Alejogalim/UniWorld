@@ -8,6 +8,7 @@ import {
   nameSpacingOk,
   runChecks,
   splitSentences,
+  tagCheck,
 } from './checks';
 import { afterReply, initialDriverState, intakeQuestion, nextTurn } from './driver';
 import { PERSONAS } from './personas';
@@ -131,6 +132,31 @@ describe('driver', () => {
   it('sends free chat unwrapped after the intake', () => {
     const turn = nextTurn({ intakeStep: 7, followUp: false }, 'Hello', question);
     expect(turn).toMatchObject({ encoded: 'Hello', intakeN: null, expectQuestion: true });
+  });
+
+  it('uses v2 frames, follows up once and reads the tag', () => {
+    const turn = nextTurn(initialDriverState, 'idk', question);
+    expect(turn.encoded.startsWith('[intake 1/6] Topic: "')).toBe(true);
+    expect(turn.expectTag).toBe(true);
+    const follow = afterReply(initialDriverState, turn, 'No rush. Was it games, music, or sport?<follow/>', question);
+    expect(follow.state).toEqual({ intakeStep: 1, followUp: true });
+    expect(follow.visible).toBe('No rush. Was it games, music, or sport?');
+    expect(follow.tag).toBe('follow');
+    const again = nextTurn(follow.state, 'games', question);
+    expect(again.encoded.startsWith('[intake 1/6 follow-up]')).toBe(true);
+    const next = afterReply(follow.state, again, 'Games! Who do you admire?<next/>', question);
+    expect(next.state).toEqual({ intakeStep: 2, followUp: false });
+    expect(next.appQuestion).toBeNull();
+  });
+});
+
+describe('tagCheck', () => {
+  it('wants exactly one tag at the end of intake replies and none elsewhere', () => {
+    expect(tagCheck('What then?<next/>', true).pass).toBe(true);
+    expect(tagCheck('What then?', true).pass).toBe(false);
+    expect(tagCheck('<next/> What then?', true).pass).toBe(false);
+    expect(tagCheck('What then?', false).pass).toBe(true);
+    expect(tagCheck('What then?<follow/>', false).pass).toBe(false);
   });
 });
 

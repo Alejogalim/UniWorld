@@ -14,7 +14,8 @@ import { SqlCounselorStore } from '@/store/counselor';
 import { useProfile } from '@/store/profile';
 import { getSecret } from '@/store/secrets';
 import { getSetting, setSetting } from '@/store/settings';
-import { decodeIntake, encodeIntake, INTAKE_TOTAL } from './intake';
+import { visibleReply } from '@/core/counselor/replyTag';
+import { encodeIntake, intakeOutcome, INTAKE_TOTAL, rebuildConversation } from './intake';
 import { chooseSessionProvider, otherProvider } from './providerChoice';
 
 export interface ChatMessage {
@@ -41,6 +42,8 @@ export interface CounselorError {
 interface Pending {
   encoded: string;
   intakeN: number | null;
+  /** True when this answers the topic's one follow-up question. */
+  followUp: boolean;
 }
 
 export const DEFAULT_WEIGHTS: CounselorWeights = { passions: 5, strengths: 5, goals: 5, earning: 5 };
@@ -85,6 +88,8 @@ interface CounselorState {
   messages: ChatMessage[];
   /** 1..6 = the intake question awaiting an answer; 7 = intake done (free-form chat). */
   intakeStep: number;
+  /** True when the question awaiting an answer is the current topic's follow-up. */
+  followUp: boolean;
   studentCount: number;
   weights: CounselorWeights;
   careers: CareerPath[];
@@ -230,26 +235,29 @@ async function runSend(pending: Pending): Promise<void> {
   try {
     const sessionId = await ensureSession();
     await syncSessionProvider(sessionId);
+    let raw = '';
     const reply = await useCore().counselor.send(sessionId, pending.encoded, (token) => {
+      raw += token;
+      const text = visibleReply(raw);
       useCounselor.setState((s) => ({
-        messages: s.messages.map((m) => (m.id === counselorId ? { ...m, text: m.text + token } : m)),
+        messages: s.messages.map((m) => (m.id === counselorId ? { ...m, text } : m)),
       }));
     });
 
     useCounselor.setState((s) => {
-      const messages = s.messages.map((m) =>
-        m.id === counselorId ? { ...m, text: reply, streaming: false } : m,
-      );
-      let intakeStep = s.intakeStep;
-      if (pending.intakeN !== null) {
-        if (pending.intakeN < INTAKE_TOTAL) {
-          messages.push(questionBubble(pending.intakeN + 1));
-          intakeStep = pending.intakeN + 1;
-        } else {
-          intakeStep = INTAKE_TOTAL + 1;
-        }
-      }
-      return { messages, intakeStep, status: 'idle', pending: null };
+      const outcome = intakeOutcome(pending, reply, s.intakeStep);
+      const messages = s.messages.flatMap((m) => {
+        if (m.id !== counselorId) return [m];
+        return outcome.text ? [{ ...m, text: outcome.text, streaming: false }] : [];
+      });
+      if (outcome.fallbackQuestion !== null) messages.push(questionBubble(outcome.fallbackQuestion));
+      return {
+        messages,
+        intakeStep: outcome.intakeStep,
+        followUp: outcome.followUp,
+        status: 'idle' as const,
+        pending: null,
+      };
     });
   } catch (err) {
     const failure = await failureFrom(err, 'chat', useCounselor.getState().sessionId);
@@ -276,6 +284,7 @@ export const useCounselor = create<CounselorState>((set, get) => ({
   sessionId: null,
   messages: [],
   intakeStep: 1,
+  followUp: false,
   studentCount: 0,
   weights: DEFAULT_WEIGHTS,
   careers: [],
@@ -295,17 +304,24 @@ export const useCounselor = create<CounselorState>((set, get) => ({
 
   async sendAnswer(raw) {
     const text = raw.trim();
-    const { status, intakeStep } = get();
+    const { status, intakeStep, followUp } = get();
     if (!text || status !== 'idle') return;
 
     const intakeN = intakeStep <= INTAKE_TOTAL ? intakeStep : null;
-    const encoded = intakeN === null ? text : encodeIntake(intakeN, questionText(intakeN), text);
+    const asFollowUp = intakeN !== null && followUp;
+    const encoded =
+      intakeN === null
+        ? text
+        : encodeIntake(intakeN, questionText(intakeN), text, {
+            followUp: asFollowUp,
+            nextTopic: intakeN < INTAKE_TOTAL ? questionText(intakeN + 1) : null,
+          });
     set((s) => ({
       error: null,
       pending: null,
       messages: [...s.messages, { id: uid(), role: 'student', text }],
     }));
-    await runSend({ encoded, intakeN });
+    await runSend({ encoded, intakeN, followUp: asFollowUp });
   },
 
   async retry() {
@@ -383,6 +399,7 @@ export const useCounselor = create<CounselorState>((set, get) => ({
       sessionId: null,
       messages: [questionBubble(1)],
       intakeStep: 1,
+      followUp: false,
       studentCount: 0,
       careers: [],
       latestBatchIds: null,
@@ -402,6 +419,7 @@ export function resetCounselorState(): void {
     sessionId: null,
     messages: [],
     intakeStep: 1,
+    followUp: false,
     studentCount: 0,
     weights: DEFAULT_WEIGHTS,
     careers: [],
@@ -426,51 +444,29 @@ async function loadLatest(): Promise<void> {
   );
   const sessionId = rows[0] ? Number(rows[0].id) : null;
   if (sessionId === null) {
-    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, studentCount: 0 });
+    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, followUp: false, studentCount: 0 });
     return;
   }
 
   const persisted = await store();
   const stored = await persisted.listMessages(sessionId);
   if (stored.length === 0) {
-    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, studentCount: 0 });
+    useCounselor.setState({ loaded: true, sessionId: null, messages: [questionBubble(1)], intakeStep: 1, followUp: false, studentCount: 0 });
     return;
   }
 
   const session = await persisted.getSession(sessionId);
   const careers = await persisted.listCareers(sessionId);
-  const messages: ChatMessage[] = [questionBubble(1)];
-  let intakeStep = 1;
-  let last: Pending | null = null;
-
-  for (const m of stored) {
-    if (m.role === 'user') {
-      const intake = decodeIntake(m.content);
-      messages.push({ id: uid(), role: 'student', text: intake ? intake.answer : m.content });
-      last = { encoded: m.content, intakeN: intake?.n ?? null };
-      if (intake) intakeStep = intake.n;
-      continue;
-    }
-    messages.push({ id: uid(), role: 'counselor', text: m.content });
-    if (last?.intakeN != null) {
-      const n = last.intakeN;
-      if (n < INTAKE_TOTAL) {
-        messages.push(questionBubble(n + 1));
-        intakeStep = n + 1;
-      } else {
-        intakeStep = INTAKE_TOTAL + 1;
-      }
-    }
-    last = null;
-  }
-
+  const rebuilt = rebuildConversation(stored, questionText);
+  const messages: ChatMessage[] = rebuilt.entries.map((entry) => ({ id: uid(), ...entry }));
   // The student's last message never got a reply: keep it, and offer to resend it.
-  const unanswered = last as Pending | null;
+  const unanswered = rebuilt.unanswered;
   useCounselor.setState({
     loaded: true,
     sessionId,
     messages,
-    intakeStep,
+    intakeStep: rebuilt.intakeStep,
+    followUp: rebuilt.followUp,
     studentCount: stored.filter((m) => m.role === 'user').length,
     weights: session?.weights ?? DEFAULT_WEIGHTS,
     careers,
